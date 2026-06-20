@@ -26,21 +26,43 @@ return new class extends Migration
 {
     public function up(): void
     {
+ 
         Schema::create('users', function (Blueprint $table) {
-            $table->id();                                              // bigint PK — ID unik, auto-increment (1, 2, 3, ...)
-            $table->string('name');                                    // Nama lengkap (misal: "Budi Santoso")
-            $table->string('email')->unique();                         // Email unik — tidak boleh ada 2 akun pakai email yang sama
-            $table->string('password');                                // Password ter-hash (Laravel otomatis hash, jadi yang tersimpan bukan text asli)
-            $table->string('phone');                                   // Nomor WhatsApp (wajib, dipakai untuk CTA dan penjadwalan)
-            $table->text('address')->nullable();                       // Alamat default penjemputan (boleh kosong saat register, diisi nanti)
-            $table->enum('role', ['user', 'admin', 'artisan'])         // Jenis akun — menentukan halaman apa yang bisa diakses
-                  ->default('user');                                    // Default: semua pendaftar baru otomatis jadi 'user'
-            $table->integer('points_balance')->default(0);             // Saldo poin aktif saat ini (bertambah tiap setor sampah)
-            $table->integer('cash_received_total')->default(0);        // Total uang tunai yang pernah diterima (Rp, historis, tidak berkurang)
-            $table->string('qr_code')->unique()->nullable();           // Kode QR unik per akun (di-generate saat register, 1 user = 1 QR selamanya)
-            $table->timestamp('email_verified_at')->nullable();        // Kapan email diverifikasi (nullable = boleh kosong kalau belum verif)
-            $table->rememberToken();                                   // Token "Remember Me" — fitur bawaan Laravel untuk session
-            $table->timestamps();                                      // Otomatis bikin 2 kolom: created_at & updated_at
+
+            // Primary Key Laravel
+            $table->id();
+
+            // UUID dari Supabase Auth
+            $table->uuid('supabase_id')
+                ->unique();
+
+            $table->string('name');
+
+            $table->string('email')
+                ->unique();
+
+            $table->string('phone');
+
+            $table->text('address')
+                ->nullable();
+
+            $table->enum('role', [
+                'user',
+                'admin',
+                'artisan'
+            ])->default('user');
+
+            $table->integer('points_balance')
+                ->default(0);
+
+            $table->integer('cash_received_total')
+                ->default(0);
+
+            $table->string('qr_code')
+                ->unique()
+                ->nullable();
+
+            $table->timestamps();
         });
 
         // Tabel bawaan Laravel untuk fitur "Lupa Password"
@@ -61,7 +83,7 @@ return new class extends Migration
         });
     }
 
-    public function down(): void
+  public function down(): void
     {
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('password_reset_tokens');
