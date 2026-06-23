@@ -11,9 +11,7 @@
             <div class="absolute -top-20 -right-20 w-72 h-72 bg-terracotta/20 blur-[80px] rounded-full pointer-events-none"></div>
 
             <div class="relative z-10 flex items-center gap-2">
-                <div class="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 20A7 7 0 0 1 4 13c0-4 3-8 8-9 0 0 1 5-1 9 2-3 4-4 7-4 0 5-4 9-8 9 0 0-1 1-1 2z"/></svg>
-                </div>
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-10 h-10 object-contain rounded-md bg-white/20 backdrop-blur-md p-0.5">
                 <span class="font-display font-bold tracking-tight text-sm text-white">SulapaKarya Macca</span>
             </div>
 
@@ -32,7 +30,6 @@
 
         <div class="p-8 sm:p-12 flex flex-col justify-center bg-white">
             
-                       <!-- TOMBOL KEMBALI KE ROUTE / (BERANDA) -->
             <div class="mb-6 md:mb-6 -mt-2 md:-mt-6 text-left">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-ink-soft/70 hover:text-forest transition-all group">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="transition-transform group-hover:-translate-x-1">
@@ -41,6 +38,7 @@
                     Kembali ke Beranda
                 </a>
             </div> 
+
             <div class="mb-6">
                 <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-ink tracking-tight">
                     Mulai Langkah Hijau Anda
@@ -51,9 +49,16 @@
             </div>
 
             @if ($errors->any())
-                <div class="alert alert-error bg-terracotta/10 border-terracotta/20 text-terracotta rounded-xl py-3 px-4 mb-5 text-sm font-semibold flex gap-2">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="shrink-0"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
-                    <span>Ada beberapa format yang tidak sesuai. Silakan periksa kembali formulir Anda.</span>
+                <div class="alert alert-error bg-terracotta/10 border border-terracotta/20 text-terracotta rounded-xl py-3 px-4 mb-5 text-sm flex flex-col items-start gap-1 text-left">
+                    <div class="flex items-center gap-2 font-bold">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="shrink-0"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+                        <span>Gagal Mendaftar Akun:</span>
+                    </div>
+                    <ul class="list-disc list-inside text-xs font-medium pl-1 mt-1 space-y-0.5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
 

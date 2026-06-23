@@ -15,10 +15,11 @@
             <div class="absolute -top-20 -right-20 w-72 h-72 bg-terracotta/20 blur-[80px] rounded-full pointer-events-none"></div>
 
             <!-- Bagian Atas: Mini Logo/Identitas -->
+            <!-- Bagian Atas: Mini Logo/Identitas di Sisi Kiri Halaman Auth -->
             <div class="relative z-10 flex items-center gap-2">
-                <div class="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 20A7 7 0 0 1 4 13c0-4 3-8 8-9 0 0 1 5-1 9 2-3 4-4 7-4 0 5-4 9-8 9 0 0-1 1-1 2z"/></svg>
-                </div>
+                <!-- GANTI PEMBUNGKUS DAN SVG LAMA -->
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-10 h-10 object-contain rounded-md bg-white/20 backdrop-blur-md p-0.5">
+                
                 <span class="font-display font-bold tracking-tight text-sm text-white">SulapaKarya Macca</span>
             </div>
 

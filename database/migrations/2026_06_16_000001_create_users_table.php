@@ -43,13 +43,15 @@ return new class extends Migration
 
             $table->string('phone');
 
+            $table->string('foto_profil')->nullable();
             $table->text('address')
                 ->nullable();
 
             $table->enum('role', [
                 'user',
                 'admin',
-                'artisan'
+                'artisan',
+                'penjemput_sampah',
             ])->default('user');
 
             $table->integer('points_balance')

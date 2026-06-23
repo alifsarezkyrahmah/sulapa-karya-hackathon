@@ -60,38 +60,67 @@
   </div>
 </section>
 
+
 <!-- ============ TENTANG KAMI ============ -->
 <section id="tentang" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
   <div class="grid md:grid-cols-2 gap-12 items-center">
+    
+    <!-- SISI KIRI: DESKRIPSI TEKS -->
     <div>
-      <span class="text-forest text-xs font-bold section-eyebrow uppercase">Tentang Kami</span>
+      <span class="text-forest text-xs font-bold section-eyebrow uppercase tracking-widest">Tentang Kami</span>
       <h2 class="font-display font-semibold text-3xl sm:text-4xl mt-3 mb-5 leading-tight">
-        Setiap kilogram sampah punya kisah kedua.
+        Every kilogram of waste has a second story.
       </h2>
-      <p class="text-ink-soft leading-relaxed">
+      <p class="text-ink-soft leading-relaxed text-sm sm:text-base">
         Platform ini hadir untuk mempertemukan sisi sampah Anda dengan tangan-tangan kreatif
         para pengrajin di Makassar. Sampah anorganik yang Anda setorkan tidak hanya bersih
         dari lingkungan, tapi kembali menjadi produk kriya yang indah dan bermakna —
         sembari menggerakkan roda ekonomi komunitas kami.
       </p>
-      <div class="mt-6 flex items-center gap-3 text-sm">
+      <div class="mt-6 flex items-center gap-3 text-xs font-bold">
         <span class="tag-stitch px-3 py-1 text-forest border-forest/40">Tanpa Perantara</span>
         <span class="tag-stitch px-3 py-1 text-maritime border-maritime/40">Terverifikasi</span>
       </div>
     </div>
 
+    <!-- SISI KANAN: DUA KARTU VISUAL (GRID) -->
     <div class="grid grid-cols-2 gap-4">
-      <div class="aspect-[3/4] rounded-2xl bg-sand border border-ink/10 flex flex-col items-center justify-center gap-3 p-4 text-center">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="text-ink-soft" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
-        <span class="text-xs font-semibold text-ink">Visual Proses Kami</span>
-        <span class="text-[11px] text-ink-soft">Dari pemilahan hingga produk jadi</span>
+      
+      <!-- KARTU 1: VISUAL PROSES (Menggunakan img1.png dengan Gradient Overlay) -->
+      <div class="aspect-[3/4] rounded-[1.5rem] overflow-hidden relative border border-ink/5 group shadow-sm">
+        <img src="{{ asset('images/img1.png') }}" alt="Visual Proses Kriya" 
+          class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" />
+        
+        <!-- Lapisan Hitam Transparan bawah agar Teks Putih Kontras & Terbaca -->
+        <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent flex flex-col justify-end p-5 text-left">
+          <span class="text-xs font-bold text-cream tracking-wide">Visual Proses Kami</span>
+          <span class="text-[10px] text-cream/70 mt-1 leading-tight font-medium">Dari pemilahan hingga produk kriya jadi</span>
+        </div>
       </div>
-      <div class="aspect-[3/4] rounded-2xl bg-forest text-white flex flex-col items-center justify-center p-5 text-center">
-        <p class="font-display font-semibold text-xl leading-snug">
+      
+
+      <!-- KARTU 2: FILOSOFI (Menggunakan bg-forest & Tampilan LOGO FULL) -->
+      <div class="aspect-[3/4] rounded-[1.5rem] bg-sand-40 text-white flex flex-col items-center justify-center p-6 text-center relative overflow-hidden shadow-md shadow-forest/5">
+        <!-- Ornamen Pola Dot Kriya Halus khas SulapaKarya -->
+        <div class="absolute inset-0 dot-grid text-white/[0.03] pointer-events-none"></div>
+    
+        <!-- Logo Aplikasi Resmi Tampil Full & Proporsional -->
+        <div class="relative bg-sand-40 z-10 mb-6 w-full flex justify-center transition-transform duration-300 hover:scale-105">
+          <img src="{{ asset('images/logo.png') }}" alt="Logo SulapaKarya Macca Full" 
+            class="w-30 h-30 sm:w-40 sm:h-40 object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.12)]" />
+        </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent flex flex-col justify-end p-5 text-left">
+        </div>
+        
+        <!-- Kalimat Kutipan Filosofi -->
+        <p class="font-display font-semibold text-base sm:text-lg leading-snug text-cream relative z-10 px-1">
           “Setiap sampah punya kisah kedua.”
         </p>
-        <span class="text-[11px] mt-3 text-white/70 uppercase tracking-wide">Filosofi SulapaKarya</span>
+        <span class="text-[9px] font-extrabold mt-4 text-sand uppercase tracking-widest relative z-10 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">
+          Filosofi SulapaKarya
+        </span>
       </div>
+
     </div>
   </div>
 </section>

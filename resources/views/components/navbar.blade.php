@@ -5,14 +5,15 @@
       
       <!-- Navbar Start: Logo -->
       <div class="navbar-start">
-        <a href="/" class="flex items-center gap-3 group transition-transform duration-200 active:scale-95">
-          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-forest to-forest-dark text-white flex items-center justify-center shadow-md shadow-forest/20">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 20A7 7 0 0 1 4 13c0-4 3-8 8-9 0 0 1 5-1 9 2-3 4-4 7-4 0 5-4 9-8 9 0 0-1 1-1 2z"/></svg>
-          </div>
-          <span class="font-display font-bold text-lg tracking-tight text-ink">
-            SulapaKarya <span class="text-terracotta">Macca</span>
-          </span>
-        </a>
+      <!-- SEBELUMNYA (Ganti bagian pembungkus w-8 h-8 ini) -->
+      <a href="/" class="flex items-center gap-3 group transition-transform duration-200 active:scale-95">
+        <!-- GANTI SVG DI DALAM SINI -->
+        <img src="{{ asset('images/logo.png') }}" alt="Logo SulapaKarya" class="w-8 h-8 object-contain rounded-full shadow-md shadow-forest/20">
+        
+        <span class="font-display font-bold text-lg tracking-tight text-ink">
+          SulapaKarya <span class="text-terracotta">Macca</span>
+        </span>
+      </a>
       </div>
 
       <!-- Navbar End: Menu items untuk Desktop (lg:flex) -->
@@ -55,6 +56,7 @@
                   <p class="text-xs font-bold text-ink truncate">{{ session('name') }}</p>
                   <p class="text-[10px] text-ink-soft truncate font-medium uppercase tracking-wider">{{ session('role') }}</p>
                 </div>
+                <li><a href="/dashboard" class="rounded-xl py-2 font-medium">Dashboard</a></li>
                 <li><a href="/profil" class="rounded-xl py-2 font-medium">Profil Saya</a></li>
                 <div class="my-1 border-t border-ink/5"></div>
                 <li>
@@ -71,52 +73,66 @@
 
         </ul>
       </div>
-
+      
       <!-- Mobile Burger Trigger & Dropdown Menu (lg:hidden) -->
       <div class="navbar-end lg:hidden">
         <div class="dropdown dropdown-end">
-          <button tabindex="0" class="btn btn-ghost btn-sm btn-circle hover:bg-ink/5">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-          </button>
-          <ul tabindex="0" class="dropdown-content menu menu-sm mt-3 z-[60] p-3 shadow-xl bg-white/95 backdrop-blur-lg rounded-2xl w-56 border border-ink/5 gap-1">
+          
+          <!-- TOMBOL TRIGGER BURGER MOBILE (Anti-Bug Mobile Focus) -->
+          <div tabindex="0" role="button" class="btn btn-ghost btn-sm btn-circle text-ink hover:bg-ink/5 active:scale-95 transition-all duration-200">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </div>
+
+          <!-- ISI DROPDOWN MENU MOBILE -->
+          <ul tabindex="0" class="dropdown-content menu menu-sm mt-3 z-[60] p-3 shadow-xl bg-white/95 backdrop-blur-lg rounded-2xl w-56 border border-ink/5 gap-1 normal-case">
             <div class="px-3 py-1 border-b border-ink/5 mb-1">
               <span class="text-[10px] font-extrabold uppercase tracking-wider text-ink/40">Navigasi</span>
             </div>
-            <li><a href="/" class="rounded-xl py-2 font-medium">Beranda</a></li>
-            <li><a href="#tentang" class="rounded-xl py-2 font-medium">Tentang Kami</a></li>
-            <li><a href="#cara-kerja" class="rounded-xl py-2 font-medium">Cara Kerja</a></li>
-            <li><a href="#produk" class="rounded-xl py-2 font-medium">Katalog Kriya</a></li>
+            <li><a href="/" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Beranda</a></li>
+            <li><a href="#tentang" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Tentang Kami</a></li>
+            <li><a href="#cara-kerja" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Cara Kerja</a></li>
+            <li><a href="#produk" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Katalog Kriya</a></li>
             
-            <!-- Tambahan Menu Mobile Berdasarkan Role jika Login -->
+            <!-- Kondisi 1: Jika Pengunjung Sudah Login (Berdasarkan Role Baru) -->
             @if(session('user_id'))
               <div class="my-1 border-t border-ink/5"></div>
               <div class="px-3 py-1 mb-1">
                 <span class="text-[10px] font-extrabold uppercase tracking-wider text-forest">Akses Fitur ({{ session('role') }})</span>
               </div>
-              @if(session('role') == 'warga')
-                <li><a href="/setor-sampah" class="rounded-xl py-2 font-medium">Setor Sampah</a></li>
+              
+              @if(session('role') == 'user')
+                <li><a href="/user/dashboard" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Dashboard Saya</a></li>
+                <li><a href="/setor-sampah" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Setor Sampah</a></li>
               @elseif(session('role') == 'pengrajin')
-                <li><a href="/kelola-karya" class="rounded-xl py-2 font-medium">Kelola Karya</a></li>
+                <li><a href="/pengrajin/dashboard" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Panel Pengrajin</a></li>
+                <li><a href="/kelola-kriya" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Kelola Karya</a></li>
               @elseif(session('role') == 'admin')
-                <li><a href="/dashboard-admin" class="rounded-xl py-2 font-medium">Panel Admin</a></li>
+                <li><a href="/dashboard-admin" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Panel Admin Utama</a></li>
               @endif
-              <li><a href="/profil" class="rounded-xl py-2 font-medium">Profil Saya</a></li>
+              
+              <li><a href="/profil" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Profil Saya</a></li>
+              
               <div class="my-1 border-t border-ink/5"></div>
               <li>
                 <form action="/logout" method="POST" class="p-0 w-full">
                   @csrf
-                  <button type="submit" class="w-full text-left text-terracotta font-semibold rounded-xl py-2 px-3">Keluar Akun</button>
+                  <button type="submit" class="w-full text-left text-terracotta font-semibold rounded-xl py-2 px-3 hover:bg-terracotta-light">
+                    Keluar Akun
+                  </button>
                 </form>
               </li>
             @endif
 
-            <!-- Tampilan Pilihan Auth Utama untuk Mobile versi Tamu -->
+            <!-- Kondisi 2: Jika Pengunjung Adalah Tamu (Belum Login) -->
             @if(!session('user_id'))
               <div class="my-1 border-t border-ink/5"></div>
-              <li><a href="/login" class="text-maritime font-semibold rounded-xl py-2">Masuk</a></li>
-              <li><a href="/register" class="bg-maritime text-white font-semibold hover:bg-maritime-dark rounded-xl text-center py-2">Daftar</a></li>
+              <li><a href="/login" class="text-maritime font-bold rounded-xl py-2 hover:bg-maritime-light">Masuk</a></li>
+              <li><a href="/register" class="bg-gradient-to-r from-maritime to-maritime-dark text-white font-bold hover:from-maritime-dark hover:to-maritime rounded-xl text-center py-2 border-none shadow-sm shadow-maritime/20">Daftar</a></li>
             @endif
           </ul>
+
         </div>
       </div>
 
