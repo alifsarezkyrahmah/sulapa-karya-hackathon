@@ -150,44 +150,6 @@
         </div>
     </div>
 
-    <!-- ============ RIWAYAT SETORAN SAMPAH ============ -->
-    <div class="bg-white border border-ink/5 rounded-[1.5rem] p-6 shadow-sm">
-        <div class="mb-5 text-left">
-            <h2 class="font-display font-extrabold text-xl text-ink">Riwayat Setoran</h2>
-            <p class="text-xs text-ink-soft font-medium">Daftar pengiriman sampah Anda yang telah diverifikasi beserta status keuntungannya.</p>
-        </div>
-
-        <!-- Tabel Riwayat Data -->
-        <div class="overflow-x-auto rounded-xl border border-ink/5">
-            <table class="table w-full text-sm">
-                <thead>
-                    <tr class="border-b border-ink/5 text-ink/70 font-bold uppercase tracking-wider text-xs bg-cream/60">
-                        <th class="py-3.5 pl-5">Tanggal</th>
-                        <th class="py-3.5">Jenis Sampah</th>
-                        <th class="py-3.5">Berat</th>
-                        <th class="py-3.5">Status</th>
-                        <th class="py-3.5 pr-5 text-right">Hadiah / Profit</th>
-                    </tr>
-                </thead>
-                <tbody class="font-medium text-ink/90">
-                    <tr class="hover:bg-cream/10 border-b border-ink/5 transition-colors">
-                        <td class="py-4 pl-5 text-ink-soft font-semibold">17 Juni 2026</td>
-                        <td class="py-4">
-                            <span class="inline-flex items-center gap-1.5 font-semibold">
-                                <span class="w-2.5 h-2.5 rounded-full bg-maritime shadow-sm"></span> Kertas & Kardus
-                            </span>
-                        </td>
-                        <td class="py-4 font-mono font-bold text-ink">10 kg</td>
-                        <td class="py-4">
-                            <span class="badge bg-forest/10 border-none text-forest text-xs font-bold px-3 py-2.5 rounded-lg shadow-inner">Selesai</span>
-                        </td>
-                        <td class="py-4 pr-5 text-right font-bold text-forest font-mono tracking-wide">+1.450 Poin</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
     <!-- ============ MODAL POPUP DIALOG: ID DIGITAL QR CODE ============ -->
     <dialog id="qr_code_modal" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box bg-white max-w-sm rounded-[2rem] border border-ink/5 p-6 text-center flex flex-col items-center relative shadow-2xl">

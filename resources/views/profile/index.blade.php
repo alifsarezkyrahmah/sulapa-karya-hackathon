@@ -102,28 +102,6 @@
                 </div>
             </div>
 
-            <!-- 3. KARTU SWITCH PERAN JADI ARTISAN -->
-            @if($user->role === 'user')
-                <div class="bg-gradient-to-br from-white via-white to-maritime-light/40 border border-maritime/10 border-t-4 border-t-maritime rounded-[1.5rem] p-5 shadow-sm text-left relative overflow-hidden">
-                    <div class="flex items-start gap-3">
-                        <div class="p-2 rounded-xl bg-maritime text-white shadow-md shrink-0">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-display font-bold text-sm text-ink">Ingin Jual Produk Kerajinan?</h4>
-                            <p class="text-[11px] text-ink-soft font-medium mt-1 leading-relaxed">Ubah akun menjadi <span class="text-maritime font-bold">Artisan (Pengrajin)</span> untuk membuka fitur etalase hasil daur ulang sampah Anda.</p>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-2 border-t border-ink/5">
-                        <form action="{{ route('profile.switch-role') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin beralih peran menjadi Artisan (Pengrajin)?');">
-                            @csrf
-                            <button type="submit" class="btn btn-sm w-full bg-gradient-to-r from-maritime to-maritime-dark hover:from-maritime-dark hover:to-maritime text-white border-none rounded-xl font-bold normal-case text-xs shadow-sm py-2 h-auto min-h-0 transition-all">
-                                Beralih Akun Pengrajin
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            @endif
 
         </div>
 
