@@ -10,14 +10,10 @@
       <!-- Kolom 1: Brand / Profil -->
       <div class="space-y-4">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-forest to-forest-dark text-white flex items-center justify-center shadow-md shadow-forest/20">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M11 20A7 7 0 0 1 4 13c0-4 3-8 8-9 0 0 1 5-1 9 2-3 4-4 7-4 0 5-4 9-8 9 0 0-1 1-1 2z"/>
-            </svg>
+          <div class="w-9 h-9 flex items-center justify-center">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo SulapaKarya" class="w-8 h-8 object-contain rounded-full shadow-md shadow-forest/20">
           </div>
-          <span class="font-display font-bold text-xl text-white tracking-tight">
-            SulapaKarya <span class="text-terracotta">Macca</span>
-          </span>
+          <span class="font-display font-bold text-xl text-white tracking-tight"> SulapaKarya </span>
         </div>
         <p class="text-sm leading-relaxed text-cream/60 font-medium">
           Mengubah sampah warga Makassar menjadi karya kriya bernilai, bersama pengrajin lokal.
@@ -54,11 +50,13 @@
               Katalog Karya
             </a>
           </li>
-          <li>
-            <a href="#" class="text-maritime hover:text-white link link-hover underline-offset-4 font-semibold transition-colors">
-              Masuk / Daftar
-            </a>
-          </li>
+          @if (!request()->is('login') && !request()->is('register') && !session('user_id'))
+            <li>
+              <a href="/login" class="text-maritime hover:text-white link link-hover underline-offset-4 font-semibold transition-colors">
+                Masuk / Daftar
+              </a>
+            </li>
+          @endif
         </ul>
       </div>
 
@@ -72,7 +70,7 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-forest shrink-0">
               <rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>
             </svg>
-            <a href="mailto:[email protected]">[email protected]</a>
+            <a href="mailto:sulapakarya@contact.com">sulapakarya@contact.com</a>
           </li>
           <li class="flex items-center gap-3 hover:text-white transition-colors">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-forest shrink-0">
@@ -96,7 +94,7 @@
   <div class="border-t border-white/[0.05] bg-black/15 relative z-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-cream/40">
       <div class="text-center sm:text-left">
-        &copy; 2026 SulapaKarya Macca. Semua hak dilindungi.
+        &copy; 2026 SulapaKarya. Semua hak dilindungi.
       </div>
       <div class="flex items-center gap-5 justify-center flex-wrap">
         <a href="#" class="hover:text-white transition-colors">Kebijakan Privasi</a>

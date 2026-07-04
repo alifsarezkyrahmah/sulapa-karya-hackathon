@@ -8,9 +8,7 @@
         <a href="/" class="flex items-center gap-3 group transition-transform duration-200 active:scale-95">
           <img src="{{ asset('images/logo.png') }}" alt="Logo SulapaKarya" class="w-8 h-8 object-contain rounded-full shadow-md shadow-forest/20">
           
-          <span class="font-display font-bold text-lg tracking-tight text-ink">
-            SulapaKarya <span class="text-terracotta">Macca</span>
-          </span>
+          <span class="font-display font-bold text-lg tracking-tight text-ink"> SulapaKarya </span>
         </a>
       </div>
 
@@ -25,7 +23,7 @@
           <li><a href="/#beranda" class="rounded-full px-4 py-2 hover:bg-forest/10 hover:text-forest transition-all">Beranda</a></li>
           <li><a href="/#tentang" class="rounded-full px-4 py-2 hover:bg-forest/10 hover:text-forest transition-all">Tentang Kami</a></li>
           <li><a href="/#cara-kerja" class="rounded-full px-4 py-2 hover:bg-forest/10 hover:text-forest transition-all">Cara Kerja</a></li>
-          <li><a href="/katalog" class="rounded-full px-4 py-2 hover:bg-forest/10 hover:text-forest transition-all">Katalog Kriya</a></li>
+          <li><a href="/#produk" class="rounded-full px-4 py-2 hover:bg-forest/10 hover:text-forest transition-all">Katalog Kriya</a></li>
           
           <!-- MENU TAMBAHAN KHUSUS USER YANG SUDAH LOGIN (Berdasarkan Role) -->
           @if(session('user_id'))

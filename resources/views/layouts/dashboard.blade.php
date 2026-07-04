@@ -80,7 +80,7 @@
         </main>
 
         <footer class="p-4 border-t border-ink/5 text-center text-[11px] font-semibold tracking-wide text-ink-soft/50 bg-white/20w-full">
-            &copy; {{ date('Y') }} SulapaKarya Macca Makassar. Hak Cipta Dilindungi.
+            &copy; {{ date('Y') }} SulapaKarya Makassar. Hak Cipta Dilindungi.
         </footer>
     </div>
 

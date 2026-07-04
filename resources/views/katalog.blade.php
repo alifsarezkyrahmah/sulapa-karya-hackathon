@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Katalog Kriya — SulapaKarya Macca'])
+@extends('layouts.app', ['title' => 'Katalog Kriya — SulapaKarya'])
 
 @section('content')
 @php

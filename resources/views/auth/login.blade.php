@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Masuk Akun — SulapaKarya Macca'])
+@extends('layouts.app', ['title' => 'Masuk Akun — SulapaKarya'])
 
 @section('content')
 <div class="min-h-[calc(100vh-5rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-cream/30">
@@ -20,7 +20,7 @@
                 <!-- GANTI PEMBUNGKUS DAN SVG LAMA -->
                 <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-10 h-10 object-contain rounded-md bg-white/20 backdrop-blur-md p-0.5">
                 
-                <span class="font-display font-bold tracking-tight text-sm text-white">SulapaKarya Macca</span>
+                <span class="font-display font-bold tracking-tight text-sm text-white">SulapaKarya</span>
             </div>
 
             <!-- Bagian Tengah/Bawah: Teks Pengantar Foto -->

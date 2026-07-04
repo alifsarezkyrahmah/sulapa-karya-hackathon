@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'SulapaKarya Macca — Dari Sampah Jadi Karya'])
+@extends('layouts.app', ['title' => 'SulapaKarya — Dari Sampah Jadi Karya'])
 
 @section('content')
 <!-- ============ HERO ============ -->
@@ -18,10 +18,7 @@
   </p>
 
   <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-    <a href="#cara-kerja" class="btn bg-forest hover:bg-forest-dark text-white border-none rounded-full px-7">
-      Mulai Setor Sampah
-    </a>
-    <a href="#cara-kerja" class="btn btn-outline border-ink/30 text-ink hover:bg-ink hover:text-cream hover:border-ink rounded-full px-7">
+    <a href="#cara-kerja" class="btn bg-forest hover:bg-forest-dark text-white border-none rounded-full px-10">
       Lihat Cara Kerja
     </a>
   </div>
@@ -156,9 +153,15 @@
     <span class="text-forest text-xs font-bold section-eyebrow uppercase">Cara Kerja</span>
     <h2 class="font-display font-semibold text-3xl sm:text-4xl mt-3 mb-4">Layanan Nyata Kita</h2>
     <p class="text-ink-soft">Lifecycle sederhana untuk pengguna: rapi, mudah, dan transparan.</p>
-    <a href="#" class="btn bg-forest hover:bg-forest-dark text-white border-none rounded-full px-7 mt-7">
-      Mulai Setor Sampah
-    </a>
+    @if (!session('user_id')) <!-- jika pengguna belum login diarahkan kehalaman login -->
+      <a href="/login" class="btn bg-forest hover:bg-forest-dark text-white border-none rounded-full px-7 mt-7">
+        Mulai Setor Sampah
+      </a>
+    @else <!-- jika pengguna sudah login, maka diarahkan ke halaman setor sampah -->
+      <a href="/setor-sampah" class="btn bg-forest hover:bg-forest-dark text-white border-none rounded-full px-7 mt-7">
+        Mulai Setor Sampah
+      </a>
+    @endif
   </div>
 
   <div class="grid sm:grid-cols-2 gap-6">
@@ -171,17 +174,6 @@
         </div>
         <p class="text-ink-soft text-sm leading-relaxed">Pilih jenis sampah yang ingin disetor, lalu jadwalkan waktu jemput sesuai zona Anda.</p>
         <span class="tag-stitch inline-block w-fit text-forest text-xs font-medium px-3 py-1 mt-3">Mudah & cepat</span>
-        <div class="flex items-center gap-4 mt-5 pt-4 border-t border-ink/10 text-ink-soft">
-          <button aria-label="Bagikan" class="hover:text-maritime transition-colors">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
-          </button>
-          <button aria-label="Simpan" class="hover:text-terracotta transition-colors">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21 12 16l-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <button aria-label="Info selengkapnya" class="hover:text-forest transition-colors">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-          </button>
-        </div>
       </div>
     </div>
 
@@ -193,17 +185,6 @@
         </div>
         <p class="text-ink-soft text-sm leading-relaxed">Tim kami memverifikasi berat serta kategori dan menjemput sampah secara langsung.</p>
         <span class="tag-stitch inline-block w-fit text-forest text-xs font-medium px-3 py-1 mt-3">Tim terpercaya</span>
-        <div class="flex items-center gap-4 mt-5 pt-4 border-t border-ink/10 text-ink-soft">
-          <button aria-label="Bagikan" class="hover:text-maritime transition-colors">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
-          </button>
-          <button aria-label="Simpan" class="hover:text-terracotta transition-colors">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21 12 16l-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <button aria-label="Info selengkapnya" class="hover:text-forest transition-colors">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-          </button>
-        </div>
       </div>
     </div>
 
@@ -215,17 +196,6 @@
         </div>
         <p class="text-ink-soft text-sm leading-relaxed">Pengrajin lokal mengolah bahan terpilih menjadi karya kriya bernilai jual tinggi.</p>
         <span class="tag-stitch inline-block w-fit text-forest text-xs font-medium px-3 py-1 mt-3">Tangan terampil</span>
-        <div class="flex items-center gap-4 mt-5 pt-4 border-t border-ink/10 text-ink-soft">
-          <button aria-label="Bagikan" class="hover:text-maritime transition-colors">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
-          </button>
-          <button aria-label="Simpan" class="hover:text-terracotta transition-colors">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21 12 16l-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <button aria-label="Info selengkapnya" class="hover:text-forest transition-colors">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-          </button>
-        </div>
       </div>
     </div>
 
@@ -237,17 +207,6 @@
         </div>
         <p class="text-ink-soft text-sm leading-relaxed">Karya dipasarkan sebagai produk berkelanjutan, langsung ke tangan pembeli.</p>
         <span class="tag-stitch inline-block w-fit text-forest text-xs font-medium px-3 py-1 mt-3">Karya ramah lingkungan</span>
-        <div class="flex items-center gap-4 mt-5 pt-4 border-t border-ink/10 text-ink-soft">
-          <button aria-label="Bagikan" class="hover:text-maritime transition-colors">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
-          </button>
-          <button aria-label="Simpan" class="hover:text-terracotta transition-colors">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21 12 16l-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <button aria-label="Info selengkapnya" class="hover:text-forest transition-colors">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-          </button>
-        </div>
       </div>
     </div>
 
@@ -260,7 +219,7 @@
     <div class="text-center max-w-2xl mx-auto mb-12">
       <span class="text-terracotta text-xs font-bold section-eyebrow uppercase">Marketplace</span>
       <h2 class="font-display font-semibold text-3xl sm:text-4xl mt-3 mb-7">Produk Unggulan</h2>
-      <a href="#" class="btn btn-outline border-terracotta text-terracotta hover:bg-terracotta hover:text-white rounded-full px-7">
+      <a href="/katalog" class="btn btn-outline border-terracotta text-terracotta hover:bg-terracotta hover:text-white rounded-full px-7">
         Lihat Katalog
       </a>
     </div>
@@ -311,7 +270,7 @@
 <!-- ============ CLOSING TAGLINE ============ -->
 <section class="py-14">
   <p class="text-center font-display italic text-lg sm:text-xl text-ink-soft max-w-2xl mx-auto px-6">
-    “Ubah sampah jadi karya, berdayakan pengrajin lokal bersama SulapaKarya Macca.”
+    “Ubah sampah jadi karya, berdayakan pengrajin lokal bersama SulapaKarya.”
   </p>
 </section>
 @endsection

@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Daftar Akun — SulapaKarya Macca'])
+@extends('layouts.app', ['title' => 'Daftar Akun — SulapaKarya'])
 
 @section('content')
 <div class="min-h-[calc(100vh-5rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-cream/30">
@@ -12,7 +12,7 @@
 
             <div class="relative z-10 flex items-center gap-2">
                 <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-10 h-10 object-contain rounded-md bg-white/20 backdrop-blur-md p-0.5">
-                <span class="font-display font-bold tracking-tight text-sm text-white">SulapaKarya Macca</span>
+                <span class="font-display font-bold tracking-tight text-sm text-white">SulapaKarya</span>
             </div>
 
             <div class="relative z-10 space-y-3 mt-auto">
