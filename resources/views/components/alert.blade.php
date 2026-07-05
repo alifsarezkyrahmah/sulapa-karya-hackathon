@@ -1,4 +1,4 @@
-{{-- resources/views/components/alert.blade.php --}}
+git{{-- resources/views/components/alert.blade.php --}}
 @if (session('success'))
 <div class="toast toast-top toast-center z-[100] mt-20">
   <div class="alert bg-forest-50 border border-forest-200 text-forest-700 shadow-lg">
