@@ -99,7 +99,11 @@
             <!-- Brand Logo Panel -->
             <div class="flex items-center gap-4 pb-4 border-b border-white/10 min-h-[3.5rem]">
                 <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-forest to-forest-dark text-white flex items-center justify-center shadow-md shrink-0 mx-auto lg:mx-0">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 20A7 7 0 0 1 4 13c0-4 3-8 8-9 0 0 1 5-1 9 2-3 4-4 7-4 0 5-4 9-8 9 0 0-1 1-1 2z"/></svg>
+                    <label for="dashboard-sidebar-drawer" class="btn btn-square btn-ghost btn-sm text-ink-soft">
+    <img src="{{ asset('images/logo.png') }}?v={{ time() }}" 
+         alt="Logo SulapaKarya" 
+         class="w-5 h-5 object-contain rounded-full">
+</label>
                 </div>
                 <span class="font-display font-bold text-base tracking-tight text-cream whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">
                     SulapaKarya <span class="text-sand/50 font-body text-xs font-normal">Panel</span>
