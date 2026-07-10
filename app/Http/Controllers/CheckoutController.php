@@ -17,20 +17,48 @@ class CheckoutController extends Controller
 {
     public function process(Request $request)
     {
+        $userId = session('user_id');
+
+        // =================================================================
+        // 🛡️ GERBANG VALIDASI 1: ANTI-SPAM TRANSAKSI MENGGANTUNG (PENDING)
+        // =================================================================
+        $pendingTransactionExists = Transaction::where('user_id', $userId)
+            ->where('status', 'pending')
+            ->exists();
+
+        if ($pendingTransactionExists) {
+            return redirect()->route('user.pembelian.history')
+                ->withErrors(['error' => 'Maaf, Anda tidak dapat melakukan checkout baru. Selesaikan atau batalkan terlebih dahulu pembayaran pesanan Anda yang masih tertunda di bawah ini!']);
+        }
+
+        // =================================================================
+        // 🛡️ GERBANG VALIDASI 2: VALIDASI INPUT KERANJANG
+        // =================================================================
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'use_points' => 'nullable|boolean'
         ]);
 
-        $user = User::findOrFail(session('user_id'));
-        $product = Product::findOrFail($request->product_id);
+        $user = User::findOrFail($userId);
+        $cart = session()->get('cart', []);
 
-        if ($product->stock < 1) {
-            return back()->withErrors(['error' => 'Maaf, stok produk ini sudah habis.']);
+        // Ambil ID produk yang dikirim dari form keranjang
+        $productId = $request->product_id;
+        
+        // Ambil detail produk dari session cart untuk mendapatkan kuantitas riil
+        $cartItem = $cart[$productId] ?? null;
+        $quantity = $cartItem ? (int)$cartItem['quantity'] : 1;
+
+        $product = Product::findOrFail($productId);
+
+        if ($product->stock < $quantity) {
+            return back()->withErrors(['error' => 'Maaf, stok produk "' . $product->name . '" tidak mencukupi untuk jumlah yang Anda minta.']);
         }
 
-        // LOGIKA POTONGAN HARGA POIN (SHOPEE COINS)
-        $originalPrice = $product->price;
+        // =================================================================
+        // 🧮 LOGIKA KALKULASI HARGA & POTONGAN DISKON POIN KRIYA
+        // =================================================================
+        $originalPrice = $product->price * $quantity;
         $pointsUsed = 0;
         $finalPrice = $originalPrice;
 
@@ -41,6 +69,7 @@ class CheckoutController extends Controller
 
         $orderId = 'TRX-ORD-' . strtoupper(Str::random(8));
 
+        // Buat record transaksi dengan menyimpan kuantitas pembelian baru
         $transaction = Transaction::create([
             'user_id'        => $user->id,
             'product_id'     => $product->id,
@@ -49,19 +78,26 @@ class CheckoutController extends Controller
             'points_used'    => $pointsUsed,
             'final_price'    => $finalPrice,
             'status'         => 'pending',
+            'quantity'       => $quantity, // Pastikan kolom quantity ini ada di skema tabel transaksi Anda
         ]);
 
-        // JIKA BAYAR FULL PAKAI POIN (Otomatis sukses tanpa Midtrans)
+        // JIKA BAYAR FULL PAKAI POIN (Otomatis sukses tanpa panggil API Midtrans)
         if ($finalPrice == 0) {
-            DB::transaction(function () use ($user, $product, $transaction, $pointsUsed) {
+            DB::transaction(function () use ($user, $product, $transaction, $pointsUsed, $quantity, $productId, $cart) {
                 $user->decrement('points_balance', $pointsUsed);
-                $product->decrement('stock', 1);
+                $product->decrement('stock', $quantity);
                 $transaction->update(['status' => 'success']);
+                
+                // Bersihkan item produk ini dari session keranjang kriya
+                unset($cart[$productId]);
+                session()->put('cart', $cart);
             });
             return redirect()->route('user.katalog')->with('success', 'Pembayaran berhasil! Anda menukar produk secara penuh menggunakan Poin Kriya.');
         }
 
-        // JIKA ADA SISA BAYAR -> PANGGIL MIDTRANS (KUNCI MATI DI SANDBOX)
+        // =================================================================
+        // 💳 INTEGRASI TOKEN GERBANG PEMBAYARAN MIDTRANS
+        // =================================================================
         Config::$serverKey = env('MIDTRANS_SERVER_KEY');
         Config::$isProduction = false; 
         Config::$isSanitized = true;
@@ -80,16 +116,34 @@ class CheckoutController extends Controller
             'item_details' => [
                 [
                     'id'       => $product->id,
-                    'price'    => $finalPrice,
-                    'quantity' => 1,
+                    'price'    => $product->price, // Mengirim harga satuan asli ke Midtrans
+                    'quantity' => $quantity,       // Jumlah kuantitas riil belanjaan
                     'name'     => substr($product->name, 0, 50)
                 ]
             ]
         ];
 
+        // Jika checkbox gunakan poin aktif, masukkan potongan harga sebagai item bernilai minus di invoice Midtrans
+        if ($pointsUsed > 0) {
+            $params['item_details'][] = [
+                'id'       => 'DISC-POIN',
+                'price'    => -$pointsUsed,
+                'quantity' => 1,
+                'name'     => 'Potongan Diskon Poin Kriya'
+            ];
+        }
+
         try {
+            // Proses mendapatkan Snap Token dari Midtrans
             $snapToken = Snap::getSnapToken($params);
             $transaction->update(['snap_token' => $snapToken]);
+
+            // =================================================================
+            // 🔥 PROSES PEMBERSIHAN OTOMATIS (PRODUK LANGSUNG HILANG DARI CART)
+            // =================================================================
+            unset($cart[$productId]); // Menghapus produk yang baru saja di-checkout
+            session()->put('cart', $cart); // Simpan kembali sisa isi keranjang ke session
+
             return view('checkout', compact('snapToken', 'transaction', 'product'));
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Gagal terhubung ke Midtrans: ' . $e->getMessage()]);
@@ -99,9 +153,10 @@ class CheckoutController extends Controller
     public function success(Request $request, $order_id)
     {
         $transaction = Transaction::where('order_id', $order_id)->firstOrFail();
+        $quantity = $transaction->quantity ?? 1;
         
         if ($transaction->status == 'pending') {
-            DB::transaction(function () use ($transaction) {
+            DB::transaction(function () use ($transaction, $quantity) {
                 $transaction->update(['status' => 'success']);
                 
                 $user = User::find($transaction->user_id);
@@ -110,11 +165,11 @@ class CheckoutController extends Controller
                 }
                 
                 $product = Product::find($transaction->product_id);
-                $product->decrement('stock', 1);
+                $product->decrement('stock', $quantity);
             });
         }
 
-        return redirect()->route('user.katalog')->with('success', 'Pembayaran Rp ' . number_format($transaction->final_price, 0, ',', '.') . ' berhasil diverifikasi! Produk segera diproses.');
+        return redirect()->route('user.pembelian.history')->with('success', 'Pembayaran Rp ' . number_format($transaction->final_price, 0, ',', '.') . ' berhasil diverifikasi! Produk segera diproses.');
     }
 
     /**
@@ -122,7 +177,6 @@ class CheckoutController extends Controller
      */
     public function history()
     {
-        // Ambil riwayat belanja beserta relasi produknya
         $transactions = Transaction::with('product')
             ->where('user_id', session('user_id'))
             ->orderBy('created_at', 'desc')

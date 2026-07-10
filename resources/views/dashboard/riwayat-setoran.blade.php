@@ -53,19 +53,22 @@
                                 @endif
                             </td>
 
-                            <td class="py-4 text-center">
-                                @if($d->status === 'pending')
-                                    <span class="badge bg-ink/5 border-none text-ink-soft text-[11px] font-bold px-2.5 py-2 rounded-lg shadow-inner">Menunggu Jadwal</span>
-                                @elseif($d->status === 'scheduled')
-                                    <span class="badge bg-maritime/10 border-none text-maritime text-[11px] font-bold px-2.5 py-2 rounded-lg shadow-inner">Dijadwalkan</span>
-                                @elseif($d->status === 'picked_up')
-                                    <span class="badge bg-purple-100 border-none text-purple-700 text-[11px] font-bold px-2.5 py-2 rounded-lg shadow-inner">Dalam Perjalanan</span>
-                                @elseif($d->status === 'verified')
-                                    <span class="badge bg-forest/10 border-none text-forest text-[11px] font-bold px-2.5 py-2 rounded-lg shadow-inner">Diverifikasi</span>
-                                @elseif($d->status === 'completed')
-                                    <span class="badge bg-forest/20 border-none text-forest-dark text-[11px] font-bold px-2.5 py-2 rounded-lg shadow-inner">Selesai</span>
-                                @elseif($d->status === 'rejected')
-                                    <span class="badge bg-terracotta/10 border-none text-terracotta text-[11px] font-bold px-2.5 py-2 rounded-lg shadow-inner">Ditolak</span>
+                            <!-- Ganti bagian penampil status di dalam loop tabel riwayat -->
+                            <td class="py-4">
+                                @if($d->status === 'pending' || $d->status === 'menunggu_admin')
+                                    <span class="badge bg-amber-100 text-amber-700 border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Menunggu Verifikasi Admin</span>
+                                @elseif($d->status === 'menunggu_penjemput')
+                                    <span class="badge bg-maritime/10 text-maritime border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Kurir Segera Menjemput</span>
+                                @elseif($d->status === 'penjemput_menuju_lokasi')
+                                    <span class="badge bg-blue-100 text-blue-700 border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Kurir dalam Perjalanan</span>
+                                @elseif($d->status === 'penjemput_tiba')
+                                    <span class="badge bg-purple-100 text-purple-700 border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Kurir Tiba di Lokasi</span>
+                                @elseif($d->status === 'selesai')
+                                    <span class="badge bg-forest/20 text-forest-dark border-none text-[10px] font-bold px-2 py-1.5 rounded-md">✓ Berhasil & Poin Cair</span>
+                                @elseif($d->status === 'ditolak')
+                                    <span class="badge bg-terracotta/10 text-terracotta border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Ditolak</span>
+                                @else
+                                    <span class="badge badge-ghost text-[10px]">{{ strtoupper($d->status) }}</span>
                                 @endif
                             </td>
 

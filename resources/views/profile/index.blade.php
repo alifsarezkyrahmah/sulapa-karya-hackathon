@@ -92,14 +92,6 @@
                     </div>
                     <div class="w-9 h-9 rounded-xl bg-forest-light text-forest flex items-center justify-center font-bold text-sm">P</div>
                 </div>
-
-                <div class="flex items-center justify-between text-left pt-2 border-t border-ink/5">
-                    <div>
-                        <span class="text-[11px] text-ink-soft font-medium">Uang Tunai Diterima</span>
-                        <p class="text-xl font-extrabold text-terracotta-dark mt-0.5"><span class="text-xs font-bold text-ink-soft">Rp</span> {{ number_format($user->cash_received_total) }}</p>
-                    </div>
-                    <div class="w-9 h-9 rounded-xl bg-terracotta-light text-terracotta flex items-center justify-center font-bold text-xs">Rp</div>
-                </div>
             </div>
 
 

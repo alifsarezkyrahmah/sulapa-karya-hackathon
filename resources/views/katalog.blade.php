@@ -108,9 +108,13 @@
                                 <span class="text-forest font-bold">✓ Tersedia (Stok: {{ $product->stock }} item)</span>
                             </div>
 
-                            <button type="button" onclick="document.getElementById('detail_modal_{{ $product->id }}').close(); document.getElementById('buy_modal_{{ $product->id }}').showModal();" class="btn w-full bg-forest hover:bg-forest-dark border-none text-white rounded-xl font-extrabold normal-case shadow-md shadow-forest/20 mt-2 h-12">
-                                Beli & Tukar Poin Sekarang
-                            </button>
+                            <!-- Ganti tombol beli langsung lama menjadi form add-to-cart session ini -->
+                            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="w-full">
+                                @csrf
+                                <button type="submit" class="btn btn-sm w-full bg-forest text-white border-none rounded-xl font-bold">
+                                    🛒 + Keranjang
+                                </button>
+                            </form>
                         </div>
                     </div>
                     <form method="dialog" class="modal-backdrop bg-ink/30 backdrop-blur-sm"><button>close</button></form>

@@ -31,4 +31,10 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'artisan_id');
     }
+
+    public function transactions()
+    {
+        // Sesuaikan 'product_id' dengan nama kolom asli di tabel transactions kamu
+        return $this->hasMany(Transaction::class, 'product_id'); 
+    }
 }

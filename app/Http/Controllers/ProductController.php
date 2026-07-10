@@ -11,8 +11,28 @@ class ProductController extends Controller
     /**
      * READ: Tampilan Utama Tabel Produk
      */
+/**
+     * READ: Tampilan Utama Tabel Produk (Garansi Hitungan Akurat)
+     */
+    /**
+     * READ: Tampilan Utama Tabel Produk (Solusi Tanpa Kolom Quantity)
+     */
+    // public function index()
+    // {
+    //     // Menghitung jumlah baris data transaksi dengan toleransi segala format teks status di DB
+    //     $products = Product::withCount(['transactions as total_terjual' => function ($query) {
+    //         $query->whereIn('status', ['success', 'paid', 'picked_up'])
+    //               ->orWhere('status', 'LIKE', '%Siap%')
+    //               ->orWhere('status', 'LIKE', '%Pickup%')
+    //               ->orWhere('status', 'LIKE', '%pickup%');
+    //     }])->orderBy('created_at', 'desc')->get();
+
+    //     return view('dashboard.admin.kelola-produk', compact('products'));
+    // }
+
     public function index()
     {
+        // Mengambil data murni produk kriya tanpa sub-query SQL yang berisiko eror tipe data
         $products = Product::orderBy('created_at', 'desc')->get();
         return view('dashboard.admin.kelola-produk', compact('products'));
     }
@@ -132,6 +152,6 @@ class ProductController extends Controller
     {
         $featuredProducts = Product::where('status', 'available')->where('is_featured', 1)->get();
         $allProducts = Product::where('status', 'available')->orderBy('created_at', 'desc')->get();
-        return view('dashboard.user.katalog', compact('featuredProducts', 'allProducts'));
+        return view('katalog', compact('featuredProducts', 'allProducts'));
     }
 }

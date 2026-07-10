@@ -8,6 +8,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\WasteDepositController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\CourierController;
+use App\Http\Controllers\CartController;
 
 // ==========================================
 // 1. RUTE PUBLIK (BISA DIAKSES TANPA LOGIN)
@@ -84,6 +86,17 @@ Route::middleware('supabase.auth')->group(function () {
     });
 
 
+    Route::middleware('supabase.role:penjemput')->group(function () {
+        // Tampilan Utama Dashboard Penjemput
+    // ==========================================
+        // KHUSUS ROLE: PENJEMPUT / KURIR LAPANGAN
+        // ==========================================
+        Route::get('/penjemput/dashboard', [CourierController::class, 'index'])->name('penjemput.dashboard');
+        Route::post('/penjemput/update-status/{id}', [CourierController::class, 'updateStatus'])->name('penjemput.updateStatus');
+        Route::post('/penjemput/complete-transaction/{id}', [CourierController::class, 'completeTransaction'])->name('penjemput.completeTransaction');
+
+    });
+
     // ------------------------------------------------------------------
     // C. PROFIL & KEAMANAN AKUN (BISA DIAKSES SEMUA PERAN)
     // ------------------------------------------------------------------
@@ -97,4 +110,13 @@ Route::middleware('supabase.auth')->group(function () {
         Route::post('/profile/password', 'updatePassword')->name('password.update');
         Route::delete('/profile', 'destroy')->name('profile.destroy');
     });
+
+
+    // ==========================================
+    // FITUR KERANJANG BELANJA KRIYA (SESSION)
+    // ==========================================
+    Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/keranjang/add/{id}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/keranjang/update/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/keranjang/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 });

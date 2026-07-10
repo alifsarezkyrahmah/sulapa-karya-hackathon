@@ -55,6 +55,8 @@
     @php
         $sidebarUser = \App\Models\User::find(session('user_id'));
         $currentRole = $sidebarUser->role ?? session('role', 'user');
+        // Menghitung total kuantitas barang yang ada di dalam session keranjang
+        $cartCount = session('cart') ? collect(session('cart'))->sum('quantity') : 0;
     @endphp
 
     @include('components.alert')
@@ -75,17 +77,16 @@
             </span>
         </div>
 
-        <main class="flex-1 p-6 sm:p-8 lg:p-10 max-w-7xl w-full mx-auto">
+        <main class="flex-1 p-6 sm:p-8 lg:p-10 max-w-7xl w-full mx-auto text-left">
             @yield('dashboard-content')
         </main>
 
-        <footer class="p-4 border-t border-ink/5 text-center text-[11px] font-semibold tracking-wide text-ink-soft/50 bg-white/20w-full">
+        <footer class="p-4 border-t border-ink/5 text-center text-[11px] font-semibold tracking-wide text-ink-soft/50 bg-white/20 w-full">
             &copy; {{ date('Y') }} SulapaKarya Makassar. Hak Cipta Dilindungi.
         </footer>
     </div>
 
     <!-- ================= SISI KIRI: SIDEBAR NAVIGASI SMART HOVER (FIXED SCROLL) ================= -->
-    <!-- PERBAIKAN: Mengganti overflow-hidden dengan overflow-x-hidden & overflow-y-auto, serta menyembunyikan scrollbar bawaan browser -->
     <aside class="fixed inset-y-0 left-0 z-50 flex flex-col justify-between bg-ink text-sand p-4 transition-all duration-300 group/sidebar shadow-xl
         w-72 -translate-x-full peer-checked:translate-x-0
         lg:w-20 lg:translate-x-0 lg:hover:w-72
@@ -129,13 +130,23 @@
                                 <span class="whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">Setor Sampah Digital</span>
                             </a>
                         </li>
-                        <!-- 3. Tukar Poin Kriya (Katalog) -->
+
+                        
+                        <!-- BARU: MENU KERANJANG KRIYA (REAL-TIME BADGE) -->
                         <li>
-                            <a href="/katalog" class="flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all hover:bg-white/5 hover:text-white {{ request()->is('katalog*') ? 'bg-forest text-white font-bold' : '' }}">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="shrink-0"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-                                <span class="whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">Tukar Poin Kriya</span>
+                            <a href="/keranjang" class="flex items-center justify-between gap-4 px-3.5 py-3 rounded-xl transition-all hover:bg-white/5 hover:text-white {{ request()->is('keranjang*') ? 'bg-forest text-white font-bold' : '' }}">
+                                <div class="flex items-center gap-4">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="shrink-0"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                    <span class="whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">Keranjang Kriya</span>
+                                </div>
+                                @if($cartCount > 0)
+                                    <span class="badge badge-sm bg-terracotta border-none text-white font-extrabold px-1.5 py-2 font-mono rounded-md transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">
+                                        {{ $cartCount }}
+                                    </span>
+                                @endif
                             </a>
                         </li>
+
                         <!-- 4. Riwayat Setoran -->
                         <li>
                             <a href="/riwayat-setoran" class="flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all hover:bg-white/5 hover:text-white {{ request()->is('riwayat-setoran*') ? 'bg-forest text-white font-bold' : '' }}">
@@ -154,12 +165,13 @@
 
                     <!-- ================= NAVIGASI ROLE: PENJEMPUT / KURIR ================= -->
                     @if($currentRole == 'penjemput')
-                        <li>
+                        {{-- <li>
                             <a href="/scan-qr" class="flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all hover:bg-white/5 hover:text-white {{ request()->is('scan-qr*') ? 'bg-forest text-white font-bold' : '' }}">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="shrink-0"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><path d="M16 16h2v2h-2zm0 0h-2v-2h2zM12 4v16M4 12h16"/></svg>
                                 <span class="whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">Scan QR Kriya Warga</span>
                             </a>
-                        </li>
+                        </li> --}}
+
                     @endif
 
                     <!-- ================= NAVIGASI ROLE: ADMIN UTAMA ================= -->
@@ -190,7 +202,7 @@
             </div>
 
             <!-- KEAMANAN -->
-            <div class="pt-2">
+            {{-- <div class="pt-2">
                 <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 px-3 block mb-3 whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">
                     Keamanan
                 </span>
@@ -203,11 +215,10 @@
                         </a>
                     </li>
                 </ul>
-            </div>
+            </div> --}}
         </div>
 
         <!-- ================= WIDGET PROFIL BAWAH SIDEBAR ================= -->
-        <!-- Ditambahkan margin-top agar tetap terdorong ke bawah namun fleksibel saat di-scroll -->
         <div class="relative z-10 bg-white/5 p-3 rounded-2xl border border-white/5 flex flex-col gap-3 mt-12 shrink-0">
             <div class="flex items-center gap-3 truncate justify-center lg:justify-start">
                 <div class="avatar {{ $sidebarUser && $sidebarUser->foto_profil ? '' : 'placeholder' }} online shrink-0">

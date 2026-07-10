@@ -2,24 +2,25 @@
 
 @section('dashboard-content')
 @php
-    // SOLUSI UTAMA: Mengambil data user secara real-time dari database berdasarkan session login Anda
+    // Mengambil data user secara real-time dari database berdasarkan session login Anda
     $currentUser = \App\Models\User::find(session('user_id'));
+    
+    // Proteksi Saldo Poin: Jika di bawah 0 atau kosong, paksa ke angka 0 bulat
+    $safePointsBalance = ($currentUser && $currentUser->points_balance > 0) ? $currentUser->points_balance : 0;
 @endphp
 
-<div class="space-y-8 animate-fadeIn">
+<div class="space-y-8 animate-fadeIn text-left">
     
     <!-- ============ HEADER SAMBUTAN & QR CODE ============ -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gradient-to-r from-white to-cream p-6 rounded-[1.5rem] border border-ink/5 shadow-md shadow-ink/[0.01]">
         <div class="flex items-center gap-4">
             
-            <!-- Avatar Lingkaran Besar Kini Menarik Foto Profil Riil Database -->
+            <!-- Avatar Lingkaran Besar Menarik Foto Profil Riil Database -->
             <div class="avatar {{ $currentUser && $currentUser->foto_profil ? '' : 'placeholder' }}">
                 <div class="bg-gradient-to-tr from-forest to-forest-dark text-white rounded-full w-16 h-16 shadow-lg shadow-forest/20 ring-4 ring-white overflow-hidden flex items-center justify-center">
                     @if($currentUser && $currentUser->foto_profil)
-                        <!-- Menampilkan Foto Profil dari Storage Lokal -->
                         <img src="{{ \Illuminate\Support\Facades\Storage::url($currentUser->foto_profil) }}?v={{ time() }}" alt="Foto Profil {{ $currentUser->name }}" class="w-full h-full object-cover" />
                     @else
-                        <!-- Fallback: Inisial Huruf Nama jika Foto Belum Diunggah -->
                         <span class="text-xl font-bold font-display">{{ strtoupper(substr(session('name', 'A'), 0, 1)) }}</span>
                     @endif
                 </div>
@@ -31,7 +32,7 @@
             </div>
         </div>
 
-        <!-- PERBAIKAN: Kartu Akses Cepat QR Code Kini Bisa Diklik & Memicu Modal Dialog -->
+        <!-- Kartu Akses Cepat QR Code Memicu Modal Dialog -->
         <div onclick="qr_code_modal.showModal()" 
              class="flex items-center gap-3 bg-white border border-forest/10 p-3 rounded-2xl w-full sm:w-auto shadow-sm cursor-pointer hover:border-forest/40 hover:bg-forest/[0.01] active:scale-95 transition-all duration-200 group">
             <div class="bg-forest-light text-forest p-2 rounded-xl border border-forest/10 group-hover:bg-forest group-hover:text-white transition-all">
@@ -58,53 +59,39 @@
         </div>
     @endif
 
-    <!-- ============ RINGKASAN KEUANGAN & METRIK ============ -->
+    <!-- ============ RINGKASAN DATA & METRIK ============ -->
     <div>
         <div class="mb-4">
-            <h2 class="font-display font-extrabold text-xl text-ink">Ringkasan Keuangan</h2>
-            <p class="text-xs text-ink-soft font-medium">Pantau poin akumulasi dan pendapatan tunai dari hasil aksi pilah sampahmu.</p>
+            <h2 class="font-display font-extrabold text-xl text-ink">Ringkasan Aktivitas</h2>
+            <p class="text-xs text-ink-soft font-medium">Pantau akumulasi volume sampah serta simpanan saldo poin reward kriya Anda.</p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <!-- Card 1: Total Setor (Aksen Hijau Kebun) -->
-            <div class="bg-gradient-to-br from-white via-white to-forest-light/60 border border-ink/5 border-l-4 border-l-forest rounded-2xl p-5 flex items-center gap-4 shadow-sm transition-all hover:shadow-md">
-                <div class="w-12 h-12 rounded-xl bg-forest text-white flex items-center justify-center shrink-0 shadow-md shadow-forest/20">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <div class="bg-gradient-to-br from-white via-white to-forest-light/60 border border-ink/5 border-l-4 border-l-forest rounded-2xl p-6 flex items-center gap-5 shadow-sm transition-all hover:shadow-md">
+                <div class="w-14 h-14 rounded-xl bg-forest text-white flex items-center justify-center shrink-0 shadow-md shadow-forest/20">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
                 </div>
                 <div>
                     <span class="text-xs text-ink-soft font-bold tracking-wide block">Total Setor Sampah</span>
-                    <p class="text-3xl font-extrabold text-forest-dark mt-0.5">45 <span class="text-sm font-bold text-ink-soft">Kg</span></p>
+                    <p class="text-3xl font-extrabold text-forest-dark mt-0.5">
+                        {{ number_format($totalWeight ?? 0, 2, ',', '.') }} <span class="text-sm font-bold text-ink-soft">Kg</span>
+                    </p>
                     <span class="text-[10px] bg-forest/10 text-forest font-extrabold px-2.5 py-0.5 rounded-full mt-2 inline-block">Riwayat Akumulasi</span>
                 </div>
             </div>
 
-            <!-- Card 2: Saldo Poin (Dinamis dari Kolom points_balance) -->
-            <div class="bg-gradient-to-br from-white via-white to-maritime-light/60 border border-ink/5 border-l-4 border-l-maritime rounded-2xl p-5 flex items-center gap-4 shadow-sm transition-all hover:shadow-md">
-                <div class="w-12 h-12 rounded-xl bg-maritime text-white flex items-center justify-center shrink-0 shadow-md shadow-maritime/20">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 12h6"/></svg>
+            <!-- Card 2: Saldo Poin Tahan Minus -->
+            <div class="bg-gradient-to-br from-white via-white to-maritime-light/60 border border-ink/5 border-l-4 border-l-maritime rounded-2xl p-6 flex items-center gap-5 shadow-sm transition-all hover:shadow-md">
+                <div class="w-14 h-14 rounded-xl bg-maritime text-white flex items-center justify-center shrink-0 shadow-md shadow-maritime/20">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 12h6"/></svg>
                 </div>
                 <div>
                     <span class="text-xs text-ink-soft font-bold tracking-wide block">Saldo Poin Kriya</span>
                     <p class="text-3xl font-extrabold text-maritime-dark mt-0.5">
-                        {{ number_format($currentUser->points_balance ?? 0, 0, ',', '.') }} 
-                        <span class="text-xs font-bold text-ink-soft">Poin</span>
+                        {{ number_format($safePointsBalance, 0, ',', '.') }} 
+                        <span class="text-sm font-bold text-ink-soft">Poin</span>
                     </p>
-                    <span class="text-[10px] text-maritime font-bold mt-2 block">Setara Rp {{ number_format(($currentUser->points_balance ?? 0) * 10, 0, ',', '.') }} potongan kriya</span>
-                </div>
-            </div>
-
-            <!-- Card 3: Total Uang Tunai (Dinamis dari Kolom cash_received_total) -->
-            <div class="bg-gradient-to-br from-white via-white to-terracotta-light/60 border border-ink/5 border-l-4 border-l-terracotta rounded-2xl p-5 flex items-center gap-4 shadow-sm transition-all hover:shadow-md">
-                <div class="w-12 h-12 rounded-xl bg-terracotta text-white flex items-center justify-center shrink-0 shadow-md shadow-terracotta/20">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
-                </div>
-                <div>
-                    <span class="text-xs text-ink-soft font-bold tracking-wide block">Total Uang Tunai</span>
-                    <p class="text-3xl font-extrabold text-terracotta-dark mt-0.5">
-                        <span class="text-sm font-extrabold text-ink-soft">Rp</span> 
-                        {{ number_format($currentUser->cash_received_total ?? 0, 0, ',', '.') }}
-                    </p>
-                    <span class="text-[10px] bg-terracotta/10 text-terracotta font-extrabold px-2.5 py-0.5 rounded-full mt-2 inline-block">Sudah Dicairkan</span>
                 </div>
             </div>
         </div>
@@ -124,6 +111,117 @@
         </a>
     </div>
 
+    <!-- ============ TABEL RIWAYAT MUTASI POIN MASUK & KELUAR DENGAN FILTER MULTI-OPSI ============ -->
+    <div class="bg-white border border-ink/5 rounded-2xl p-6 shadow-sm space-y-4">
+        <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
+            <div>
+                <h2 class="font-display font-extrabold text-xl text-ink">Buku Kas & Aktivitas Poin Kriya</h2>
+                <p class="text-xs text-ink-soft font-medium">Lacak seluruh riwayat mutasi kredit (masuk) dan debit (keluar) poin kriya Anda secara real-time.</p>
+            </div>
+            
+            <!-- PANEL SELEKSI FILTER INTERAKTIF (PERTANGGAL & STATUS MUTASI) -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full xl:w-auto text-xs font-bold">
+                <!-- Filter Jangkauan Tanggal -->
+                <div class="flex items-center gap-2 bg-cream/40 border border-ink/10 px-3 py-1.5 rounded-xl">
+                    <span class="text-ink-soft text-[11px] uppercase tracking-wider">Tanggal:</span>
+                    <input type="date" id="filter_start_date" onchange="filterMutationTable()" class="bg-transparent focus:outline-none font-mono text-ink">
+                    <span class="text-ink-soft">-</span>
+                    <input type="date" id="filter_end_date" onchange="filterMutationTable()" class="bg-transparent focus:outline-none font-mono text-ink">
+                </div>
+
+                <!-- Tab Segment Opsi Mutasi -->
+                <div class="join border border-ink/10 rounded-xl overflow-hidden bg-white shrink-0">
+                    <button id="tab_all" onclick="changeMutationTab('all')" class="join-item btn btn-xs bg-forest text-white border-none normal-case font-bold px-3">Semua</button>
+                    <button id="tab_in" onclick="changeMutationTab('masuk')" class="join-item btn btn-xs bg-white text-ink-soft hover:bg-cream border-none normal-case font-bold px-3">Masuk (+)</button>
+                    <button id="tab_out" onclick="changeMutationTab('keluar')" class="join-item btn btn-xs bg-white text-ink-soft hover:bg-cream border-none normal-case font-bold px-3">Keluar (-)</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-ink/5">
+            <table class="table w-full text-sm" id="mutation_table">
+                <thead>
+                    <tr class="bg-sand/30 text-ink border-b border-ink/5 text-xs uppercase tracking-wider">
+                        <th class="font-extrabold py-3.5 pl-4">Tanggal & Waktu</th>
+                        <th class="font-extrabold py-3.5">Pihak Terkait</th>
+                        <th class="font-extrabold py-3.5">Keterangan Aktivitas</th>
+                        <th class="font-extrabold py-3.5 text-right pr-4">Jumlah Mutasi</th>
+                    </tr>
+                </thead>
+                <tbody class="font-medium text-ink/90">
+                    @php $hasRows = false; @endphp
+                    
+                    <!-- 1. MERGE LOGIKA DATA MASUK: Dari Pengiriman Poin oleh Kurir -->
+                    @foreach($pointHistory as $history)
+                        @php 
+                            $hasRows = true; 
+                            $kurir = \App\Models\User::find($history->sender_id);
+                            $timestamp = \Carbon\Carbon::parse($history->created_at);
+                        @endphp
+                        <tr class="mutation-row border-b border-ink/5 hover:bg-sand/10 transition-colors" 
+                            data-type="masuk" 
+                            data-date="{{ $timestamp->format('Y-m-d') }}">
+                            <td class="py-3.5 pl-4">
+                                <span class="text-xs font-bold text-ink block">{{ $timestamp->translatedFormat('d M Y') }}</span>
+                                <span class="text-[10px] text-ink-soft/60 block font-mono mt-0.5">{{ $timestamp->format('H:i') }} WITA</span>
+                            </td>
+                            <td class="py-3.5 text-xs">
+                                <span class="font-bold text-forest flex items-center gap-1">🟢 {{ $kurir->name ?? 'Armada Kurir' }}</span>
+                                <span class="text-[10px] text-ink-soft/50 block mt-0.5 font-mono">{{ $history->reference_number }}</span>
+                            </td>
+                            <td class="py-3.5 text-xs text-ink-soft max-w-xs truncate" title="{{ $history->note }}">
+                                {{ $history->note ?? 'Insentif pilah sampah daur ulang' }}
+                            </td>
+                            <td class="py-3.5 text-right pr-4">
+                                <span class="text-forest font-extrabold font-mono text-xs bg-forest/10 px-2.5 py-1 rounded-lg inline-block">
+                                    + {{ number_format($history->amount, 0, ',', '.') }}
+                                </span>
+                            </td>
+                        </tr>
+                    @endforeach
+
+                    <!-- 2. MERGE LOGIKA DATA KELUAR: Dari Pembelian Kriya Menggunakan Poin (Gunakan variabel $buyHistory dari controller) -->
+                    @if(isset($buyHistory))
+                        @foreach($buyHistory as $spent)
+                            @php 
+                                $hasRows = true; 
+                                $timestamp = \Carbon\Carbon::parse($spent->created_at);
+                                $produk = \App\Models\Product::find($spent->product_id);
+                            @endphp
+                            <tr class="mutation-row border-b border-ink/5 hover:bg-sand/10 transition-colors" 
+                                data-type="keluar" 
+                                data-date="{{ $timestamp->format('Y-m-d') }}">
+                                <td class="py-3.5 pl-4">
+                                    <span class="text-xs font-bold text-ink block">{{ $timestamp->translatedFormat('d M Y') }}</span>
+                                    <span class="text-[10px] text-ink-soft/60 block font-mono mt-0.5">{{ $timestamp->format('H:i') }} WITA</span>
+                                </td>
+                                <td class="py-3.5 text-xs">
+                                    <span class="font-bold text-terracotta flex items-center gap-1">🔴 Toko UMKM Kriya</span>
+                                    <span class="text-[10px] text-ink-soft/50 block mt-0.5 font-mono">{{ $spent->order_id }}</span>
+                                </td>
+                                <td class="py-3.5 text-xs text-ink-soft max-w-xs truncate">
+                                    Tukar Poin untuk: {{ $produk->name ?? 'Produk Kerajinan' }}
+                                </td>
+                                <td class="py-3.5 text-right pr-4">
+                                    <span class="text-terracotta font-extrabold font-mono text-xs bg-terracotta/10 px-2.5 py-1 rounded-lg inline-block">
+                                        - {{ number_format($spent->points_used, 0, ',', '.') }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
+
+                    <!-- Placeholder baris jika kedua riwayat kosong -->
+                    <tr id="empty_mutation_placeholder" class="{{ $hasRows ? 'hidden' : '' }}">
+                        <td colspan="4" class="py-10 text-center text-ink-soft/50 text-xs font-medium">
+                            📭 Belum ada rekaman mutasi poin masuk ataupun keluar pada akun Anda.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- ============ KATALOG KERAJINAN PREVIEW ============ -->
     <div>
         <div class="flex justify-between items-end mb-4">
@@ -134,7 +232,6 @@
             <a href="/katalog" class="btn btn-sm btn-outline border-forest/20 text-forest hover:bg-forest hover:text-white rounded-xl text-xs normal-case font-bold px-4 transition-all shadow-sm">Lihat Katalog</a>
         </div>
 
-        <!-- 4 Grid Placeholder Kartu Produk Kriya -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             @for ($i = 1; $i <= 4; $i++)
                 <div class="bg-white border border-ink/5 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all group">
@@ -153,7 +250,6 @@
     <!-- ============ MODAL POPUP DIALOG: ID DIGITAL QR CODE ============ -->
     <dialog id="qr_code_modal" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box bg-white max-w-sm rounded-[2rem] border border-ink/5 p-6 text-center flex flex-col items-center relative shadow-2xl">
-            <!-- Tombol Silang Pojok Kanan Atas -->
             <form method="dialog">
                 <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft/70 hover:text-ink">✕</button>
             </form>
@@ -161,10 +257,8 @@
             <h3 class="font-display font-extrabold text-xl text-ink mt-3">ID Digital Anda</h3>
             <p class="text-xs text-ink-soft font-semibold mt-1 px-4">Tunjukkan kode QR ini kepada kurir armada SulapaKarya saat melakukan penjemputan sampah.</p>
             
-            <!-- Wadah Bingkai Gambar QR Code -->
             <div class="bg-cream p-4 rounded-3xl border border-ink/5 my-6 shadow-inner flex items-center justify-center">
                 @if($currentUser && $currentUser->qr_code)
-                    <!-- Menggunakan API qrserver untuk generate gambar dari UUID secara real-time -->
                     <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ urlencode($currentUser->qr_code) }}&color=241F18&bgcolor=FAF6EF" 
                          alt="QR Code ID {{ $currentUser->name }}" 
                          class="w-44 h-44 rounded-xl object-contain shadow-sm" />
@@ -175,16 +269,73 @@
                 @endif
             </div>
             
-            <!-- String UUID Token di bagian bawah -->
             <div class="text-center w-full bg-cream/50 py-2.5 px-4 rounded-xl border border-ink/5 font-mono text-[11px] font-extrabold text-forest select-all" title="Klik 3x untuk menyalin">
                 {{ $currentUser->qr_code ?? 'Belum tergenerasi' }}
             </div>
         </div>
-        <!-- Klik Area Luar untuk Menutup Modal -->
         <form method="dialog" class="modal-backdrop bg-ink/40 backdrop-blur-sm">
             <button>close</button>
         </form>
     </dialog>
 
 </div>
+
+<!-- ================= ENGINE FILTER INTERAKTIF REAL-TIME (JAVASCRIPT) ================= -->
+<script>
+    let currentActiveTab = 'all';
+
+    function changeMutationTab(tabType) {
+        // Atur styling tombol tab active
+        const tabs = {
+            'all': document.getElementById('tab_all'),
+            'masuk': document.getElementById('tab_in'),
+            'keluar': document.getElementById('tab_out')
+        };
+
+        Object.keys(tabs).forEach(key => {
+            if (tabs[key]) {
+                if (key === tabType) {
+                    tabs[key].className = "join-item btn btn-xs bg-forest text-white border-none normal-case font-bold px-3";
+                } else {
+                    tabs[key].className = "join-item btn btn-xs bg-white text-ink-soft hover:bg-cream border-none normal-case font-bold px-3";
+                }
+            }
+        });
+
+        currentActiveTab = tabType;
+        filterMutationTable();
+    }
+
+    function filterMutationTable() {
+        const rows = document.querySelectorAll('.mutation-row');
+        const startDateVal = document.getElementById('filter_start_date').value;
+        const endDateVal = document.getElementById('filter_end_date').value;
+        const placeholder = document.getElementById('empty_mutation_placeholder');
+        
+        let visibleRowsCount = 0;
+
+        rows.forEach(row => {
+            const rowType = row.getAttribute('data-type');
+            const rowDate = row.getAttribute('data-date');
+            
+            let matchTab = (currentActiveTab === 'all' || rowType === currentActiveTab);
+            let matchStartDate = (!startDateVal || rowDate >= startDateVal);
+            let matchEndDate = (!endDateVal || rowDate <= endDateVal);
+
+            if (matchTab && matchStartDate && matchEndDate) {
+                row.classList.remove('hidden');
+                visibleRowsCount++;
+            } else {
+                row.classList.add('hidden');
+            }
+        });
+
+        // Manajemen tampilan row placeholder kosong jika data setelah difilter nihil
+        if (visibleRowsCount === 0) {
+            placeholder.classList.remove('hidden');
+        } else {
+            placeholder.classList.add('hidden');
+        }
+    }
+</script>
 @endsection

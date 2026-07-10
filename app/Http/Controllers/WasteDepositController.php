@@ -72,12 +72,13 @@ class WasteDepositController extends Controller
     }
 
     public function history()
-    {
-        // Tarik data riwayat khusus untuk user yang sedang login
-        $deposits = WasteDeposit::where('user_id', session('user_id'))
-                                ->orderBy('created_at', 'desc')
-                                ->get();
+{
+    // Mengambil semua deposit milik user yang sedang login
+    // Tidak perlu memfilter status agar semua progres terlihat oleh user
+    $deposits = \App\Models\Deposit::where('user_id', session('user_id'))
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-        return view('dashboard.riwayat-setoran', compact('deposits'));
-    }
+    return view('dashboard.riwayat-setoran', compact('deposits'));
+}
 }
