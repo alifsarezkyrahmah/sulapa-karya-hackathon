@@ -87,9 +87,6 @@
           </div>
 
           <ul id="mobile-nav-menu" tabindex="0" class="dropdown-content menu menu-sm mt-3 z-[60] p-3 shadow-xl bg-white/95 backdrop-blur-lg rounded-2xl w-56 border border-ink/5 gap-1 normal-case">
-            <div class="px-3 py-1 border-b border-ink/5 mb-1">
-              <span class="text-[10px] font-extrabold uppercase tracking-wider text-ink/40">Navigasi</span>
-            </div>
             <li><a href="/#beranda" data-nav="beranda" class="nav-link rounded-xl py-2 font-medium text-ink">Beranda</a></li>
             <li><a href="/#tentang" data-nav="tentang" class="nav-link rounded-xl py-2 font-medium text-ink">Tentang Kami</a></li>
             <li><a href="/#cara-kerja" data-nav="cara-kerja" class="nav-link rounded-xl py-2 font-medium text-ink">Cara Kerja</a></li>
@@ -114,10 +111,6 @@
                     {{ $currentRole }}
                   </span>
                 </div>
-              </div>
-              
-              <div class="px-3 py-1 mb-1">
-                <span class="text-[10px] font-extrabold uppercase tracking-wider text-forest">Akses Fitur</span>
               </div>
               
               @if($currentRole == 'user' || $currentRole == 'warga')
