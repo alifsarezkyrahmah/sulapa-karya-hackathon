@@ -12,6 +12,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+        // Memaksa Laravel mengenali folder public Vercel
+        $this->app->bind('path.public', function() {
+            return base_path('public');
+        });
     }
 
     /**
