@@ -2,7 +2,7 @@
 
 @section('content')
 <!-- ============ HERO ============ -->
-<section id="beranda" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 text-center">
+<section id="beranda" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 text-center">
   <span class="tag-stitch inline-block text-forest text-xs font-semibold section-eyebrow uppercase px-4 py-1.5 mb-6">
     Gerakan Daur Ulang Komunitas Makassar
   </span>
@@ -59,12 +59,12 @@
 
 
 <!-- ============ TENTANG KAMI ============ -->
-<section id="tentang" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-  <div class="grid md:grid-cols-2 gap-12 items-center">
+<section id="tentang" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24">
+  <!-- Grid disesuaikan ke lg agar tablet (md) menumpuk rapi ke bawah -->
+  <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
     
     <!-- SISI KIRI: DESKRIPSI TEKS -->
-    <div>
-      <span class="text-forest text-xs font-bold section-eyebrow uppercase tracking-widest">Tentang Kami</span>
+    <div class="lg:pt-2">
       <h2 class="font-display font-semibold text-3xl sm:text-4xl mt-3 mb-5 leading-tight">
         Every kilogram of waste has a second story.
       </h2>
@@ -81,10 +81,10 @@
     </div>
 
     <!-- SISI KANAN: DUA KARTU VISUAL (GRID) -->
-    <div class="grid grid-cols-2 gap-4">
+    <!-- Diberi mt-8 agar terpisah manis saat tampilan mobile/tablet -->
+    <div class="grid grid-cols-2 gap-4 mt-8 lg:mt-0">
       
-      <!-- KARTU 1: VISUAL PROSES (Menggunakan img1.png dengan Gradient Overlay) -->
-      <div class="aspect-[3/4] rounded-[1.5rem] overflow-hidden relative border border-ink/5 group shadow-sm">
+      <!-- KARTU 1: VISUAL PROSES (Menggunakan img1.png dengan Gradient Overlay) -->      <div class="aspect-[3/4] rounded-[1.5rem] overflow-hidden relative border border-ink/5 group shadow-sm">
         <img src="{{ asset('images/img1.png') }}" alt="Visual Proses Kriya" 
           class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" />
         
@@ -96,18 +96,14 @@
       </div>
       
 
-      <!-- KARTU 2: FILOSOFI (Menggunakan bg-forest & Tampilan LOGO FULL) -->
       <div class="aspect-[3/4] rounded-[1.5rem] bg-sand-40 text-white flex flex-col items-center justify-center p-6 text-center relative overflow-hidden shadow-md shadow-forest/5">
-        <!-- Ornamen Pola Dot Kriya Halus khas SulapaKarya -->
         <div class="absolute inset-0 dot-grid text-white/[0.03] pointer-events-none"></div>
     
-        <!-- Logo Aplikasi Resmi Tampil Full & Proporsional -->
         <div class="relative bg-sand-40 z-10 mb-6 w-full flex justify-center transition-transform duration-300 hover:scale-105">
           <img src="{{ asset('images/logo.png') }}" alt="Logo SulapaKarya Macca Full" 
             class="w-30 h-30 sm:w-40 sm:h-40 object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.12)]" />
         </div>
-                <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent flex flex-col justify-end p-5 text-left">
-        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent flex flex-col justify-end p-5 text-left"></div>
         
         <!-- Kalimat Kutipan Filosofi -->
         <p class="font-display font-semibold text-base sm:text-lg leading-snug text-cream relative z-10 px-1">
@@ -123,9 +119,8 @@
 </section>
 
 <!-- ============ IMPACT TRACKER ============ -->
-<section class="bg-ink text-cream py-20">
+<section class="bg-ink text-cream py-12 sm:py-16 lg:py-24">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <span class="text-forest text-xs font-bold section-eyebrow uppercase">Impact Tracker</span>
     <h2 class="font-display font-semibold text-3xl sm:text-4xl mt-3 mb-12">
       Live counters dampak lingkungan &amp; pemberdayaan pengrajin
     </h2>
@@ -148,9 +143,8 @@
 </section>
 
 <!-- ============ LAYANAN NYATA KITA ============ -->
-<section id="cara-kerja" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<section id="cara-kerja" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24">
   <div class="text-center max-w-2xl mx-auto mb-12">
-    <span class="text-forest text-xs font-bold section-eyebrow uppercase">Cara Kerja</span>
     <h2 class="font-display font-semibold text-3xl sm:text-4xl mt-3 mb-4">Layanan Nyata Kita</h2>
     <p class="text-ink-soft">Lifecycle sederhana untuk pengguna: rapi, mudah, dan transparan.</p>
     @if (!session('user_id')) <!-- jika pengguna belum login diarahkan kehalaman login -->
@@ -165,7 +159,6 @@
   </div>
 
   <div class="grid sm:grid-cols-2 gap-6">
-
     <div class="card bg-white border border-ink/10 rounded-2xl hover:shadow-lg hover:-translate-y-0.5 transition-all">
       <div class="card-body p-6">
         <div class="flex items-center gap-3 mb-1">
@@ -209,15 +202,13 @@
         <span class="tag-stitch inline-block w-fit text-forest text-xs font-medium px-3 py-1 mt-3">Karya ramah lingkungan</span>
       </div>
     </div>
-
   </div>
 </section>
 
 <!-- ============ PRODUK UNGGULAN ============ -->
-<section id="produk" class="bg-sand/60 py-20">
+<section id="produk" class="bg-sand/60 py-12 sm:py-16 lg:py-24">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center max-w-2xl mx-auto mb-12">
-      <span class="text-terracotta text-xs font-bold section-eyebrow uppercase">Marketplace</span>
       <h2 class="font-display font-semibold text-3xl sm:text-4xl mt-3 mb-7">Produk Unggulan</h2>
       <a href="/katalog" class="btn btn-outline border-terracotta text-terracotta hover:bg-terracotta hover:text-white rounded-full px-7">
         Lihat Katalog
@@ -225,7 +216,6 @@
     </div>
 
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
-
       <div class="card bg-white rounded-2xl border border-ink/10 overflow-hidden hover:shadow-lg transition-shadow">
         <div class="aspect-square bg-forest-light/60 grid place-items-center text-forest/50">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
@@ -262,13 +252,12 @@
           <span class="tag-stitch inline-block w-fit text-terracotta border-terracotta/50 font-mono text-xs font-semibold px-3 py-1 mt-2">Rp 110.000</span>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
 <!-- ============ CLOSING TAGLINE ============ -->
-<section class="py-14">
+<section class="py-12 sm:py-16">
   <p class="text-center font-display italic text-lg sm:text-xl text-ink-soft max-w-2xl mx-auto px-6">
     “Ubah sampah jadi karya, berdayakan pengrajin lokal bersama SulapaKarya.”
   </p>

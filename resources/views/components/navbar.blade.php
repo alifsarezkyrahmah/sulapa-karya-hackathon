@@ -170,14 +170,14 @@
 
       const options = {
         root: null,
-        rootMargin: "-50% 0px -50% 0px", // Memantau tepat saat section berada di tengah layar
+        rootMargin: "-15% 0px -40% 0px", // Memantau tepat saat section berada di tengah layar
         threshold: 0
       };
 
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-          if (entries[0].isIntersecting) {
-              const activeId = entries[0].target.id;
+          if (entry.isIntersecting) {
+              const activeId = entry.target.id;
               activateNavbarLink(activeId);
           }
         });

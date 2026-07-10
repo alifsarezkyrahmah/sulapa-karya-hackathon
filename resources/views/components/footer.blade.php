@@ -4,7 +4,7 @@
   <div class="absolute inset-0 dot-grid text-cream/[0.01] pointer-events-none"></div>
 
   <!-- Main Footer Content -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 sm:py-16 lg:py-24 relative z-10">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
       
       <!-- Kolom 1: Brand / Profil -->
@@ -20,10 +20,10 @@
         </p>
         <!-- Seni Dekoratif Media Sosial kriya -->
         <div class="flex items-center gap-3 pt-2">
-          <a href="#" aria-label="Instagram" class="w-8 h-8 rounded-lg border border-white/10 grid place-items-center hover:bg-forest hover:text-white hover:border-forest transition-all duration-300">
+          <a href="https://instagram.com/sulapakarya" aria-label="Instagram" class="w-8 h-8 rounded-lg border border-white/10 grid place-items-center hover:bg-forest hover:text-white hover:border-forest transition-all duration-300">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
           </a>
-          <a href="#" aria-label="WhatsApp" class="w-8 h-8 rounded-lg border border-white/10 grid place-items-center hover:bg-forest hover:text-white hover:border-forest transition-all duration-300">
+          <a href="https://wa.me/sulapakarya" aria-label="WhatsApp" class="w-8 h-8 rounded-lg border border-white/10 grid place-items-center hover:bg-forest hover:text-white hover:border-forest transition-all duration-300">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </a>
         </div>
@@ -46,7 +46,7 @@
             </a>
           </li>
           <li>
-            <a href="#produk" class="text-cream/60 hover:text-white link link-hover underline-offset-4 transition-colors">
+            <a href="/katalog" class="text-cream/60 hover:text-white link link-hover underline-offset-4 transition-colors">
               Katalog Karya
             </a>
           </li>
@@ -92,7 +92,7 @@
 
   <!-- Bottom Bar: Copyright & Legal Links -->
   <div class="border-t border-white/[0.05] bg-black/15 relative z-10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-cream/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-cream/40">
       <div class="text-center sm:text-left">
         &copy; 2026 SulapaKarya. Semua hak dilindungi.
       </div>

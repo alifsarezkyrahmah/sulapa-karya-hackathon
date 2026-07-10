@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Dashboard — SulapaKarya Macca' }}</title>
+    <title>{{ $title ?? 'Dashboard — SulapaKarya' }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -98,20 +98,16 @@
         <div class="relative z-10 space-y-6">
             <!-- Brand Logo Panel -->
             <div class="flex items-center gap-4 pb-4 border-b border-white/10 min-h-[3.5rem]">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-forest to-forest-dark text-white flex items-center justify-center shadow-md shrink-0 mx-auto lg:mx-0">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 20A7 7 0 0 1 4 13c0-4 3-8 8-9 0 0 1 5-1 9 2-3 4-4 7-4 0 5-4 9-8 9 0 0-1 1-1 2z"/></svg>
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr text-white flex items-center justify-center shadow-md shrink-0 mx-auto lg:mx-0">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo SulapaKarya" class="w-8 h-8 object-contain rounded-full shadow">
                 </div>
                 <span class="font-display font-bold text-base tracking-tight text-cream whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">
-                    SulapaKarya <span class="text-sand/50 font-body text-xs font-normal">Panel</span>
+                    SulapaKarya
                 </span>
             </div>
 
             <!-- MENU UTAMA -->
             <div>
-                <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 px-3 block mb-3 whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">
-                    Navigasi Fitur
-                </span>
-                
                 <ul class="space-y-1.5 font-medium text-sm p-0 m-0 list-none">
                     <!-- 1. Ringkasan Panel (Dashboard) -->
                     <li>
