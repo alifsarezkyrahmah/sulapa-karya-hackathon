@@ -1,4 +1,4 @@
-@extends('layouts.dashboard', ['title' => 'Kelola Pengguna — SulapaKarya Macca'])
+@extends('layouts.dashboard', ['title' => 'Kelola Pengguna — SulapaKarya'])
 
 @section('dashboard-content')
 <div class="space-y-6 animate-fadeIn">
@@ -6,7 +6,7 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div class="text-left">
             <h1 class="font-display font-extrabold text-2xl text-ink tracking-tight">Manajemen Akun Pengguna</h1>
-            <p class="text-xs text-ink-soft/80 font-medium mt-1">Kelola tingkatan hak akses gerakan sosial SulapaKarya Macca daerah Makassar.</p>
+            <p class="text-xs text-ink-soft/80 font-medium mt-1">Kelola tingkatan hak akses gerakan sosial SulapaKarya daerah Makassar.</p>
         </div>
         <button onclick="add_user_modal.showModal()" class="btn btn-sm bg-forest border-none text-white hover:bg-forest-dark rounded-xl normal-case shadow-md font-bold px-4 gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>

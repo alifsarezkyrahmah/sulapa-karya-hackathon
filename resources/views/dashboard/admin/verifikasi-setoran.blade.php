@@ -1,4 +1,4 @@
-@extends('layouts.dashboard', ['title' => 'Verifikasi Setoran — SulapaKarya Macca'])
+@extends('layouts.dashboard', ['title' => 'Verifikasi Setoran — SulapaKarya'])
 
 @section('dashboard-content')
 <div class="space-y-6 animate-fadeIn">
