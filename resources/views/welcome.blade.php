@@ -7,14 +7,13 @@
     Gerakan Daur Ulang Komunitas Makassar
   </span>
 
-  <h1 class="font-display font-semibold text-4xl sm:text-5xl lg:text-6xl leading-[1.1] max-w-3xl mx-auto">
-    Dari Sampah Jadi Karya,<br>
+  <h1 class="font-display font-semibold text-3xl sm:text-4xl lg:text-5xl leading-[1.1] max-w-3xl mx-auto">
+    Tukar Sampahmu Jadi Uang,<br>
     Untuk <span class="text-forest">Makassar</span> Tercinta.
   </h1>
 
   <p class="mt-6 text-ink-soft text-base sm:text-lg max-w-xl mx-auto">
-    Kami menghubungkan warga, pengepul, dan pengrajin lokal dalam satu siklus —
-    sampah yang Anda setorkan hari ini, kembali sebagai karya kriya bernilai esok hari.
+    Jangan biarkan sampah anorganik rumahmu terbuang sia-sia. Kumpulkan, setor ke kami, dan langsung dapatkan uangnya!
   </p>
 
   <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -32,7 +31,7 @@
         <div class="w-20 h-20 rounded-2xl bg-white grid place-items-center shadow-sm text-ink-soft">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6h14ZM10 11v6M14 11v6"/></svg>
         </div>
-        <span class="text-sm font-semibold text-ink">Sampah Terpilah</span>
+        <span class="text-sm font-semibold text-ink">Pilah Sampahmu</span>
       </div>
 
       <svg class="flow-arrow text-forest shrink-0 rotate-90 sm:rotate-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -41,7 +40,7 @@
         <div class="w-20 h-20 rounded-2xl bg-white grid place-items-center shadow-sm text-forest">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0-1.4 0L4 15.6V20h4.4l9.3-9.3a1 1 0 0 0 0-1.4l-3-3Z"/><path d="m17.5 9.5 1.5-1.5"/></svg>
         </div>
-        <span class="text-sm font-semibold text-ink">Diolah Pengrajin</span>
+        <span class="text-sm font-semibold text-ink">Sampah Diambil</span>
       </div>
 
       <svg class="flow-arrow text-forest shrink-0 rotate-90 sm:rotate-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -50,71 +49,122 @@
         <div class="w-20 h-20 rounded-2xl bg-white grid place-items-center shadow-sm text-terracotta">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 4l9 5.5M4 10v9a1 1 0 0 0 1 1h5v-6h4v6h5a1 1 0 0 0 1-1v-9"/></svg>
         </div>
-        <span class="text-sm font-semibold text-ink">Karya Siap Pakai</span>
+        <span class="text-sm font-semibold text-ink">Terima Uang</span>
       </div>
 
     </div>
   </div>
 </section>
 
+<!-- ============ SEKSI JENIS SAMPAH YANG DITERIMA ============ -->
+<section id="jenis-sampah" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+  <div class="text-center max-w-2xl mx-auto mb-12">
+    <h2 class="font-display font-semibold text-3xl sm:text-4xl text-ink">
+      Jenis Sampah yang Bisa Ditukar
+    </h2>
+    <p class="mt-3 text-ink-soft text-sm sm:text-base">
+      Berikut jenis sampah yang bisa kamu tukarkan di <span class="text-forest">SulapaKarya</span>
+    </p>
+  </div>
 
-<!-- ============ TENTANG KAMI ============ -->
-<section id="tentang" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24">
-  <!-- Grid disesuaikan ke lg agar tablet (md) menumpuk rapi ke bawah -->
-  <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+  <div class="grid md:grid-cols-3 gap-6 sm:gap-8">
     
-    <!-- SISI KIRI: DESKRIPSI TEKS -->
-    <div class="lg:pt-2">
-      <h2 class="font-display font-semibold text-3xl sm:text-4xl mt-3 mb-5 leading-tight">
-        Every kilogram of waste has a second story.
-      </h2>
-      <p class="text-ink-soft leading-relaxed text-sm sm:text-base">
-        Platform ini hadir untuk mempertemukan sisi sampah Anda dengan tangan-tangan kreatif
-        para pengrajin di Makassar. Sampah anorganik yang Anda setorkan tidak hanya bersih
-        dari lingkungan, tapi kembali menjadi produk kriya yang indah dan bermakna —
-        sembari menggerakkan roda ekonomi komunitas kami.
-      </p>
-      <div class="mt-6 flex items-center gap-3 text-xs font-bold">
-        <span class="tag-stitch px-3 py-1 text-forest border-forest/40">Tanpa Perantara</span>
-        <span class="tag-stitch px-3 py-1 text-maritime border-maritime/40">Terverifikasi</span>
-      </div>
-    </div>
-
-    <!-- SISI KANAN: DUA KARTU VISUAL (GRID) -->
-    <!-- Diberi mt-8 agar terpisah manis saat tampilan mobile/tablet -->
-    <div class="grid grid-cols-2 gap-4 mt-8 lg:mt-0">
-      
-      <!-- KARTU 1: VISUAL PROSES (Menggunakan img1.png dengan Gradient Overlay) -->      <div class="aspect-[3/4] rounded-[1.5rem] overflow-hidden relative border border-ink/5 group shadow-sm">
-        <img src="{{ asset('images/img1.png') }}" alt="Visual Proses Kriya" 
-          class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" />
-        
-        <!-- Lapisan Hitam Transparan bawah agar Teks Putih Kontras & Terbaca -->
-        <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent flex flex-col justify-end p-5 text-left">
-          <span class="text-xs font-bold text-cream tracking-wide">Visual Proses Kami</span>
-          <span class="text-[10px] text-cream/70 mt-1 leading-tight font-medium">Dari pemilahan hingga produk kriya jadi</span>
+    <!-- 1. PLASTIK -->
+    <div class="card bg-white border border-ink/10 rounded-3xl p-6 sm:p-8 hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between">
+      <div>
+        <div class="w-14 h-14 rounded-2xl bg-forest-light text-forest grid place-items-center mb-6">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 2h4M10 5h4M9 5v3l-2 3v10a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V11l-2-3V5H9z"/>
+          </svg>
         </div>
-      </div>
-      
-
-      <div class="aspect-[3/4] rounded-[1.5rem] bg-sand-40 text-white flex flex-col items-center justify-center p-6 text-center relative overflow-hidden shadow-md shadow-forest/5">
-        <div class="absolute inset-0 dot-grid text-white/[0.03] pointer-events-none"></div>
-    
-        <div class="relative bg-sand-40 z-10 mb-6 w-full flex justify-center transition-transform duration-300 hover:scale-105">
-          <img src="{{ asset('images/logo.png') }}" alt="Logo SulapaKarya Macca Full" 
-            class="w-30 h-30 sm:w-40 sm:h-40 object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.12)]" />
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent flex flex-col justify-end p-5 text-left"></div>
-        
-        <!-- Kalimat Kutipan Filosofi -->
-        <p class="font-display font-semibold text-base sm:text-lg leading-snug text-cream relative z-10 px-1">
-          “Setiap sampah punya kisah kedua.”
+        <h3 class="font-display font-semibold text-2xl text-ink mb-2">Sampah Plastik</h3>
+        <p class="text-ink-soft text-xs leading-relaxed mb-6">
+          Bahan plastik anorganik bersih dari sisa makanan atau cairan.
         </p>
-        <span class="text-[9px] font-extrabold mt-4 text-sand uppercase tracking-widest relative z-10 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">
-          Filosofi SulapaKarya
+        
+        <div class="space-y-2 border-t border-ink/5 pt-4">
+          <span class="text-[11px] font-bold text-forest uppercase tracking-wider block mb-2">Contoh Barang:</span>
+          <ul class="text-xs text-ink-soft space-y-1.5 list-disc list-inside">
+            <li>Botol & gelas plastik minuman</li>
+            <li>Wadah deterjen, shampoo & jeriken</li>
+            <li>Ember, baskom & perabotan plastik</li>
+            <li>Tutup botol & galon bekas</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="mt-6 pt-4 border-t border-ink/5">
+        <span class="tag-stitch w-full text-center block text-forest text-xs font-semibold px-3 py-1.5">
+          ✓ Diterima dalam Kondisi Kering
         </span>
       </div>
-
     </div>
+
+    <!-- 2. KERTAS -->
+    <div class="card bg-white border border-ink/10 rounded-3xl p-6 sm:p-8 hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between">
+      <div>
+        <div class="w-14 h-14 rounded-2xl bg-sand/80 text-terracotta grid place-items-center mb-6">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-2xl text-ink mb-2">Sampah Kertas</h3>
+        <p class="text-ink-soft text-xs leading-relaxed mb-6">
+          Segala jenis olahan serat kertas dan karton yang tidak basah/berminyak.
+        </p>
+        
+        <div class="space-y-2 border-t border-ink/5 pt-4">
+          <span class="text-[11px] font-bold text-terracotta uppercase tracking-wider block mb-2">Contoh Barang:</span>
+          <ul class="text-xs text-ink-soft space-y-1.5 list-disc list-inside">
+            <li>Kardus & box kemasan bekas</li>
+            <li>Kertas HVS kantor / sekolah</li>
+            <li>Koran, majalah & brosur</li>
+            <li>Buku bekas & kemasan paperboard</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-ink/5">
+        <span class="tag-stitch w-full text-center block text-terracotta border-terracotta/40 text-xs font-semibold px-3 py-1.5">
+          ✓ Dilipat & Ditalikan Lebih Baik
+        </span>
+      </div>
+    </div>
+
+    <!-- 3. KAIN -->
+    <div class="card bg-white border border-ink/10 rounded-3xl p-6 sm:p-8 hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between">
+      <div>
+        <div class="w-14 h-14 rounded-2xl bg-maritime/10 text-maritime grid place-items-center mb-6">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-2xl text-ink mb-2">Sampah Kain</h3>
+        <p class="text-ink-soft text-xs leading-relaxed mb-6">
+          Limbah tekstil rumah tangga dan konveksi yang layak daur ulang.
+        </p>
+
+        <div class="space-y-2 border-t border-ink/5 pt-4">
+          <span class="text-[11px] font-bold text-maritime uppercase tracking-wider block mb-2">Contoh Barang:</span>
+          <ul class="text-xs text-ink-soft space-y-1.5 list-disc list-inside">
+            <li>Pakaian bekas tak terpakai</li>
+            <li>Kain perca sisa jaitan/konveksi</li>
+            <li>Sprei, sarung bantal & gorden bekas</li>
+            <li>Tas kain & bahan tekstil sintetis</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-ink/5">
+        <span class="tag-stitch w-full text-center block text-maritime border-maritime/40 text-xs font-semibold px-3 py-1.5">
+          ✓ Bersih & Tidak Lembap
+        </span>
+      </div>
+    </div>
+
   </div>
 </section>
 
