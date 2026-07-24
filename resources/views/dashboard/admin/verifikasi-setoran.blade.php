@@ -157,7 +157,7 @@
                                     
                                     <div class="form-control mb-3">
                                         <label class="label py-1"><span class="label-text font-bold text-xs text-ink">Keputusan Akhir <span class="text-terracotta">*</span></span></label>
-                                        <select name="keputusan" id="keputusan_select_{{ $d->id }}" required class="select select-bordered w-full rounded-xl text-sm focus:outline-none focus:border-maritime font-bold" onchange="toggleKurir(this.value, 'kurir_box_{{ $d->id }}')">
+                                        <select name="keputusan" id="keputusan_select_{{ $d->id }}" required class="select select-bordered select-readable w-full rounded-xl text-sm focus:outline-none focus:border-maritime font-bold bg-white text-ink" onchange="toggleKurir(this.value, 'kurir_box_{{ $d->id }}')">
                                             <option value="" disabled selected>-- Tentukan Sikap... --</option>
                                             <option value="terima">Terima & Tugaskan Penjemput</option>
                                             <option value="tolak">Tolak Setoran (Bukan sampah daur ulang)</option>
@@ -166,7 +166,7 @@
 
                                     <div id="kurir_box_{{ $d->id }}" class="form-control hidden mb-3 bg-white p-3 rounded-xl border border-ink/10 shadow-sm">
                                         <label class="label py-1"><span class="label-text font-bold text-xs text-maritime">Tugaskan ke Kurir <span class="text-terracotta">*</span></span></label>
-                                        <select name="penjemput_id" class="select select-bordered w-full rounded-xl text-sm focus:outline-none focus:border-maritime font-bold bg-cream/20">
+                                        <select name="penjemput_id" class="select select-bordered select-readable w-full rounded-xl text-sm focus:outline-none focus:border-maritime font-bold bg-cream/20 text-ink">
                                             <option value="" disabled selected>Pilih staf kurir yang sedang aktif...</option>
                                             @foreach($penjemputs as $kurir)
                                                 <option value="{{ $kurir->id }}">{{ $kurir->name }} - (HP: {{ $kurir->phone ?? '-' }})</option>
@@ -201,6 +201,25 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* Perbaiki keterbacaan dropdown: opsi sebelumnya gelap di atas latar gelap. */
+    select.select-readable {
+        background-color: #ffffff;
+        color: #1f2937;
+    }
+    select.select-readable option {
+        background-color: #ffffff;
+        color: #1f2937;
+    }
+    /* Tetap ada highlight saat opsi disorot/terpilih. */
+    select.select-readable option:checked,
+    select.select-readable option:hover,
+    select.select-readable option:focus {
+        background-color: #2f6b3c; /* forest */
+        color: #ffffff;
+    }
+</style>
 
 <script>
     function toggleKurir(keputusan, boxId) {

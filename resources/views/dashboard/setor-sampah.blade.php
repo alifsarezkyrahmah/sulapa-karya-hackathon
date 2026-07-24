@@ -108,20 +108,47 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-2">
+                        @php
+                            // Fallback tanggal server bila JS mati; nilai sebenarnya diatur ulang oleh flatpickr (tanggal browser real-time).
+                            $minPickupDate = date('Y-m-d', strtotime('+1 day'));
+                        @endphp
                         <div class="form-control">
                             <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Rencana Tanggal Jemput</span></label>
                             <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-ink-soft">📅</span>
-                                <input type="date" name="pickup_date" min="{{ date('Y-m-d') }}" value="{{ old('pickup_date') }}" class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 pl-11">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none z-10">📅</span>
+                                <input type="date" name="pickup_date" min="{{ $minPickupDate }}" value="{{ old('pickup_date') }}" placeholder="dd/mm/yyyy" class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 pl-11 cursor-pointer">
                             </div>
+                            <label class="label"><span id="pickup-date-hint" class="label-text-alt text-[10px] text-ink-soft">Penjemputan paling cepat besok ({{ \Carbon\Carbon::parse($minPickupDate)->translatedFormat('d M Y') }}).</span></label>
                         </div>
 
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Waktu Standby (Opsional)</span></label>
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-ink-soft">⏰</span>
-                                <input type="time" name="pickup_time" value="{{ old('pickup_time') }}" class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 pl-11">
+                            <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Waktu Penjemputan</span></label>
+                            <input type="hidden" name="pickup_time" id="pickup_time_input" value="{{ old('pickup_time') }}">
+
+                            <div id="pickup-time-dropdown" class="relative">
+                                {{-- Tombol pemicu (tampilan seperti select) --}}
+                                <button type="button" id="pickup-time-trigger" aria-haspopup="listbox" aria-expanded="false"
+                                    class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 pl-11 pr-9 flex items-center cursor-pointer text-left">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none z-10">⏰</span>
+                                    <span id="pickup-time-label" class="truncate text-ink-soft">Pilih jam penjemputan</span>
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none">▾</span>
+                                </button>
+
+                                {{-- Panel opsi (muncul saat tombol ditekan) --}}
+                                <ul id="pickup-time-menu" role="listbox" class="hidden absolute z-30 mt-1 w-full max-h-60 overflow-auto rounded-xl border border-ink/10 bg-white shadow-lg py-1">
+                                    @for ($hour = 8; $hour <= 16; $hour++)
+                                        @php
+                                            $slotStart = sprintf('%02d:00', $hour);
+                                            $slotEnd   = sprintf('%02d:00', $hour + 1);
+                                        @endphp
+                                        <li role="option" data-slot="{{ $slotStart }}"
+                                            class="pickup-slot px-4 py-2.5 text-sm font-semibold text-ink cursor-pointer hover:bg-cream/60 transition-colors {{ old('pickup_time') === $slotStart ? 'is-selected' : '' }}">
+                                            {{ $slotStart }} - {{ $slotEnd }}
+                                        </li>
+                                    @endfor
+                                </ul>
                             </div>
+                            <label class="label"><span id="pickup-time-hint" class="label-text-alt text-[10px] text-ink-soft">Pilih tanggal jemput terlebih dahulu, lalu pilih jamnya.</span></label>
                         </div>
                     </div>
                 </div>
@@ -135,4 +162,190 @@
         </div>
     @endif
 </div>
+
+{{-- Flatpickr: kalender pilih tanggal penjemputan --}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/id.js"></script>
+<style>
+    /* Warna aksen kalender agar selaras dengan tema forest */
+    .flatpickr-day.selected,
+    .flatpickr-day.selected:hover { background: #2f6b3c; border-color: #2f6b3c; }
+    .flatpickr-day.today { border-color: #2f6b3c; }
+    .flatpickr-day.today:hover { background: #2f6b3c; color: #fff; }
+    .flatpickr-months .flatpickr-month,
+    .flatpickr-current-month .flatpickr-monthDropdown-months,
+    .flatpickr-weekday { color: #2f6b3c; }
+    /* Tanggal yang kuotanya penuh: beri tanda merah samar + kursor "tidak boleh" */
+    .flatpickr-day.pickup-date-full {
+        color: #c0392b !important;
+        text-decoration: line-through;
+        cursor: not-allowed !important;
+        pointer-events: auto !important; /* tetap bisa di-hover agar tooltip muncul */
+    }
+    /* Opsi slot waktu penjemputan (dropdown) */
+    #pickup-time-menu .pickup-slot.is-selected {
+        background: #2f6b3c;
+        color: #fff;
+    }
+    #pickup-time-menu .pickup-slot.is-selected:hover { background: #2f6b3c; }
+    #pickup-time-menu .pickup-slot.is-full {
+        color: #c0392b;
+        text-decoration: line-through;
+        background: #f8e6e3;
+        cursor: not-allowed;
+        opacity: .9;
+    }
+    #pickup-time-menu .pickup-slot.is-full:hover { background: #f8e6e3; }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var pickupDateInput = document.querySelector('input[name="pickup_date"]');
+        if (pickupDateInput && window.flatpickr) {
+            if (window.flatpickr.l10ns && window.flatpickr.l10ns.id) {
+                flatpickr.localize(flatpickr.l10ns.id);
+            }
+            var minDate = new Date().fp_incr(1); // paling cepat besok (berdasar tanggal browser real-time)
+            var fullDates = @json($fullPickupDates ?? []); // tanggal yang kuotanya sudah penuh (10 pengangkutan)
+            var fullDatesSet = fullDates.reduce(function (acc, d) { acc[d] = true; return acc; }, {});
+
+            var fp = flatpickr(pickupDateInput, {
+                dateFormat: 'Y-m-d',       // nilai yang dikirim ke server (cocok utk kolom date)
+                altInput: true,            // input tampilan yang mudah dibaca user
+                altFormat: 'd F Y',
+                minDate: minDate,          // blokir hari ini & sebelumnya
+                disable: fullDates,        // blokir tanggal yang sudah penuh
+                disableMobile: true,       // paksa pakai kalender flatpickr, bukan native
+                onDayCreate: function (dObj, dStr, fpInstance, dayElem) {
+                    // Beri keterangan saat kursor diarahkan ke tanggal yang penuh.
+                    var ymd = fpInstance.formatDate(dayElem.dateObj, 'Y-m-d');
+                    if (fullDatesSet[ymd]) {
+                        dayElem.classList.add('pickup-date-full');
+                        dayElem.setAttribute('title', 'Pengantaran penuh, tolong pilih hari lain.');
+                    }
+                },
+            });
+
+            // Tampilkan placeholder samar pada input tampilan flatpickr.
+            if (fp.altInput) {
+                fp.altInput.setAttribute('placeholder', 'dd/mm/yyyy');
+            }
+
+            // Sinkronkan teks bantuan di bawah dengan tanggal minimal kalender (hindari selisih zona waktu server).
+            var hint = document.getElementById('pickup-date-hint');
+            if (hint) {
+                var fmt = fp.formatDate(minDate, 'd F Y');
+                hint.textContent = 'Penjemputan paling cepat besok (' + fmt + ').';
+            }
+        }
+
+        // ===== Kuota slot waktu penjemputan (maksimal 2 user per slot per hari) =====
+        var fullTimeSlots = @json($fullTimeSlots ?? []); // { 'Y-m-d': ['08:00', '13:00', ...] }
+        var pickupDateEl  = document.querySelector('input[name="pickup_date"]');
+        var timeInput     = document.getElementById('pickup_time_input');
+        var timeTrigger   = document.getElementById('pickup-time-trigger');
+        var timeMenu      = document.getElementById('pickup-time-menu');
+        var timeLabel     = document.getElementById('pickup-time-label');
+        var timeHint      = document.getElementById('pickup-time-hint');
+        var slotItems     = Array.prototype.slice.call(document.querySelectorAll('#pickup-time-menu .pickup-slot'));
+
+        function currentPickupDate() {
+            return pickupDateEl ? pickupDateEl.value : '';
+        }
+
+        function isSlotFull(item) {
+            return item.classList.contains('is-full');
+        }
+
+        function setTriggerLabel() {
+            var selected = slotItems.filter(function (i) { return i.classList.contains('is-selected'); })[0];
+            if (selected) {
+                timeLabel.textContent = selected.textContent.trim();
+                timeLabel.classList.remove('text-ink-soft');
+                timeLabel.classList.add('text-ink');
+            } else {
+                timeLabel.textContent = 'Pilih jam penjemputan';
+                timeLabel.classList.add('text-ink-soft');
+                timeLabel.classList.remove('text-ink');
+            }
+        }
+
+        function openMenu() {
+            timeMenu.classList.remove('hidden');
+            timeTrigger.setAttribute('aria-expanded', 'true');
+        }
+        function closeMenu() {
+            timeMenu.classList.add('hidden');
+            timeTrigger.setAttribute('aria-expanded', 'false');
+        }
+        function toggleMenu() {
+            timeMenu.classList.contains('hidden') ? openMenu() : closeMenu();
+        }
+
+        function refreshTimeSlots() {
+            var date = currentPickupDate();
+            var fullList = (date && fullTimeSlots[date]) ? fullTimeSlots[date] : [];
+
+            slotItems.forEach(function (item) {
+                var slot = item.getAttribute('data-slot');
+                var isFull = fullList.indexOf(slot) !== -1;
+
+                if (isFull) {
+                    item.classList.add('is-full');
+                    item.setAttribute('aria-disabled', 'true');
+                    item.setAttribute('title', 'Silahkan pilih waktu penjemputan lain');
+                    // Batalkan pilihan bila slot yang sebelumnya dipilih ternyata sudah penuh.
+                    if (item.classList.contains('is-selected')) {
+                        item.classList.remove('is-selected');
+                        if (timeInput) timeInput.value = '';
+                    }
+                } else {
+                    item.classList.remove('is-full');
+                    item.removeAttribute('aria-disabled');
+                    item.removeAttribute('title');
+                }
+            });
+
+            setTriggerLabel();
+
+            if (timeHint) {
+                timeHint.textContent = date
+                    ? 'Klik untuk memilih jam. Slot yang penuh tidak bisa dipilih.'
+                    : 'Pilih tanggal jemput terlebih dahulu, lalu pilih jamnya.';
+            }
+        }
+
+        if (timeTrigger) {
+            timeTrigger.addEventListener('click', function (e) {
+                e.stopPropagation();
+                toggleMenu();
+            });
+        }
+
+        slotItems.forEach(function (item) {
+            item.addEventListener('click', function () {
+                if (isSlotFull(item)) return; // slot penuh: tidak bisa dipilih
+                slotItems.forEach(function (i) { i.classList.remove('is-selected'); });
+                item.classList.add('is-selected');
+                if (timeInput) timeInput.value = item.getAttribute('data-slot');
+                setTriggerLabel();
+                closeMenu();
+            });
+        });
+
+        // Tutup dropdown saat klik di luar.
+        document.addEventListener('click', function (e) {
+            if (timeMenu && !timeMenu.classList.contains('hidden')) {
+                var wrap = document.getElementById('pickup-time-dropdown');
+                if (wrap && !wrap.contains(e.target)) closeMenu();
+            }
+        });
+
+        // Perbarui slot setiap kali tanggal berubah (flatpickr & native sama-sama memicu 'change').
+        if (pickupDateEl) {
+            pickupDateEl.addEventListener('change', refreshTimeSlots);
+        }
+        refreshTimeSlots(); // status awal (termasuk setelah validasi gagal / old input)
+    });
+</script>
 @endsection
