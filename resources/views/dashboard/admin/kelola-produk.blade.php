@@ -1,4 +1,4 @@
-@extends('layouts.dashboard', ['title' => 'Kelola Produk Kriya — SulapaKarya Macca'])
+@extends('layouts.dashboard', ['title' => 'Kelola Produk Kriya — SulapaKarya'])
 
 @section('dashboard-content')
 <div class="space-y-6 animate-fadeIn text-left">
@@ -284,7 +284,7 @@
                                     </form>
 
                                     <div class="text-center border-b border-dashed border-ink/20 pb-4">
-                                        <h4 class="font-display font-black text-xl text-ink">SulapaKarya Macca</h4>
+                                        <h4 class="font-display font-black text-xl text-ink">SulapaKarya</h4>
                                         <p class="text-[10px] text-ink-soft font-semibold tracking-wide uppercase mt-0.5">Pusat Kerajinan Daur Ulang Makassar</p>
                                         <div class="badge border-none text-[9px] font-bold mt-2 uppercase px-2.5 py-2
                                             {{ str_contains(strtolower($sh->status), 'picked') ? 'bg-forest/10 text-forest' : '' }}

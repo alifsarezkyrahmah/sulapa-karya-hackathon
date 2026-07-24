@@ -1,59 +1,342 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sulapa Karya Hackathon
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem manajemen bank sampah dan poin berbasis Laravel yang dikembangkan untuk Sulapa Karya Hackathon.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Prasyarat
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Pastikan software berikut sudah terinstall:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 1. Git
+Cek instalasi:
 
-## Learning Laravel
+```bash
+git --version
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 2. PHP
+Minimal sesuai versi yang digunakan project.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+php -v
+```
 
-## Laravel Sponsors
+### 3. Composer
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer --version
+```
 
-### Premium Partners
+### 4. Node.js & NPM
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+node -v
+npm -v
+```
 
-## Contributing
+### 5. MySQL
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Dapat menggunakan:
 
-## Code of Conduct
+- XAMPP
+- Laragon
+- MySQL Community Server
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+# Clone Repository
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Clone langsung branch development yang digunakan tim:
 
-## License
+```bash
+git clone -b feature/auth-supabase https://github.com/alifsarezkyrahmah/sulapa-karya-hackathon.git
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Masuk ke folder project:
+
+```bash
+cd sulapa-karya-hackathon
+```
+
+---
+
+# Pastikan Branch Aktif
+
+```bash
+git branch
+```
+
+Output:
+
+```bash
+* feature/auth-supabase
+```
+
+Jika belum berada di branch tersebut:
+
+```bash
+git checkout feature/auth-supabase
+```
+
+atau
+
+```bash
+git switch feature/auth-supabase
+```
+
+---
+
+# Install Dependency Backend
+
+Install seluruh package Laravel:
+
+```bash
+composer install
+```
+
+---
+
+# Install Dependency Frontend
+
+```bash
+npm install
+```
+
+---
+
+# Setup Environment
+
+Buat file `.env`:
+
+### Windows
+
+```bash
+copy .env.example .env
+```
+
+### Linux / MacOS
+
+```bash
+cp .env.example .env
+```
+
+---
+
+# Konfigurasi Database
+
+Buat database baru di MySQL:
+
+```sql
+CREATE DATABASE sulapa_db;
+```
+
+Buka file `.env` dan sesuaikan konfigurasi:
+
+```env
+APP_NAME="Sulapa Karya"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=sulapa_db
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+---
+
+# Konfigurasi Supabase
+
+Minta nilai berikut kepada Project Manager atau anggota tim yang memiliki akses:
+
+```env
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+```
+
+**Jangan pernah mengupload file `.env` ke GitHub.**
+
+---
+
+# Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+Output:
+
+```bash
+Application key set successfully.
+```
+
+---
+
+# Migrasi Database
+
+Jalankan migration:
+
+```bash
+php artisan migrate
+```
+
+Jika tersedia seeder:
+
+```bash
+php artisan migrate --seed
+```
+
+---
+
+# Storage Link
+
+Jika project menggunakan upload gambar atau file:
+
+```bash
+php artisan storage:link
+```
+
+---
+
+# Menjalankan Project
+
+## Terminal 1 - Laravel
+
+```bash
+php artisan serve
+```
+
+Laravel akan berjalan di:
+
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+## Terminal 2 - Vite
+
+```bash
+npm run dev
+```
+
+Biarkan terminal ini tetap berjalan selama development.
+
+---
+
+# Update Kode dari Repository
+
+Sebelum mulai bekerja setiap hari:
+
+```bash
+git checkout feature/auth-supabase
+git pull origin feature/auth-supabase
+```
+
+---
+
+# Workflow Development
+
+## Menambahkan Perubahan
+
+```bash
+git add .
+```
+
+## Commit
+
+```bash
+git commit -m "feat: deskripsi perubahan"
+```
+
+Contoh:
+
+```bash
+git commit -m "feat: add transfer point feature"
+```
+
+## Push ke Repository
+
+```bash
+git push origin feature/auth-supabase
+```
+
+---
+
+# Troubleshooting
+
+## Vendor Tidak Ditemukan
+
+```bash
+composer install
+```
+
+---
+
+## Error APP_KEY
+
+```bash
+php artisan key:generate
+```
+
+---
+
+## Error Database
+
+Pastikan:
+
+- Database sudah dibuat
+- Konfigurasi `.env` sudah benar
+- MySQL sedang berjalan
+
+---
+
+## Error Vite Manifest
+
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## Error Storage
+
+```bash
+php artisan storage:link
+```
+
+---
+
+# Struktur Branch
+
+```text
+main
+│
+├── develop
+│
+└── feature/auth-supabase
+```
+
+Branch aktif pengembangan saat ini:
+
+```text
+feature/auth-supabase
+```
+
+---
+
+# Kontak Tim
+
+Jika mengalami kendala saat setup:
+
+- Pastikan seluruh dependency sudah terinstall
+- Pastikan file `.env` sudah dikonfigurasi dengan benar
+- Hubungi anggota tim untuk mendapatkan kredensial Supabase dan konfigurasi tambahan yang diperlukan
+
+---
+Happy Coding 🚀

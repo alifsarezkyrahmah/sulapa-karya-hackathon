@@ -22,7 +22,7 @@
           <li><a href="/#cara-kerja" data-nav="cara-kerja" class="nav-link rounded-full px-4 py-2 hover:bg-forest/10 hover:text-forest transition-all">Cara Kerja</a></li>
           <li><a href="/katalog" data-nav="katalog" class="nav-link rounded-full px-4 py-2 hover:bg-forest/10 hover:text-forest transition-all {{ request()->is('katalog*') ? 'bg-forest/10 text-forest font-black' : '' }}">Katalog Kriya</a></li>
           
-          @if(session('user_id') && ($currentRole == 'user' || $currentRole == 'admin' || $currentRole == 'warga'))
+          @if(session('user_id') && ($currentRole == 'user' || $currentRole == 'warga'))
             <li>
               <a href="/keranjang" data-nav="keranjang" class="nav-link rounded-full px-4 py-2 hover:bg-forest/10 hover:text-forest transition-all flex items-center gap-2 {{ request()->is('keranjang*') ? 'bg-forest/10 text-forest font-black' : '' }}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="shrink-0"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -118,10 +118,9 @@
                 <li><a href="/keranjang" data-nav="keranjang" class="nav-link rounded-xl py-2 font-medium text-ink flex justify-between {{ request()->is('keranjang*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Keranjang Kriya @if($cartCount > 0) <span class="badge bg-terracotta text-white font-mono font-bold">{{ $cartCount }}</span> @endif</a></li>
                 <li><a href="/setor-sampah" class="rounded-xl py-2 font-medium text-ink {{ request()->is('setor-sampah*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Setor Sampah</a></li>
               @elseif($currentRole == 'penjemput')
-                <li><a href="/dashboard" class="rounded-xl py-2 font-medium text-ink {{ request()->is('dashboard*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Panel Penjemput</a></li>
+                <li><a href="/dashboard" class="rounded-xl py-2 font-medium text-ink {{ request()->is('dashboard*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Dashboard Kurir</a></li>
               @elseif($currentRole == 'admin')
-                <li><a href="/dashboard" class="rounded-xl py-2 font-medium text-ink {{ request()->is('dashboard*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Panel Admin Utama</a></li>
-                <li><a href="/keranjang" data-nav="keranjang" class="nav-link rounded-xl py-2 font-medium text-ink flex justify-between {{ request()->is('keranjang*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Keranjang Kriya @if($cartCount > 0) <span class="badge bg-terracotta text-white font-mono font-bold">{{ $cartCount }}</span> @endif</a></li>
+                <li><a href="/dashboard" class="rounded-xl py-2 font-medium text-ink {{ request()->is('dashboard*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Dashboard Admin</a></li>
               @endif
               
               <li><a href="/profile" class="rounded-xl py-2 font-medium text-ink {{ request()->is('profile*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Profil Saya</a></li>

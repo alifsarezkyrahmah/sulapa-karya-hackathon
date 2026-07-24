@@ -71,7 +71,7 @@
             <label for="dashboard-sidebar-drawer" class="btn btn-square btn-ghost btn-sm text-ink-soft">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current stroke-[2.2]"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </label>
-            <span class="font-display font-extrabold text-sm text-ink tracking-tight">SulapaKarya Macca</span>
+            <span class="font-display font-extrabold text-sm text-ink tracking-tight">SulapaKarya</span>
             <span class="badge bg-forest/10 border-none text-forest font-extrabold text-[9px] uppercase tracking-wider px-2 py-2 rounded-md">
                 {{ $currentRole }}
             </span>
@@ -98,7 +98,7 @@
         <div class="relative z-10 space-y-6">
             <!-- Brand Logo Panel -->
             <div class="flex items-center gap-4 pb-4 border-b border-white/10 min-h-[3.5rem]">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr text-white flex items-center justify-center shadow-md shrink-0 mx-auto lg:mx-0">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr text-white flex items-center justify-center shadow-md shrink-0">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo SulapaKarya" class="w-8 h-8 object-contain rounded-full shadow">
                 </div>
                 <span class="font-display font-bold text-base tracking-tight text-cream whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">
@@ -216,7 +216,7 @@
 
         <!-- ================= WIDGET PROFIL BAWAH SIDEBAR ================= -->
         <div class="relative z-10 bg-white/5 p-3 rounded-2xl border border-white/5 flex flex-col gap-3 mt-12 shrink-0">
-            <div class="flex items-center gap-3 truncate justify-center lg:justify-start">
+            <div class="flex items-center gap-3 truncate justify-start w-full">
                 <div class="avatar {{ $sidebarUser && $sidebarUser->foto_profil ? '' : 'placeholder' }} online shrink-0">
                     <div class="bg-white/10 text-cream rounded-full w-9 h-9 shadow-inner overflow-hidden flex items-center justify-center ring-2 ring-white/10">
                         @if($sidebarUser && $sidebarUser->foto_profil)

@@ -1,4 +1,4 @@
-@extends('layouts.dashboard', ['title' => 'Dashboard Admin — SulapaKarya Macca'])
+@extends('layouts.dashboard', ['title' => 'Dashboard Admin — SulapaKarya'])
 
 @section('dashboard-content')
 @php
@@ -19,10 +19,10 @@
     <div class="bg-gradient-to-r from-white to-cream p-6 rounded-[1.5rem] border border-ink/5 shadow-md shadow-ink/[0.01] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div class="text-left">
             <h1 class="font-display font-extrabold text-2xl text-ink leading-tight">Selamat Datang di Panel Utama, Admin!</h1>
-            <p class="text-xs text-ink-soft font-semibold mt-1">Pantau perputaran koin kriya, verifikasi setoran sampah, dan kelola ekosistem SulapaKarya Macca kota Makassar.</p>
+            <p class="text-xs text-ink-soft font-semibold mt-1">Pantau perputaran koin kriya, verifikasi setoran sampah, dan kelola ekosistem SulapaKarya kota Makassar.</p>
         </div>
         <div class="shrink-0 bg-forest/10 text-forest px-4 py-2 rounded-xl border border-forest/10 text-xs font-bold font-mono">
-            Mode Akses: Root Admin Utama
+            Mode Akses: Admin
         </div>
     </div>
 
