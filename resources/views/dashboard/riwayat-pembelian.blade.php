@@ -4,8 +4,8 @@
 <div class="space-y-6 animate-fadeIn">
     
     <div class="text-left">
-        <h1 class="font-display font-extrabold text-2xl text-ink tracking-tight">Riwayat Pembelian Kriya</h1>
-        <p class="text-xs text-ink-soft/80 font-medium mt-1">Daftar produk upcycling hasil karya UMKM Makassar yang telah Anda pesan.</p>
+        <h1 class="font-display font-extrabold text-2xl text-ink tracking-tight">{{ ($isAdmin ?? false) ? 'Riwayat Pembelian Semua Warga' : 'Riwayat Pembelian Kriya' }}</h1>
+        <p class="text-xs text-ink-soft/80 font-medium mt-1">{{ ($isAdmin ?? false) ? 'Rekap seluruh pembelian produk kriya oleh warga.' : 'Daftar produk upcycling hasil karya UMKM Makassar yang telah Anda pesan.' }}</p>
     </div>
 
     @if(session('success'))
@@ -24,7 +24,8 @@
             <table class="table w-full text-sm">
                 <thead>
                     <tr class="border-b border-ink/5 text-ink/70 font-bold uppercase tracking-wider text-xs bg-cream/60">
-                        <th class="py-3.5 pl-5">Tanggal & No. Pesanan</th>
+                        @if($isAdmin ?? false)<th class="py-3.5 pl-5">Pembeli</th>@endif
+                        <th class="py-3.5 {{ ($isAdmin ?? false) ? '' : 'pl-5' }}">Tanggal & No. Pesanan</th>
                         <th class="py-3.5">Produk Kriya</th>
                         <th class="py-3.5">Skema Potongan Harga</th>
                         <th class="py-3.5 text-center">Status</th>
@@ -34,8 +35,15 @@
                 <tbody class="font-medium text-ink/90">
                     @forelse($transactions as $t)
                         <tr class="hover:bg-cream/10 border-b border-ink/5 transition-colors">
-                            
+
+                            @if($isAdmin ?? false)
                             <td class="py-4 pl-5">
+                                <span class="font-bold text-ink block">{{ $t->user->name ?? 'Anonim' }}</span>
+                                <span class="text-[10px] text-ink-soft/60 block">{{ $t->user->phone ?? '-' }}</span>
+                            </td>
+                            @endif
+
+                            <td class="py-4 {{ ($isAdmin ?? false) ? '' : 'pl-5' }}">
                                 <span class="text-ink-soft font-bold block">{{ $t->created_at->translatedFormat('d M Y') }}</span>
                                 <span class="text-[10px] text-ink-soft/60 font-mono mt-0.5 block tracking-wide">{{ $t->order_id }}</span>
                             </td>
@@ -84,7 +92,9 @@
                             </td>
 
                             <td class="py-4 pr-5 text-center">
-                                @if($t->status === 'pending')
+                                @if($isAdmin ?? false)
+                                    <span class="text-xs text-ink-soft/40 italic font-normal">—</span>
+                                @elseif($t->status === 'pending')
                                     <a href="{{ route('checkout.resume', $t->order_id) }}" class="btn btn-xs bg-amber-500 border-none text-white hover:bg-amber-600 rounded-lg px-3 font-bold shadow-sm normal-case">
                                         💳 Bayar Sekarang
                                     </a>
@@ -96,11 +106,15 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="py-12 text-center text-ink-soft/60 font-medium text-xs">
+                            <td colspan="{{ ($isAdmin ?? false) ? 6 : 5 }}" class="py-12 text-center text-ink-soft/60 font-medium text-xs">
                                 <div class="flex flex-col items-center justify-center gap-2">
                                     <span class="text-2xl opacity-40">🛍️</span>
-                                    <p>Anda belum pernah melakukan pembelian produk kriya.</p>
-                                    <a href="{{ route('user.katalog') }}" class="text-maritime underline mt-1 font-bold">Buka Katalog Produk</a>
+                                    @if($isAdmin ?? false)
+                                        <p>Belum ada riwayat pembelian dari warga.</p>
+                                    @else
+                                        <p>Anda belum pernah melakukan pembelian produk kriya.</p>
+                                        <a href="{{ route('user.katalog') }}" class="text-maritime underline mt-1 font-bold">Buka Katalog Produk</a>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

@@ -44,8 +44,15 @@
                             
                             <td class="py-4 pl-5">
                                 <span class="text-ink-soft font-mono font-bold block">{{ $d->deposit_code }}</span>
-                                <span class="text-[10px] text-ink-soft/60 block tracking-wide mt-0.5">{{ \Carbon\Carbon::parse($d->created_at)->translatedFormat('d M Y - H:i') }}</span>
+                                <span class="text-[10px] text-ink-soft/60 block tracking-wide mt-0.5">Diajukan: {{ \Carbon\Carbon::parse($d->created_at)->translatedFormat('d M Y - H:i') }}</span>
                                 <span class="text-xs font-bold text-maritime block mt-1">Oleh: {{ $warga->name ?? 'Anonim' }}</span>
+                                @if($d->pickup_date)
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-forest-dark bg-forest/10 border border-forest/15 px-2 py-1 rounded-md mt-1.5">
+                                        🗓 {{ \Carbon\Carbon::parse($d->pickup_date)->translatedFormat('d M Y') }}@if($d->pickup_time) • {{ \Carbon\Carbon::parse($d->pickup_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($d->pickup_time)->addHour()->format('H:i') }}@endif
+                                    </span>
+                                @else
+                                    <span class="text-[10px] text-ink-soft/50 block mt-1.5 italic">Jadwal jemput belum diisi</span>
+                                @endif
                             </td>
 
                             <td class="py-4">
@@ -134,6 +141,20 @@
                                         <div class="bg-cream/30 p-4 rounded-xl border border-ink/5">
                                             <span class="text-[10px] font-bold text-ink-soft uppercase tracking-widest block mb-2">Lokasi Penjemputan</span>
                                             <p class="font-semibold text-sm leading-snug text-ink">{{ $d->pickup_address }}</p>
+                                        </div>
+
+                                        <div class="bg-maritime/5 p-4 rounded-xl border border-maritime/10">
+                                            <span class="text-[10px] font-bold text-maritime-dark uppercase tracking-widest block mb-2">Jadwal Penjemputan</span>
+                                            <div class="flex flex-col gap-1 text-sm">
+                                                <div class="flex justify-between">
+                                                    <span class="text-maritime-dark/70">Tanggal Jemput:</span>
+                                                    <span class="font-bold text-maritime-dark">{{ $d->pickup_date ? \Carbon\Carbon::parse($d->pickup_date)->translatedFormat('l, d M Y') : 'Belum diisi' }}</span>
+                                                </div>
+                                                <div class="flex justify-between">
+                                                    <span class="text-maritime-dark/70">Jam Jemput:</span>
+                                                    <span class="font-bold text-maritime-dark">{{ $d->pickup_time ? \Carbon\Carbon::parse($d->pickup_time)->format('H:i') . ' - ' . \Carbon\Carbon::parse($d->pickup_time)->addHour()->format('H:i') : 'Belum diisi' }}</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 

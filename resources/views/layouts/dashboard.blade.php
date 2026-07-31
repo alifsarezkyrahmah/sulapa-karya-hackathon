@@ -118,7 +118,7 @@
                     </li>
 
                     <!-- ================= NAVIGASI ROLE: USER / WARGA ================= -->
-                    @if($currentRole == 'user' || $currentRole == 'admin')
+                    @if($currentRole == 'user')
                         <!-- 2. Setor Sampah Digital -->
                         <li>
                             <a href="/setor-sampah" class="flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all hover:bg-white/5 hover:text-white {{ request()->is('setor-sampah*') ? 'bg-forest text-white font-bold' : '' }}">
@@ -127,7 +127,7 @@
                             </a>
                         </li>
 
-                        
+
                         <!-- BARU: MENU KERANJANG KRIYA (REAL-TIME BADGE) -->
                         <li>
                             <a href="/keranjang" class="flex items-center justify-between gap-4 px-3.5 py-3 rounded-xl transition-all hover:bg-white/5 hover:text-white {{ request()->is('keranjang*') ? 'bg-forest text-white font-bold' : '' }}">
@@ -142,7 +142,9 @@
                                 @endif
                             </a>
                         </li>
+                    @endif
 
+                    @if($currentRole == 'user' || $currentRole == 'admin')
                         <!-- 4. Riwayat Setoran -->
                         <li>
                             <a href="/riwayat-setoran" class="flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all hover:bg-white/5 hover:text-white {{ request()->is('riwayat-setoran*') ? 'bg-forest text-white font-bold' : '' }}">

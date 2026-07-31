@@ -177,12 +177,19 @@ class CheckoutController extends Controller
      */
     public function history()
     {
-        $transactions = Transaction::with('product')
-            ->where('user_id', session('user_id'))
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $currentUser = \App\Models\User::find(session('user_id'));
+        $isAdmin = $currentUser && $currentUser->role === 'admin';
 
-        return view('dashboard.riwayat-pembelian', compact('transactions'));
+        // Admin melihat SEMUA riwayat pembelian warga; user biasa hanya miliknya sendiri.
+        $query = Transaction::with(['product', 'user'])->orderBy('created_at', 'desc');
+
+        if (!$isAdmin) {
+            $query->where('user_id', session('user_id'));
+        }
+
+        $transactions = $query->get();
+
+        return view('dashboard.riwayat-pembelian', compact('transactions', 'isAdmin'));
     }
 
     /**

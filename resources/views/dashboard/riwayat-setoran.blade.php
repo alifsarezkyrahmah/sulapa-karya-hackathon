@@ -4,8 +4,8 @@
 <div class="space-y-6 animate-fadeIn">
     
     <div class="text-left">
-        <h1 class="font-display font-extrabold text-2xl text-ink tracking-tight">Riwayat Setoran Anda</h1>
-        <p class="text-xs text-ink-soft/80 font-medium mt-1">Pantau status penjemputan dan keuntungan dari setiap sampah yang Anda setor.</p>
+        <h1 class="font-display font-extrabold text-2xl text-ink tracking-tight">{{ ($isAdmin ?? false) ? 'Riwayat Setoran Semua Warga' : 'Riwayat Setoran Anda' }}</h1>
+        <p class="text-xs text-ink-soft/80 font-medium mt-1">{{ ($isAdmin ?? false) ? 'Rekap seluruh setoran sampah yang diajukan oleh warga.' : 'Pantau status penjemputan dan keuntungan dari setiap sampah yang Anda setor.' }}</p>
     </div>
 
     <div class="bg-white border border-ink/5 rounded-[1.5rem] p-6 shadow-sm overflow-hidden">
@@ -13,7 +13,8 @@
             <table class="table w-full text-sm">
                 <thead>
                     <tr class="border-b border-ink/5 text-ink/70 font-bold uppercase tracking-wider text-xs bg-cream/60">
-                        <th class="py-3.5 pl-5">Tanggal & Kode</th>
+                        @if($isAdmin ?? false)<th class="py-3.5 pl-5">Warga</th>@endif
+                        <th class="py-3.5 {{ ($isAdmin ?? false) ? '' : 'pl-5' }}">Tanggal & Kode</th>
                         <th class="py-3.5">Jenis Sampah</th>
                         <th class="py-3.5">Berat Timbangan</th>
                         <th class="py-3.5 text-center">Status</th>
@@ -23,8 +24,15 @@
                 <tbody class="font-medium text-ink/90">
                     @forelse($deposits as $d)
                         <tr class="hover:bg-cream/10 border-b border-ink/5 transition-colors">
-                            
+
+                            @if($isAdmin ?? false)
                             <td class="py-4 pl-5">
+                                <span class="font-bold text-ink block">{{ $d->user->name ?? 'Anonim' }}</span>
+                                <span class="text-[10px] text-ink-soft/60 block">{{ $d->user->phone ?? '-' }}</span>
+                            </td>
+                            @endif
+
+                            <td class="py-4 {{ ($isAdmin ?? false) ? '' : 'pl-5' }}">
                                 <span class="text-ink-soft font-bold block">{{ $d->created_at->translatedFormat('d M Y') }}</span>
                                 <span class="text-[10px] text-ink-soft/60 font-mono mt-0.5 block">{{ $d->deposit_code }}</span>
                             </td>
@@ -89,10 +97,10 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="py-12 text-center text-ink-soft/60 font-medium text-xs">
+                            <td colspan="{{ ($isAdmin ?? false) ? 6 : 5 }}" class="py-12 text-center text-ink-soft/60 font-medium text-xs">
                                 <div class="flex flex-col items-center justify-center gap-2">
                                     <span class="text-2xl opacity-50">🍃</span>
-                                    <p>Belum ada riwayat setoran. Ayo mulai pilah sampahmu hari ini!</p>
+                                    <p>{{ ($isAdmin ?? false) ? 'Belum ada riwayat setoran dari warga.' : 'Belum ada riwayat setoran. Ayo mulai pilah sampahmu hari ini!' }}</p>
                                 </div>
                             </td>
                         </tr>

@@ -162,12 +162,18 @@ class WasteDepositController extends Controller
 
     public function history()
 {
-    // Mengambil semua deposit milik user yang sedang login
-    // Tidak perlu memfilter status agar semua progres terlihat oleh user
-    $deposits = \App\Models\Deposit::where('user_id', session('user_id'))
-                ->orderBy('created_at', 'desc')
-                ->get();
+    $currentUser = User::find(session('user_id'));
+    $isAdmin = $currentUser && $currentUser->role === 'admin';
 
-    return view('dashboard.riwayat-setoran', compact('deposits'));
+    // Admin melihat SEMUA riwayat setoran warga; user biasa hanya miliknya sendiri.
+    $query = \App\Models\Deposit::with('user')->orderBy('created_at', 'desc');
+
+    if (!$isAdmin) {
+        $query->where('user_id', session('user_id'));
+    }
+
+    $deposits = $query->get();
+
+    return view('dashboard.riwayat-setoran', compact('deposits', 'isAdmin'));
 }
 }

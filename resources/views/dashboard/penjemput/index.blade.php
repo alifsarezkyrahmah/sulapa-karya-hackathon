@@ -64,6 +64,7 @@
                         <th class="font-extrabold">Warga & Kode</th>
                         <th class="font-extrabold">Kategori</th>
                         <th class="font-extrabold">Estimasi Berat</th>
+                        <th class="font-extrabold">Jadwal Jemput</th>
                         <th class="font-extrabold">Alamat Penjemputan</th>
                         <th class="font-extrabold text-center">Tindakan Lapangan</th>
                     </tr>
@@ -78,6 +79,16 @@
                             </td>
                             <td><span class="badge bg-cream border border-ink/10 text-ink-soft font-bold text-[10px] px-2 py-1 rounded-md">{{ strtoupper($task->category) }}</span></td>
                             <td class="font-mono font-bold text-ink">{{ number_format($task->estimated_weight, 2) }} Kg</td>
+                            <td>
+                                @if($task->pickup_date)
+                                    <span class="font-bold text-ink block text-xs">🗓 {{ \Carbon\Carbon::parse($task->pickup_date)->translatedFormat('d M Y') }}</span>
+                                    @if($task->pickup_time)
+                                        <span class="text-[10px] text-maritime font-bold block mt-0.5">⏰ {{ \Carbon\Carbon::parse($task->pickup_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($task->pickup_time)->addHour()->format('H:i') }}</span>
+                                    @endif
+                                @else
+                                    <span class="text-[10px] text-ink-soft/50 italic">Belum dijadwalkan</span>
+                                @endif
+                            </td>
                             <td class="text-ink-soft max-w-xs truncate" title="{{ $task->pickup_address }}">{{ $task->pickup_address }}</td>
                             <td class="py-4 text-center">
                                 @if($task->status === 'menunggu_penjemput')
@@ -155,7 +166,7 @@
                         </dialog>
                     @empty
                         <tr>
-                            <td colspan="5" class="py-8 text-center text-ink-soft/60 font-medium text-xs">
+                            <td colspan="6" class="py-8 text-center text-ink-soft/60 font-medium text-xs">
                                 🎉 Bagus! Tidak ada antrean rute penjemputan tersisa untuk Anda hari ini.
                             </td>
                         </tr>
@@ -172,7 +183,7 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="table table-zebra w-full text-sm">
+            <table class="table w-full text-sm">
                 <thead>
                     <tr class="bg-sand/30 text-ink border-b border-ink/5">
                         <th class="font-extrabold">PENYETOR</th>
@@ -185,7 +196,7 @@
                 <tbody>
                     @forelse($completedLogs as $log)
                         @php $pemohon = \App\Models\User::find($log->user_id); @endphp
-                        <tr class="border-b border-ink/5">
+                        <tr class="border-b border-ink/5 even:bg-cream/30 hover:bg-sand/10 transition-colors">
                             <td class="font-semibold text-ink">{{ $pemohon->name ?? 'Anonim' }}</td>
                             <td>{{ ucfirst($log->category) }}</td>
                             <td class="font-bold text-ink-soft font-mono">{{ number_format($log->actual_weight, 2) }} Kg</td>
