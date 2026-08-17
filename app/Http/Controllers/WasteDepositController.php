@@ -27,7 +27,7 @@ class WasteDepositController extends Controller
     {
         return WasteDeposit::query()
             ->whereNotNull('pickup_date')
-            ->where('status', '!=', 'rejected')
+            ->where('status', '!=', 'ditolak')
             ->whereDate('pickup_date', '>=', date('Y-m-d'))
             ->groupBy('pickup_date')
             ->havingRaw('COUNT(*) >= ?', [self::DAILY_PICKUP_QUOTA])
@@ -47,7 +47,7 @@ class WasteDepositController extends Controller
         $rows = WasteDeposit::query()
             ->whereNotNull('pickup_date')
             ->whereNotNull('pickup_time')
-            ->where('status', '!=', 'rejected')
+            ->where('status', '!=', 'ditolak')
             ->whereDate('pickup_date', '>=', date('Y-m-d'))
             ->selectRaw('pickup_date, pickup_time, COUNT(*) as total')
             ->groupBy('pickup_date', 'pickup_time')
@@ -69,12 +69,16 @@ class WasteDepositController extends Controller
         // 1. Ambil data User untuk auto-fill Alamat
         $user = User::find(session('user_id'));
 
-        // 2. Kategori Sampah yang sesuai dengan ENUM database kamu
         $categories = [
-            (object)['id' => 'plastik', 'nama' => '♻️ Plastik (Botol, Gelas, Kemasan)'],
-            (object)['id' => 'kertas',  'nama' => '📄 Kertas (Buku, Kardus, Koran)'],
-            (object)['id' => 'kain',    'nama' => '👕 Kain (Pakaian Bekas, Perca)']
+            (object)['id' => 'plastik',    'nama' => 'Plastik (Botol, Gelas, Kemasan)'],
+            (object)['id' => 'kertas',     'nama' => 'Kertas (HVS, Kardus, Koran)'],
+            (object)['id' => 'kain',       'nama' => 'Kain (Pakaian Bekas, Perca)'],
+            (object)['id' => 'logam',      'nama' => 'Logam (Kaleng, Besi, Tembaga)'],
+            (object)['id' => 'kaca',       'nama' => 'Kaca (Botol Kaca)'],
+            (object)['id' => 'elektronik', 'nama' => 'Elektronik (E-Waste)'],
         ];
+
+        $subCategories = config('sulapakarya.point_conversion');
 
         // 3. Tanggal yang sudah penuh (kuota 10) — untuk dinonaktifkan di kalender
         $fullPickupDates = $this->getFullPickupDates();
@@ -82,13 +86,13 @@ class WasteDepositController extends Controller
         // 4. Slot jam yang sudah penuh (kuota 2 per slot per hari) — untuk dinonaktifkan
         $fullTimeSlots = $this->getFullTimeSlots();
 
-        return view('dashboard.setor-sampah', compact('user', 'categories', 'fullPickupDates', 'fullTimeSlots'));
+        return view('dashboard.setor-sampah', compact('user', 'categories', 'subCategories', 'fullPickupDates', 'fullTimeSlots'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'category'         => 'required|in:plastik,kertas,kain',
+            'category'         => 'required|in:plastik,kertas,kain,logam,kaca,elektronik',
             'sub_category'     => 'nullable|string|max:255',
             'estimated_weight' => 'required|numeric|min:0.1',
             'reward_type'      => 'required|in:cash,points',
@@ -107,7 +111,7 @@ class WasteDepositController extends Controller
         // Cek kuota harian: satu hari maksimal DAILY_PICKUP_QUOTA pengangkutan.
         if ($request->filled('pickup_date')) {
             $bookedCount = WasteDeposit::whereDate('pickup_date', $request->pickup_date)
-                ->where('status', '!=', 'rejected')
+                ->where('status', '!=', 'ditolak')
                 ->count();
 
             if ($bookedCount >= self::DAILY_PICKUP_QUOTA) {
@@ -121,7 +125,7 @@ class WasteDepositController extends Controller
         if ($request->filled('pickup_date') && $request->filled('pickup_time')) {
             $slotCount = WasteDeposit::whereDate('pickup_date', $request->pickup_date)
                 ->where('pickup_time', $request->pickup_time)
-                ->where('status', '!=', 'rejected')
+                ->where('status', '!=', 'ditolak')
                 ->count();
 
             if ($slotCount >= self::SLOT_PICKUP_QUOTA) {

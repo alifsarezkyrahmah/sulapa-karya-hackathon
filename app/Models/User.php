@@ -54,4 +54,9 @@ class User extends Authenticatable
             'receiver_id'
         );
     }
+
+    public function deposits()
+    {
+        return $this->hasMany(Deposit::class, 'user_id');
+    }
 }

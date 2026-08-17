@@ -71,8 +71,10 @@
                         </div>
 
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Rincian Barang (Opsional)</span></label>
-                            <input type="text" name="sub_category" value="{{ old('sub_category') }}" placeholder="Contoh: Botol Aqua Kosong, Kardus Mie" class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20">
+                            <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Jenis Barang <span class="text-terracotta">*</span></span></label>
+                            <select name="sub_category" id="sub_category_select" required class="select select-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 font-bold">
+                                <option value="" disabled selected>-- Pilih kategori dulu --</option>
+                            </select>
                         </div>
                     </div>
 
@@ -80,8 +82,21 @@
                         <div class="form-control">
                             <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Perkiraan Berat <span class="text-terracotta">*</span></span></label>
                             <div class="relative">
-                                <input type="number" step="0.1" name="estimated_weight" value="{{ old('estimated_weight') }}" placeholder="0.0" required class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 pr-12 @error('estimated_weight') border-terracotta @enderror">
+                                <input type="number" step="0.1" name="estimated_weight" id="estimated_weight_input" value="{{ old('estimated_weight') }}" placeholder="0.0" required class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 pr-12 @error('estimated_weight') border-terracotta @enderror">
                                 <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-soft">Kg</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="point-estimation" class="hidden bg-forest/[0.04] border border-forest/10 p-4 rounded-2xl">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-ink-soft font-extrabold uppercase tracking-wider block">Estimasi Poin yang Didapat</span>
+                                <span class="text-xs text-ink-soft font-medium" id="point-rate-info"></span>
+                            </div>
+                            <div class="text-right">
+                                <span id="estimated-points" class="text-2xl font-black font-mono text-forest">0</span>
+                                <span class="text-xs font-bold text-forest block">Poin</span>
                             </div>
                         </div>
                     </div>
@@ -346,6 +361,62 @@
             pickupDateEl.addEventListener('change', refreshTimeSlots);
         }
         refreshTimeSlots(); // status awal (termasuk setelah validasi gagal / old input)
+
+        // ===== Sub-kategori dinamis & estimasi poin =====
+        var subCatData = @json($subCategories ?? []);
+        var categorySelect = document.querySelector('select[name="category"]');
+        var subCategorySelect = document.getElementById('sub_category_select');
+        var weightInput = document.getElementById('estimated_weight_input');
+        var pointEstBox = document.getElementById('point-estimation');
+        var pointsDisplay = document.getElementById('estimated-points');
+        var rateInfo = document.getElementById('point-rate-info');
+        var oldSubCategory = @json(old('sub_category', ''));
+
+        function populateSubCategories() {
+            var cat = categorySelect ? categorySelect.value : '';
+            if (!subCategorySelect) return;
+            subCategorySelect.innerHTML = '<option value="" disabled selected>-- Pilih jenis barang --</option>';
+            if (cat && subCatData[cat]) {
+                Object.keys(subCatData[cat]).forEach(function(name) {
+                    var opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    if (name === oldSubCategory) opt.selected = true;
+                    subCategorySelect.appendChild(opt);
+                });
+            }
+            updatePointEstimation();
+        }
+
+        function updatePointEstimation() {
+            var cat = categorySelect ? categorySelect.value : '';
+            var sub = subCategorySelect ? subCategorySelect.value : '';
+            var weight = weightInput ? parseFloat(weightInput.value) || 0 : 0;
+            var rate = 0;
+
+            if (cat && sub && subCatData[cat] && subCatData[cat][sub]) {
+                rate = subCatData[cat][sub];
+            }
+
+            if (rate > 0 && weight > 0) {
+                pointEstBox.classList.remove('hidden');
+                pointsDisplay.textContent = new Intl.NumberFormat('id-ID').format(Math.round(weight * rate));
+                rateInfo.textContent = sub + ': ' + new Intl.NumberFormat('id-ID').format(rate) + ' poin/kg';
+            } else if (rate > 0) {
+                pointEstBox.classList.remove('hidden');
+                pointsDisplay.textContent = '0';
+                rateInfo.textContent = sub + ': ' + new Intl.NumberFormat('id-ID').format(rate) + ' poin/kg';
+            } else {
+                pointEstBox.classList.add('hidden');
+            }
+        }
+
+        if (categorySelect) {
+            categorySelect.addEventListener('change', populateSubCategories);
+            if (categorySelect.value) populateSubCategories();
+        }
+        if (subCategorySelect) subCategorySelect.addEventListener('change', updatePointEstimation);
+        if (weightInput) weightInput.addEventListener('input', updatePointEstimation);
     });
 </script>
 @endsection

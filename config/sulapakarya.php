@@ -1,56 +1,72 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| CONFIG: SulapaKarya Business Rules
-|--------------------------------------------------------------------------
-|
-| File ini berisi SEMUA angka-angka bisnis yang dipakai di controller.
-| Taruh di: project-laravel/config/sulapakarya.php
-| Akses di controller: config('sulapakarya.material_prices.plastik.PET/HDPE')
-|
-| Kenapa di config, bukan di database?
-|   - Harga material jarang berubah
-|   - Lebih cepat diakses (tidak perlu query DB)
-|   - Gampang diubah: edit file ini, selesai
-|   - Kalau nanti mau pindah ke DB (misal admin bisa edit harga dari dashboard),
-|     tinggal buat tabel baru dan ganti config() jadi DB query
-|
-*/
-
 return [
 
-    // Harga beli material per kg (dari user/penyetor)
-    // Dipakai untuk menghitung reward poin/cash
-    'material_prices' => [
+    'point_conversion' => [
         'plastik' => [
-            'PP Berwarna'  => 2400,   // Rp/kg — Gelas plastik
-            'PET/HDPE'     => 1600,   // Rp/kg — Botol minuman/sampo
+            'Gelas Plastik (PP Berwarna)' => 960,
+            'Botol Plastik (PET/HDPE)'    => 640,
+            'Plastik Kresek (LDPE)'       => 400,
         ],
         'kertas' => [
-            'HVS/Buku'     => 1800,   // Rp/kg
-            'Kardus/Koran' => 2500,   // Rp/kg
+            'Kertas HVS/Buku Bekas'          => 720,
+            'Kardus Bekas'                    => 800,
+            'Kertas Koran'                    => 600,
+            'Kertas Dupleks (Karton Makanan)' => 400,
         ],
         'kain' => [
-            'Kain Perca'   => 10000,  // Rp/kg — Limbah tekstil
+            'Kain Perca / Limbah Tekstil' => 4000,
+        ],
+        'logam' => [
+            'Kaleng Aluminium (Minuman)' => 4800,
+            'Kaleng Besi / Seng'         => 1000,
+            'Logam Tembaga'              => 24000,
+            'Besi Tua / Padat'           => 1600,
+        ],
+        'kaca' => [
+            'Botol Kaca' => 200,
+        ],
+        'elektronik' => [
+            'Elektronik Bekas (E-Waste)' => 2000,
         ],
     ],
 
-    // Rumus konversi poin:
-    // poin = berat_kg × harga_per_kg × points_multiplier
-    // Contoh: 0.6 kg PET → 0.6 × 1600 × 10 = 9.600 poin
-    'points_multiplier' => 10,         // 1 Rupiah = 10 Poin
+    'material_prices' => [
+        'plastik' => [
+            'Gelas Plastik (PP Berwarna)' => 2400,
+            'Botol Plastik (PET/HDPE)'    => 1600,
+            'Plastik Kresek (LDPE)'       => 1000,
+        ],
+        'kertas' => [
+            'Kertas HVS/Buku Bekas'          => 1800,
+            'Kardus Bekas'                    => 2000,
+            'Kertas Koran'                    => 1500,
+            'Kertas Dupleks (Karton Makanan)' => 1000,
+        ],
+        'kain' => [
+            'Kain Perca / Limbah Tekstil' => 10000,
+        ],
+        'logam' => [
+            'Kaleng Aluminium (Minuman)' => 12000,
+            'Kaleng Besi / Seng'         => 2500,
+            'Logam Tembaga'              => 60000,
+            'Besi Tua / Padat'           => 4000,
+        ],
+        'kaca' => [
+            'Botol Kaca' => 500,
+        ],
+        'elektronik' => [
+            'Elektronik Bekas (E-Waste)' => 5000,
+        ],
+    ],
 
-    // Minimum berat untuk reward uang tunai
-    'cash_minimum_kg' => 1.0,          // Di bawah 1 kg = hanya bisa pilih poin
+    'cash_minimum_kg' => 1.0,
 
-    // Syarat penarikan tunai dari poin
-    'cash_withdrawal_min_points' => 1000000,  // 1.000.000 poin = Rp 100.000
+    'cash_withdrawal_min_points' => 1000000,
 
-    // Membership tiers
     'membership_tiers' => [
         'pemula'  => ['price' => 0,      'max_products' => 5],
-        'aktif'   => ['price' => 35000,  'max_products' => null],  // null = unlimited
+        'aktif'   => ['price' => 35000,  'max_products' => null],
         'premium' => ['price' => 100000, 'max_products' => null],
     ],
 ];

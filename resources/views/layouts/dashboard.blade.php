@@ -174,6 +174,13 @@
 
                     <!-- ================= NAVIGASI ROLE: ADMIN UTAMA ================= -->
                     @if($currentRole == 'admin')
+                        <!-- Statistik Platform -->
+                        <li>
+                            <a href="/statistik" class="flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all hover:bg-white/5 hover:text-white {{ request()->is('statistik*') ? 'bg-forest text-white font-bold' : '' }}">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="shrink-0"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                                <span class="whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">Statistik Platform</span>
+                            </a>
+                        </li>
                         <!-- 6. Verifikasi Setoran -->
                         <li>
                             <a href="/verifikasi-setoran" class="flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all hover:bg-white/5 hover:text-white {{ request()->is('verifikasi-setoran*') ? 'bg-forest text-white font-bold' : '' }}">

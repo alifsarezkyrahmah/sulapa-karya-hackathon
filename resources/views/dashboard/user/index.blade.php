@@ -2,11 +2,13 @@
 
 @section('dashboard-content')
 @php
-    // Mengambil data user secara real-time dari database berdasarkan session login Anda
     $currentUser = \App\Models\User::find(session('user_id'));
-    
-    // Proteksi Saldo Poin: Jika di bawah 0 atau kosong, paksa ke angka 0 bulat
     $safePointsBalance = ($currentUser && $currentUser->points_balance > 0) ? $currentUser->points_balance : 0;
+
+    $activeDeposits = \App\Models\WasteDeposit::where('user_id', session('user_id'))
+        ->whereIn('status', ['pending', 'menunggu_penjemput', 'penjemput_menuju_lokasi', 'penjemput_tiba'])
+        ->orderBy('created_at', 'desc')
+        ->get();
 @endphp
 
 <div class="space-y-8 animate-fadeIn text-left">
@@ -32,15 +34,13 @@
             </div>
         </div>
 
-        <!-- Kartu Akses Cepat QR Code Memicu Modal Dialog -->
-        <div onclick="qr_code_modal.showModal()" 
-             class="flex items-center gap-3 bg-white border border-forest/10 p-3 rounded-2xl w-full sm:w-auto shadow-sm cursor-pointer hover:border-forest/40 hover:bg-forest/[0.01] active:scale-95 transition-all duration-200 group">
-            <div class="bg-forest-light text-forest p-2 rounded-xl border border-forest/10 group-hover:bg-forest group-hover:text-white transition-all">
+        <div class="flex items-center gap-3 bg-white border border-forest/10 p-3 rounded-2xl w-full sm:w-auto shadow-sm">
+            <div class="bg-forest-light text-forest p-2 rounded-xl border border-forest/10">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/></svg>
             </div>
             <div class="text-left">
-                <span class="text-[10px] font-extrabold uppercase tracking-wider text-ink-soft/60 block">ID Digital Saya</span>
-                <span class="text-xs font-mono font-bold text-forest truncate block w-28 group-hover:text-forest-dark">Lihat QR Code</span>
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-ink-soft/60 block">Setoran Aktif</span>
+                <span class="text-xs font-bold text-forest">{{ $activeDeposits->count() }} <span class="text-ink-soft font-medium">setoran</span></span>
             </div>
         </div>
     </div>
@@ -110,6 +110,47 @@
             Setor Sampah Baru
         </a>
     </div>
+
+    <!-- ============ QR CODE SETORAN AKTIF ============ -->
+    @if($activeDeposits->count() > 0)
+    <div class="bg-white border border-ink/5 rounded-[1.5rem] p-6 shadow-sm">
+        <div class="mb-5 text-left">
+            <h2 class="font-display font-extrabold text-xl text-ink">QR Code Setoran Aktif</h2>
+            <p class="text-xs text-ink-soft font-medium">Tunjukkan QR Code setoran kepada kurir saat penjemputan sampah. Setiap setoran memiliki QR unik.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @foreach($activeDeposits as $dep)
+                <div class="border border-ink/5 rounded-2xl p-4 bg-cream/20 hover:bg-cream/40 transition-all">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="text-left">
+                            <span class="font-mono text-xs font-extrabold text-forest block">{{ $dep->deposit_code }}</span>
+                            <span class="text-[10px] text-ink-soft block mt-0.5">{{ ucfirst($dep->category) }} &middot; {{ number_format($dep->estimated_weight, 1) }} Kg</span>
+                            <span class="text-[10px] text-ink-soft/60 block">{{ $dep->created_at->translatedFormat('d M Y') }}</span>
+                        </div>
+                        @if($dep->status === 'pending')
+                            <span class="badge bg-amber-100 text-amber-700 border-none text-[9px] font-bold px-1.5 py-1 rounded-md shrink-0">Menunggu</span>
+                        @elseif($dep->status === 'menunggu_penjemput')
+                            <span class="badge bg-maritime/10 text-maritime border-none text-[9px] font-bold px-1.5 py-1 rounded-md shrink-0">Dijemput</span>
+                        @elseif($dep->status === 'penjemput_menuju_lokasi')
+                            <span class="badge bg-blue-100 text-blue-700 border-none text-[9px] font-bold px-1.5 py-1 rounded-md shrink-0">Kurir OTW</span>
+                        @elseif($dep->status === 'penjemput_tiba')
+                            <span class="badge bg-purple-100 text-purple-700 border-none text-[9px] font-bold px-1.5 py-1 rounded-md shrink-0">Kurir Tiba</span>
+                        @endif
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="bg-white p-3 rounded-xl border border-ink/5 shadow-inner">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data={{ urlencode($dep->deposit_code) }}&color=241F18&bgcolor=FFFFFF"
+                                 alt="QR {{ $dep->deposit_code }}"
+                                 class="w-36 h-36 rounded-lg object-contain" loading="lazy" />
+                        </div>
+                        <span class="text-[10px] text-ink-soft font-medium mt-2 italic">Scan kode ini saat kurir tiba</span>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
 
     <!-- ============ TABEL RIWAYAT MUTASI POIN MASUK & KELUAR DENGAN FILTER MULTI-OPSI ============ -->
     <div class="bg-white border border-ink/5 rounded-2xl p-6 shadow-sm space-y-4">
@@ -247,36 +288,6 @@
         </div>
     </div>
 
-    <!-- ============ MODAL POPUP DIALOG: ID DIGITAL QR CODE ============ -->
-    <dialog id="qr_code_modal" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box bg-white max-w-sm rounded-[2rem] border border-ink/5 p-6 text-center flex flex-col items-center relative shadow-2xl">
-            <form method="dialog">
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft/70 hover:text-ink">✕</button>
-            </form>
-            
-            <h3 class="font-display font-extrabold text-xl text-ink mt-3">ID Digital Anda</h3>
-            <p class="text-xs text-ink-soft font-semibold mt-1 px-4">Tunjukkan kode QR ini kepada kurir armada SulapaKarya saat melakukan penjemputan sampah.</p>
-            
-            <div class="bg-cream p-4 rounded-3xl border border-ink/5 my-6 shadow-inner flex items-center justify-center">
-                @if($currentUser && $currentUser->qr_code)
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ urlencode($currentUser->qr_code) }}&color=241F18&bgcolor=FAF6EF" 
-                         alt="QR Code ID {{ $currentUser->name }}" 
-                         class="w-44 h-44 rounded-xl object-contain shadow-sm" />
-                @else
-                    <div class="w-44 h-44 rounded-xl bg-sand/30 flex items-center justify-center text-xs text-terracotta font-bold">
-                        QR Code Gagal Dimuat
-                    </div>
-                @endif
-            </div>
-            
-            <div class="text-center w-full bg-cream/50 py-2.5 px-4 rounded-xl border border-ink/5 font-mono text-[11px] font-extrabold text-forest select-all" title="Klik 3x untuk menyalin">
-                {{ $currentUser->qr_code ?? 'Belum tergenerasi' }}
-            </div>
-        </div>
-        <form method="dialog" class="modal-backdrop bg-ink/40 backdrop-blur-sm">
-            <button>close</button>
-        </form>
-    </dialog>
 
 </div>
 

@@ -27,15 +27,6 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-3 bg-white border border-forest/10 p-3 rounded-2xl w-full sm:w-auto shadow-sm">
-            <div class="bg-amber-50 text-amber-500 p-2 rounded-xl border border-amber-100 flex items-center justify-center">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-            </div>
-            <div>
-                <span class="text-[10px] font-extrabold uppercase tracking-wider text-ink-soft/60 block">RATING OPERASIONAL</span>
-                <span class="text-sm font-bold text-ink">★ 4.9 <span class="text-xs text-ink-soft font-medium">Sempurna</span></span>
-            </div>
-        </div>
     </div>
 
     @if($errors->any())
@@ -113,8 +104,8 @@
                             <div class="modal-box bg-white max-w-md rounded-[2rem] border border-ink/5 p-6 text-left relative overflow-y-auto max-h-[90vh]">
                                 <button onclick="closeWeightModal('{{ $task->id }}')" class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft">✕</button>
                                 
-                                <h3 class="font-display font-extrabold text-xl text-ink">Validasi Timbangan & QR</h3>
-                                <p class="text-xs text-ink-soft mt-1 mb-4">Input data timbangan riil dan verifikasi QR Code warga untuk mencairkan saldo poin.</p>
+                                <h3 class="font-display font-extrabold text-xl text-ink">Validasi Timbangan & QR Setoran</h3>
+                                <p class="text-xs text-ink-soft mt-1 mb-4">Input data timbangan riil dan scan QR Code setoran warga untuk mencairkan saldo poin.</p>
                                 
                                 <form action="{{ route('penjemput.completeTransaction', $task->id) }}" method="POST" class="space-y-4">
                                     @csrf
@@ -127,34 +118,45 @@
                                                class="input input-bordered w-full rounded-xl font-bold font-mono text-xl focus:outline-none focus:border-forest bg-cream/20">
                                     </div>
 
+                                    @php
+                                        $konversi = config('sulapakarya.point_conversion');
+                                        $taskKat = strtolower($task->category);
+                                        $taskSub = $task->sub_category;
+                                        $taskRate = 400;
+                                        if (isset($konversi[$taskKat][$taskSub])) {
+                                            $taskRate = $konversi[$taskKat][$taskSub];
+                                        } elseif (isset($konversi[$taskKat])) {
+                                            $taskRate = (int) round(array_sum($konversi[$taskKat]) / count($konversi[$taskKat]));
+                                        }
+                                    @endphp
                                     <div class="bg-forest/[0.03] border border-forest/10 p-3.5 rounded-xl flex items-center justify-between">
                                         <div>
                                             <span class="text-[10px] text-ink-soft font-extrabold uppercase tracking-wider block">Insentif Tabungan Poin</span>
-                                            <span class="text-xs text-ink-soft font-medium">Nilai konversi: 1 Kg = 1.000 Poin</span>
+                                            <span class="text-xs text-ink-soft font-medium">{{ $task->sub_category ?? ucfirst($task->category) }}: {{ number_format($taskRate, 0, ',', '.') }} poin/kg</span>
                                         </div>
                                         <div class="text-right">
-                                            <span id="live_points_{{ $task->id }}" class="text-2xl font-black font-mono text-forest">0</span>
+                                            <span id="live_points_{{ $task->id }}" class="text-2xl font-black font-mono text-forest" data-rate="{{ $taskRate }}">0</span>
                                             <span class="text-xs font-bold text-forest block">Poin</span>
                                         </div>
                                     </div>
 
                                     <div class="form-control space-y-2">
-                                        <label class="label py-1 pb-0"><span class="label-text font-bold text-xs">Metode Verifikasi ID Digital Warga <span class="text-terracotta">*</span></span></label>
+                                        <label class="label py-1 pb-0"><span class="label-text font-bold text-xs">Verifikasi QR Code Setoran <span class="text-terracotta">*</span></span></label>
                                         
                                         <div class="join w-full border border-ink/10 rounded-xl overflow-hidden text-xs font-bold bg-white mb-2">
-                                            <button type="button" id="btn_mode_paste_{{ $task->id }}" onclick="toggleVerificationMode('{{ $task->id }}', 'paste')" class="join-item btn btn-xs flex-1 bg-forest text-white border-none normal-case">Salin Kode Token</button>
+                                            <button type="button" id="btn_mode_paste_{{ $task->id }}" onclick="toggleVerificationMode('{{ $task->id }}', 'paste')" class="join-item btn btn-xs flex-1 bg-forest text-white border-none normal-case">Salin Kode Setoran</button>
                                             <button type="button" id="btn_mode_scan_{{ $task->id }}" onclick="toggleVerificationMode('{{ $task->id }}', 'scan')" class="join-item btn btn-xs flex-1 bg-white text-ink-soft hover:bg-cream border-none normal-case">📸 Kamera Scan QR</button>
                                         </div>
 
                                         <div id="container_paste_{{ $task->id }}" class="relative">
-                                            <input type="text" name="qr_code_warga" id="qr_input_{{ $task->id }}" placeholder="Tempel / ketik token UUID QR Code warga..." required class="input input-bordered w-full rounded-xl text-xs focus:outline-none focus:border-forest bg-cream/20 font-mono">
+                                            <input type="text" name="qr_code_warga" id="qr_input_{{ $task->id }}" placeholder="Tempel / ketik kode setoran (misal: TRX-XXXXXX)..." required class="input input-bordered w-full rounded-xl text-xs focus:outline-none focus:border-forest bg-cream/20 font-mono">
                                         </div>
 
                                         <div id="container_scan_{{ $task->id }}" class="hidden space-y-2">
                                             <div class="w-full bg-black aspect-square rounded-2xl overflow-hidden border border-ink/10 relative shadow-inner">
                                                 <div id="reader_{{ $task->id }}" class="w-full h-full"></div>
                                             </div>
-                                            <p class="text-[10px] text-ink-soft text-center font-medium italic">Arahkan kamera ke QR Code aplikasi warga untuk memindai otomatis.</p>
+                                            <p class="text-[10px] text-ink-soft text-center font-medium italic">Arahkan kamera ke QR Code setoran warga untuk memindai otomatis.</p>
                                         </div>
                                     </div>
 
@@ -233,14 +235,14 @@
         document.getElementById('timbang_modal_' + taskId).close();
     }
 
-    // 🌟 Hitung Poin Berbasis Input Kg Lapangan Riil (Simulasi 1 Kg = 1.000 Poin)
     function updateLivePoints(taskId) {
         const weightInput = document.getElementById('actual_weight_' + taskId);
         const pointsDisplay = document.getElementById('live_points_' + taskId);
-        
+
         let weight = parseFloat(weightInput.value) || 0;
-        let finalPoints = Math.round(weight * 1000);
-        
+        let rate = parseInt(pointsDisplay.getAttribute('data-rate')) || 400;
+        let finalPoints = Math.round(weight * rate);
+
         pointsDisplay.innerText = new Intl.NumberFormat('id-ID').format(finalPoints);
     }
 
@@ -290,7 +292,7 @@
                 
                 // Kembalikan ke panel teks otomatis agar input siap dikirim
                 toggleVerificationMode(taskId, 'paste');
-                alert("✓ QR Code Warga Berhasil Dipindai!");
+                alert("✓ QR Code Setoran Berhasil Dipindai!");
             },
             (errorMessage) => {
                 // Abaikan kesalahan pembacaan frame per detik untuk kestabilan log

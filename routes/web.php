@@ -74,6 +74,10 @@ Route::middleware('supabase.auth')->group(function () {
         Route::put('/kelola-pengguna/{id}/update', [AdminController::class, 'update'])->name('admin.users.update');
         Route::delete('/kelola-pengguna/{id}', [AdminController::class, 'destroy'])->name('admin.users.destroy');
 
+        // Statistik Akumulasi Platform
+        Route::get('/statistik', [AdminController::class, 'statistics'])->name('admin.statistics');
+        Route::get('/statistik/export', [AdminController::class, 'exportCategoryData'])->name('admin.statistics.export');
+
         // Verifikasi & Penugasan Kurir untuk Setoran Sampah Warga
         Route::get('/verifikasi-setoran', [AdminController::class, 'manageDeposits'])->name('admin.deposits');
         Route::post('/verifikasi-setoran/{id}/setujui', [AdminController::class, 'approveDeposit'])->name('admin.deposits.approve');

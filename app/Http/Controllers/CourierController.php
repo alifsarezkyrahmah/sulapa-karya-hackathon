@@ -68,23 +68,22 @@ class CourierController extends Controller
             $deposit = Deposit::findOrFail($id);
             $warga = User::findOrFail($deposit->user_id);
 
-            // Validasi Keamanan: Pastikan QR Code yang disecan kurir cocok dengan pemilik setoran
-            if ($warga->qr_code !== $request->qr_code_warga) {
-                return back()->withErrors(['error' => 'Kode QR tidak cocok! Pastikan Anda memindai QR Code dari aplikasi warga yang bersangkutan.']);
+            if ($deposit->deposit_code !== $request->qr_code_warga) {
+                return back()->withErrors(['error' => 'Kode QR tidak cocok! Pastikan Anda memindai QR Code setoran yang benar dari aplikasi warga.']);
             }
 
-            // --- STRATEGI LOGIKA KALKULASI POIN KRIYA ---
             $kategori = strtolower($deposit->category);
-            $opsiHarga = [
-                'plastik' => 2500,
-                'kertas'  => 1500,
-                'kardus'  => 2000,
-                'kain'    => 4000,
-                'logam'   => 8000,
-                'kaca'    => 1000
-            ];
-            $pengaliPoin = $opsiHarga[$kategori] ?? 1000;
-            $totalPoinDihasilkan = round($request->actual_weight * $pengaliPoin);
+            $subKategori = $deposit->sub_category;
+            $konversi = config('sulapakarya.point_conversion');
+
+            $poinPerKg = 400;
+            if (isset($konversi[$kategori][$subKategori])) {
+                $poinPerKg = $konversi[$kategori][$subKategori];
+            } elseif (isset($konversi[$kategori])) {
+                $poinPerKg = (int) round(array_sum($konversi[$kategori]) / count($konversi[$kategori]));
+            }
+
+            $totalPoinDihasilkan = (int) round($request->actual_weight * $poinPerKg);
 
             // 1. Update Tabel `deposits` menjadi Selesai
             $deposit->update([

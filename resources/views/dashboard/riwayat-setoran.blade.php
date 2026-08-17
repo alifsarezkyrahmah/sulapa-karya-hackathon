@@ -18,6 +18,7 @@
                         <th class="py-3.5">Jenis Sampah</th>
                         <th class="py-3.5">Berat Timbangan</th>
                         <th class="py-3.5 text-center">Status</th>
+                        <th class="py-3.5 text-center">QR Code</th>
                         <th class="py-3.5 pr-5 text-right">Hadiah / Profit</th>
                     </tr>
                 </thead>
@@ -80,14 +81,47 @@
                                 @endif
                             </td>
 
+                            <td class="py-4 text-center">
+                                @if(in_array($d->status, ['pending', 'menunggu_penjemput', 'penjemput_menuju_lokasi', 'penjemput_tiba']))
+                                    <button onclick="document.getElementById('qr_modal_{{ $d->id }}').showModal()" class="btn btn-xs bg-forest/10 text-forest border-none hover:bg-forest hover:text-white rounded-lg font-bold normal-case text-[10px] px-2">
+                                        Lihat QR
+                                    </button>
+
+                                    <dialog id="qr_modal_{{ $d->id }}" class="modal modal-bottom sm:modal-middle">
+                                        <div class="modal-box bg-white max-w-sm rounded-[2rem] border border-ink/5 p-6 text-center flex flex-col items-center relative shadow-2xl">
+                                            <form method="dialog">
+                                                <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft/70 hover:text-ink">✕</button>
+                                            </form>
+                                            <h3 class="font-display font-extrabold text-xl text-ink mt-3">QR Code Setoran</h3>
+                                            <p class="text-xs text-ink-soft font-semibold mt-1 px-4">Tunjukkan QR ini kepada kurir saat penjemputan.</p>
+                                            <div class="bg-cream p-4 rounded-3xl border border-ink/5 my-5 shadow-inner flex items-center justify-center">
+                                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ urlencode($d->deposit_code) }}&color=241F18&bgcolor=FAF6EF"
+                                                     alt="QR {{ $d->deposit_code }}"
+                                                     class="w-44 h-44 rounded-xl object-contain shadow-sm" loading="lazy" />
+                                            </div>
+                                            <div class="text-center w-full bg-cream/50 py-2.5 px-4 rounded-xl border border-ink/5 font-mono text-[11px] font-extrabold text-forest select-all">
+                                                {{ $d->deposit_code }}
+                                            </div>
+                                        </div>
+                                        <form method="dialog" class="modal-backdrop bg-ink/40 backdrop-blur-sm">
+                                            <button>close</button>
+                                        </form>
+                                    </dialog>
+                                @elseif($d->status === 'selesai')
+                                    <span class="text-[10px] text-ink-soft/40 italic">Selesai</span>
+                                @else
+                                    <span class="text-[10px] text-ink-soft/40">-</span>
+                                @endif
+                            </td>
+
                             <td class="py-4 pr-5 text-right font-bold font-mono tracking-wide">
-                                @if(in_array($d->status, ['verified', 'completed']))
+                                @if($d->status === 'selesai')
                                     @if($d->reward_type === 'points')
                                         <span class="text-maritime">+{{ number_format($d->points_earned, 0, ',', '.') }} Poin</span>
                                     @else
                                         <span class="text-forest">Rp {{ number_format($d->cash_earned, 0, ',', '.') }}</span>
                                     @endif
-                                @elseif($d->status === 'rejected')
+                                @elseif($d->status === 'ditolak')
                                     <span class="text-terracotta text-[11px] font-sans">-</span>
                                 @else
                                     <span class="text-ink-soft/40 text-[11px] font-sans italic">Menunggu verifikasi</span>
@@ -97,7 +131,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ ($isAdmin ?? false) ? 6 : 5 }}" class="py-12 text-center text-ink-soft/60 font-medium text-xs">
+                            <td colspan="{{ ($isAdmin ?? false) ? 7 : 6 }}" class="py-12 text-center text-ink-soft/60 font-medium text-xs">
                                 <div class="flex flex-col items-center justify-center gap-2">
                                     <span class="text-2xl opacity-50">🍃</span>
                                     <p>{{ ($isAdmin ?? false) ? 'Belum ada riwayat setoran dari warga.' : 'Belum ada riwayat setoran. Ayo mulai pilah sampahmu hari ini!' }}</p>
