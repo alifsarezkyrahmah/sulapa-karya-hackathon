@@ -12,6 +12,14 @@ class PointTransfer extends Model
         'amount',
         'note',
         'reference_number',
+        'status',
+        'deposit_id',
+        'approved_by',
+        'approved_at',
+    ];
+
+    protected $casts = [
+        'approved_at' => 'datetime',
     ];
 
     public function sender()

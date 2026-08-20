@@ -194,29 +194,41 @@
                     
                     <!-- 1. MERGE LOGIKA DATA MASUK: Dari Pengiriman Poin oleh Kurir -->
                     @foreach($pointHistory as $history)
-                        @php 
-                            $hasRows = true; 
+                        @php
+                            $hasRows = true;
                             $kurir = \App\Models\User::find($history->sender_id);
                             $timestamp = \Carbon\Carbon::parse($history->created_at);
+                            $isPending = ($history->status ?? 'approved') === 'pending';
                         @endphp
-                        <tr class="mutation-row border-b border-ink/5 hover:bg-sand/10 transition-colors" 
-                            data-type="masuk" 
+                        <tr class="mutation-row border-b border-ink/5 hover:bg-sand/10 transition-colors"
+                            data-type="masuk"
                             data-date="{{ $timestamp->format('Y-m-d') }}">
                             <td class="py-3.5 pl-4">
                                 <span class="text-xs font-bold text-ink block">{{ $timestamp->translatedFormat('d M Y') }}</span>
                                 <span class="text-[10px] text-ink-soft/60 block font-mono mt-0.5">{{ $timestamp->format('H:i') }} WITA</span>
                             </td>
                             <td class="py-3.5 text-xs">
-                                <span class="font-bold text-forest flex items-center gap-1">🟢 {{ $kurir->name ?? 'Armada Kurir' }}</span>
+                                <span class="font-bold {{ $isPending ? 'text-amber-600' : 'text-forest' }} flex items-center gap-1">
+                                    {{ $isPending ? '🟡' : '🟢' }} {{ $kurir->name ?? 'Armada Kurir' }}
+                                </span>
                                 <span class="text-[10px] text-ink-soft/50 block mt-0.5 font-mono">{{ $history->reference_number }}</span>
                             </td>
                             <td class="py-3.5 text-xs text-ink-soft max-w-xs truncate" title="{{ $history->note }}">
                                 {{ $history->note ?? 'Insentif pilah sampah daur ulang' }}
+                                @if($isPending)
+                                    <span class="ml-1 text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-md">Pending</span>
+                                @endif
                             </td>
                             <td class="py-3.5 text-right pr-4">
-                                <span class="text-forest font-extrabold font-mono text-xs bg-forest/10 px-2.5 py-1 rounded-lg inline-block">
-                                    + {{ number_format($history->amount, 0, ',', '.') }}
-                                </span>
+                                @if($isPending)
+                                    <span class="text-amber-600 font-extrabold font-mono text-xs bg-amber-50 px-2.5 py-1 rounded-lg inline-block">
+                                        ~ {{ number_format($history->amount, 0, ',', '.') }}
+                                    </span>
+                                @else
+                                    <span class="text-forest font-extrabold font-mono text-xs bg-forest/10 px-2.5 py-1 rounded-lg inline-block">
+                                        + {{ number_format($history->amount, 0, ',', '.') }}
+                                    </span>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

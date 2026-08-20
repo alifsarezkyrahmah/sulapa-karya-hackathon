@@ -188,14 +188,21 @@
                                 <span class="whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">Verifikasi Setoran</span>
                             </a>
                         </li>
-                        <!-- 7. Kelola User -->
+                        <!-- 7. Verifikasi Poin -->
+                        <li>
+                            <a href="/verifikasi-poin" class="flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all hover:bg-white/5 hover:text-white {{ request()->is('verifikasi-poin*') ? 'bg-forest text-white font-bold' : '' }}">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="shrink-0"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                <span class="whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">Verifikasi Poin</span>
+                            </a>
+                        </li>
+                        <!-- 8. Kelola User -->
                         <li>
                             <a href="/kelola-pengguna" class="flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all hover:bg-white/5 hover:text-white {{ request()->is('kelola-pengguna*') ? 'bg-forest text-white font-bold' : '' }}">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="shrink-0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                                 <span class="whitespace-nowrap transition-opacity duration-300 lg:opacity-0 lg:group-hover/sidebar:opacity-100">Kelola User</span>
                             </a>
                         </li>
-                        <!-- 8. Kelola Produk -->
+                        <!-- 9. Kelola Produk -->
                         <li>
                             <a href="/kelola-produk" class="flex items-center gap-4 px-3.5 py-3 rounded-xl transition-all hover:bg-white/5 hover:text-white {{ request()->is('kelola-produk*') ? 'bg-forest text-white font-bold' : '' }}">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="shrink-0"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>

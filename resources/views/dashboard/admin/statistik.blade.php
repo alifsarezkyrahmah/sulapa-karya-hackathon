@@ -109,7 +109,9 @@
                 <table class="table w-full text-sm">
                     <thead>
                         <tr class="bg-cream/60 border-b border-ink/5 text-ink/70 font-bold uppercase tracking-wider text-xs">
-                            <th class="py-3 pl-4 text-left">Nama Barang</th>
+                            <th class="py-3 pl-4 text-left">Kecamatan</th>
+                            <th class="py-3 text-left">Kelurahan</th>
+                            <th class="py-3 text-left">Nama Barang</th>
                             <th class="py-3 text-left">Kategori Sampah</th>
                             <th class="py-3 text-center">Jumlah Setoran</th>
                             <th class="py-3 pr-4 text-right">Total Berat (Kg)</th>
@@ -119,6 +121,12 @@
                         @forelse($depositsByCategory as $cat)
                             <tr class="border-b border-ink/5 hover:bg-cream/20 transition-colors">
                                 <td class="py-3.5 pl-4">
+                                    <span class="font-bold text-ink text-xs">{{ $cat->kecamatan ?? '-' }}</span>
+                                </td>
+                                <td class="py-3.5">
+                                    <span class="text-xs text-ink-soft font-semibold">{{ $cat->kelurahan ?? '-' }}</span>
+                                </td>
+                                <td class="py-3.5">
                                     <span class="font-bold text-ink">{{ $cat->sub_category ?? '-' }}</span>
                                 </td>
                                 <td class="py-3.5">
@@ -128,7 +136,7 @@
                                 <td class="py-3.5 pr-4 text-right font-mono font-bold text-forest">{{ number_format($cat->total_weight, 1, ',', '.') }} kg</td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" class="py-6 text-center text-ink-soft/50 text-xs">Belum ada data setoran.</td></tr>
+                            <tr><td colspan="6" class="py-6 text-center text-ink-soft/50 text-xs">Belum ada data setoran.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

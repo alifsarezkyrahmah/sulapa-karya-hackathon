@@ -62,7 +62,10 @@
                                 @endif
                             </td>
 
-                            <!-- Ganti bagian penampil status di dalam loop tabel riwayat -->
+                            @php
+                                $pt = $d->pointTransfer;
+                                $poinStatus = $pt->status ?? null;
+                            @endphp
                             <td class="py-4">
                                 @if($d->status === 'pending' || $d->status === 'menunggu_admin')
                                     <span class="badge bg-amber-100 text-amber-700 border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Menunggu Verifikasi Admin</span>
@@ -72,6 +75,10 @@
                                     <span class="badge bg-blue-100 text-blue-700 border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Kurir dalam Perjalanan</span>
                                 @elseif($d->status === 'penjemput_tiba')
                                     <span class="badge bg-purple-100 text-purple-700 border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Kurir Tiba di Lokasi</span>
+                                @elseif($d->status === 'selesai' && $poinStatus === 'pending')
+                                    <span class="badge bg-amber-100 text-amber-700 border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Poin Pending</span>
+                                @elseif($d->status === 'selesai' && $poinStatus === 'rejected')
+                                    <span class="badge bg-terracotta/10 text-terracotta border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Poin Ditolak</span>
                                 @elseif($d->status === 'selesai')
                                     <span class="badge bg-forest/20 text-forest-dark border-none text-[10px] font-bold px-2 py-1.5 rounded-md">✓ Berhasil & Poin Cair</span>
                                 @elseif($d->status === 'ditolak')
@@ -115,7 +122,17 @@
                             </td>
 
                             <td class="py-4 pr-5 text-right font-bold font-mono tracking-wide">
-                                @if($d->status === 'selesai')
+                                @if($d->status === 'selesai' && $poinStatus === 'approved')
+                                    @if($d->reward_type === 'points')
+                                        <span class="text-maritime">+{{ number_format($d->points_earned, 0, ',', '.') }} Poin</span>
+                                    @else
+                                        <span class="text-forest">Rp {{ number_format($d->cash_earned, 0, ',', '.') }}</span>
+                                    @endif
+                                @elseif($d->status === 'selesai' && $poinStatus === 'pending')
+                                    <span class="text-amber-600 text-[11px] font-sans italic">Menunggu approval</span>
+                                @elseif($d->status === 'selesai' && $poinStatus === 'rejected')
+                                    <span class="text-terracotta text-[11px] font-sans">Poin ditolak</span>
+                                @elseif($d->status === 'selesai' && !$poinStatus)
                                     @if($d->reward_type === 'points')
                                         <span class="text-maritime">+{{ number_format($d->points_earned, 0, ',', '.') }} Poin</span>
                                     @else

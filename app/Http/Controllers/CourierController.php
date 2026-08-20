@@ -85,26 +85,23 @@ class CourierController extends Controller
 
             $totalPoinDihasilkan = (int) round($request->actual_weight * $poinPerKg);
 
-            // 1. Update Tabel `deposits` menjadi Selesai
             $deposit->update([
                 'status'        => 'selesai',
                 'actual_weight' => $request->actual_weight,
                 'points_earned' => $totalPoinDihasilkan,
             ]);
 
-            // 2. Mutasi Saldo: Tambahkan Poin ke akun Dompet Digital Warga
-            $warga->increment('points_balance', $totalPoinDihasilkan);
-
-            // 3. Catat Riwayat Mutasi ke Buku Kas Tabel `point_transfers` Supabase
             PointTransfer::create([
-                'sender_id'        => session('user_id'), // Kurir
-                'receiver_id'      => $warga->id, // Warga
+                'sender_id'        => session('user_id'),
+                'receiver_id'      => $warga->id,
                 'amount'           => $totalPoinDihasilkan,
-                'note'             => "Poin Cair dari Setoran Sampah " . ucfirst($deposit->category) . " (" . $request->actual_weight . " Kg)",
+                'note'             => "Poin dari Setoran Sampah " . ucfirst($deposit->category) . " (" . $request->actual_weight . " Kg)",
                 'reference_number' => 'TRF-' . strtoupper(Str::random(10)),
+                'status'           => 'pending',
+                'deposit_id'       => $deposit->id,
             ]);
 
-            return back()->with('success', 'Transaksi Sukses! Berat divalidasi dan 🌟' . number_format($totalPoinDihasilkan) . ' poin telah ditransfer ke dompet warga.');
+            return back()->with('success', 'Sampah berhasil diambil! ' . number_format($totalPoinDihasilkan) . ' poin menunggu persetujuan admin sebelum masuk ke dompet warga.');
 
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Gagal memproses transaksi: ' . $e->getMessage()]);

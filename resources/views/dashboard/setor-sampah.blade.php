@@ -88,19 +88,6 @@
                         </div>
                     </div>
 
-                    <div id="point-estimation" class="hidden bg-forest/[0.04] border border-forest/10 p-4 rounded-2xl">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-[10px] text-ink-soft font-extrabold uppercase tracking-wider block">Estimasi Poin yang Didapat</span>
-                                <span class="text-xs text-ink-soft font-medium" id="point-rate-info"></span>
-                            </div>
-                            <div class="text-right">
-                                <span id="estimated-points" class="text-2xl font-black font-mono text-forest">0</span>
-                                <span class="text-xs font-bold text-forest block">Poin</span>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="form-control mt-2">
                         <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Foto Bukti Fisik Sampah <span class="text-terracotta">*</span></span></label>
                         <input type="file" name="photo" accept="image/*" capture="environment" required class="file-input file-input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 @error('photo') border-terracotta @enderror" />
@@ -113,13 +100,34 @@
                         <span>🛵</span> Detail Penjemputan Armada
                     </h2>
                     
-                    <div class="form-control bg-cream/30 p-4 rounded-2xl border border-ink/5">
-                        <label class="label py-1 flex justify-between items-center">
+                    <div class="bg-cream/30 p-4 rounded-2xl border border-ink/5 space-y-4">
+                        <label class="label py-0">
                             <span class="label-text font-bold text-xs text-ink">Titik Lokasi Penjemputan <span class="text-terracotta">*</span></span>
-                            <span class="text-[9px] bg-maritime/10 text-maritime px-2 py-0.5 rounded font-extrabold uppercase tracking-wider">Otomatis dari Profil</span>
                         </label>
-                        <textarea name="pickup_address" rows="3" placeholder="Masukkan alamat lengkap RT/RW, Patokan gedung, dll." required class="textarea textarea-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-white shadow-inner mt-1 @error('pickup_address') border-terracotta @enderror">{{ old('pickup_address', $user->address ?? $user->alamat ?? '') }}</textarea>
-                        <label class="label"><span class="label-text-alt text-[10px] text-ink-soft">Silakan edit kotak di atas jika Anda ingin sampah dijemput di lokasi yang berbeda dari rumah Anda.</span></label>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="form-control">
+                                <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Kecamatan <span class="text-terracotta">*</span></span></label>
+                                <select name="kecamatan" id="kecamatan_select" required class="select select-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-white font-bold">
+                                    <option value="" disabled {{ old('kecamatan') ? '' : 'selected' }}>-- Pilih Kecamatan --</option>
+                                    @foreach(array_keys(config('makassar.kecamatan_kelurahan')) as $kec)
+                                        <option value="{{ $kec }}" {{ old('kecamatan') === $kec ? 'selected' : '' }}>{{ $kec }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-control">
+                                <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Kelurahan <span class="text-terracotta">*</span></span></label>
+                                <select name="kelurahan" id="kelurahan_select" required class="select select-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-white font-bold">
+                                    <option value="" disabled selected>-- Pilih kecamatan dulu --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Detail Alamat (Jalan, No. Rumah, RT/RW, Patokan) <span class="text-terracotta">*</span></span></label>
+                            <textarea name="pickup_address" rows="2" placeholder="Contoh: Jl. Perintis Kemerdekaan No. 12, RT 03/RW 05, dekat Masjid Al-Ikhlas" required class="textarea textarea-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-white shadow-inner @error('pickup_address') border-terracotta @enderror">{{ old('pickup_address', $user->address ?? $user->alamat ?? '') }}</textarea>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-2">
@@ -362,14 +370,10 @@
         }
         refreshTimeSlots(); // status awal (termasuk setelah validasi gagal / old input)
 
-        // ===== Sub-kategori dinamis & estimasi poin =====
+        // ===== Sub-kategori dinamis =====
         var subCatData = @json($subCategories ?? []);
         var categorySelect = document.querySelector('select[name="category"]');
         var subCategorySelect = document.getElementById('sub_category_select');
-        var weightInput = document.getElementById('estimated_weight_input');
-        var pointEstBox = document.getElementById('point-estimation');
-        var pointsDisplay = document.getElementById('estimated-points');
-        var rateInfo = document.getElementById('point-rate-info');
         var oldSubCategory = @json(old('sub_category', ''));
 
         function populateSubCategories() {
@@ -385,38 +389,38 @@
                     subCategorySelect.appendChild(opt);
                 });
             }
-            updatePointEstimation();
-        }
-
-        function updatePointEstimation() {
-            var cat = categorySelect ? categorySelect.value : '';
-            var sub = subCategorySelect ? subCategorySelect.value : '';
-            var weight = weightInput ? parseFloat(weightInput.value) || 0 : 0;
-            var rate = 0;
-
-            if (cat && sub && subCatData[cat] && subCatData[cat][sub]) {
-                rate = subCatData[cat][sub];
-            }
-
-            if (rate > 0 && weight > 0) {
-                pointEstBox.classList.remove('hidden');
-                pointsDisplay.textContent = new Intl.NumberFormat('id-ID').format(Math.round(weight * rate));
-                rateInfo.textContent = sub + ': ' + new Intl.NumberFormat('id-ID').format(rate) + ' poin/kg';
-            } else if (rate > 0) {
-                pointEstBox.classList.remove('hidden');
-                pointsDisplay.textContent = '0';
-                rateInfo.textContent = sub + ': ' + new Intl.NumberFormat('id-ID').format(rate) + ' poin/kg';
-            } else {
-                pointEstBox.classList.add('hidden');
-            }
         }
 
         if (categorySelect) {
             categorySelect.addEventListener('change', populateSubCategories);
             if (categorySelect.value) populateSubCategories();
         }
-        if (subCategorySelect) subCategorySelect.addEventListener('change', updatePointEstimation);
-        if (weightInput) weightInput.addEventListener('input', updatePointEstimation);
+
+        // ===== Kecamatan → Kelurahan dinamis =====
+        var kecKelData = @json(config('makassar.kecamatan_kelurahan'));
+        var kecSelect = document.getElementById('kecamatan_select');
+        var kelSelect = document.getElementById('kelurahan_select');
+        var oldKelurahan = @json(old('kelurahan', ''));
+
+        function populateKelurahan() {
+            var kec = kecSelect ? kecSelect.value : '';
+            if (!kelSelect) return;
+            kelSelect.innerHTML = '<option value="" disabled selected>-- Pilih kelurahan --</option>';
+            if (kec && kecKelData[kec]) {
+                kecKelData[kec].forEach(function(kel) {
+                    var opt = document.createElement('option');
+                    opt.value = kel;
+                    opt.textContent = kel;
+                    if (kel === oldKelurahan) opt.selected = true;
+                    kelSelect.appendChild(opt);
+                });
+            }
+        }
+
+        if (kecSelect) {
+            kecSelect.addEventListener('change', populateKelurahan);
+            if (kecSelect.value) populateKelurahan();
+        }
     });
 </script>
 @endsection

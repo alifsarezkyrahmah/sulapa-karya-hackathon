@@ -31,6 +31,8 @@ class Deposit extends Model
         'points_earned',
         'cash_earned',
         'pickup_address',
+        'kecamatan',
+        'kelurahan',
         'pickup_date',
         'pickup_time',
         'admin_notes',
@@ -77,5 +79,10 @@ class Deposit extends Model
     public function verifier()
     {
         return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    public function pointTransfer()
+    {
+        return $this->hasOne(PointTransfer::class, 'deposit_id');
     }
 }

@@ -82,6 +82,10 @@ Route::middleware('supabase.auth')->group(function () {
         Route::get('/verifikasi-setoran', [AdminController::class, 'manageDeposits'])->name('admin.deposits');
         Route::post('/verifikasi-setoran/{id}/setujui', [AdminController::class, 'approveDeposit'])->name('admin.deposits.approve');
 
+        // Verifikasi Poin Pending dari Kurir
+        Route::get('/verifikasi-poin', [AdminController::class, 'pendingPoints'])->name('admin.pending-points');
+        Route::post('/verifikasi-poin/{id}/proses', [AdminController::class, 'approvePoints'])->name('admin.points.approve');
+
         // CRUD Manajemen Data Katalog Produk Kriya (Upload, Edit, Hapus)
         Route::get('/kelola-produk', [ProductController::class, 'index'])->name('admin.products.index');
         Route::post('/kelola-produk/store', [ProductController::class, 'store'])->name('admin.products.store');

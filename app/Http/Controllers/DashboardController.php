@@ -49,10 +49,11 @@ class DashboardController extends Controller
                                 ->where('status', 'selesai')
                                 ->sum('actual_weight');
 
-            // 3. Tarik riwayat poin masuk (receiver_id bernilai ID user yang sedang login)
+            // 3. Tarik riwayat poin masuk (approved) dan pending
             $pointHistory = \App\Models\PointTransfer::where('receiver_id', $userId)
+                                ->whereIn('status', ['approved', 'pending'])
                                 ->orderBy('created_at', 'desc')
-                                ->take(5) // Batasi 5 transaksi terakhir untuk widget dashboard
+                                ->take(10)
                                 ->get();
 
 

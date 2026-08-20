@@ -96,6 +96,8 @@ class WasteDepositController extends Controller
             'sub_category'     => 'nullable|string|max:255',
             'estimated_weight' => 'required|numeric|min:0.1',
             'reward_type'      => 'required|in:cash,points',
+            'kecamatan'        => 'required|string|max:100',
+            'kelurahan'        => 'required|string|max:100',
             'pickup_address'   => 'required|string',
             'pickup_date'      => 'nullable|date|after:today',
             'pickup_time'      => 'nullable|in:08:00,09:00,10:00,11:00,12:00,13:00,14:00,15:00,16:00',
@@ -143,6 +145,8 @@ class WasteDepositController extends Controller
 
             $depositCode = 'TRX-' . strtoupper(substr(uniqid(), -6));
 
+            $fullAddress = $request->pickup_address . ', Kel. ' . $request->kelurahan . ', Kec. ' . $request->kecamatan . ', Makassar';
+
             WasteDeposit::create([
                 'user_id'          => session('user_id'),
                 'deposit_code'     => $depositCode,
@@ -151,8 +155,10 @@ class WasteDepositController extends Controller
                 'estimated_weight' => $request->estimated_weight,
                 'photo_path'       => $photoPath,
                 'reward_type'      => $request->reward_type,
-                'status'           => 'pending', 
-                'pickup_address'   => $request->pickup_address,
+                'status'           => 'pending',
+                'pickup_address'   => $fullAddress,
+                'kecamatan'        => $request->kecamatan,
+                'kelurahan'        => $request->kelurahan,
                 'pickup_date'      => $request->pickup_date,
                 'pickup_time'      => $request->pickup_time,
             ]);
@@ -170,7 +176,7 @@ class WasteDepositController extends Controller
     $isAdmin = $currentUser && $currentUser->role === 'admin';
 
     // Admin melihat SEMUA riwayat setoran warga; user biasa hanya miliknya sendiri.
-    $query = \App\Models\Deposit::with('user')->orderBy('created_at', 'desc');
+    $query = \App\Models\Deposit::with(['user', 'pointTransfer'])->orderBy('created_at', 'desc');
 
     if (!$isAdmin) {
         $query->where('user_id', session('user_id'));

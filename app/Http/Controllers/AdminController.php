@@ -184,7 +184,79 @@ class AdminController extends Controller
 
 
     // ========================================================================
-    // BLOK 3: STATISTIK AKUMULASI PLATFORM
+    // BLOK 3: VERIFIKASI POIN PENDING
+    // ========================================================================
+
+    public function pendingPoints()
+    {
+        $this->autoApprovePendingPoints();
+
+        $pendingTransfers = PointTransfer::where('status', 'pending')
+            ->with(['sender', 'receiver'])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return view('dashboard.admin.verifikasi-poin', compact('pendingTransfers'));
+    }
+
+    public function approvePoints(Request $request, $id)
+    {
+        $request->validate(['keputusan' => 'required|in:setujui,tolak']);
+
+        try {
+            $transfer = PointTransfer::findOrFail($id);
+
+            if ($transfer->status !== 'pending') {
+                return back()->withErrors(['error' => 'Transfer poin ini sudah diproses sebelumnya.']);
+            }
+
+            if ($request->keputusan === 'setujui') {
+                $transfer->update([
+                    'status'      => 'approved',
+                    'approved_by' => session('user_id'),
+                    'approved_at' => Carbon::now(),
+                ]);
+
+                $warga = User::findOrFail($transfer->receiver_id);
+                $warga->increment('points_balance', $transfer->amount);
+
+                return back()->with('success', number_format($transfer->amount) . ' poin berhasil dicairkan ke akun ' . $warga->name . '!');
+            } else {
+                $transfer->update([
+                    'status'      => 'rejected',
+                    'approved_by' => session('user_id'),
+                    'approved_at' => Carbon::now(),
+                ]);
+
+                return back()->with('success', 'Poin ditolak. Saldo warga tidak berubah.');
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Gagal memproses: ' . $e->getMessage()]);
+        }
+    }
+
+    private function autoApprovePendingPoints()
+    {
+        $expired = PointTransfer::where('status', 'pending')
+            ->where('created_at', '<=', Carbon::now()->subHours(24))
+            ->get();
+
+        foreach ($expired as $transfer) {
+            $transfer->update([
+                'status'      => 'approved',
+                'approved_at' => Carbon::now(),
+            ]);
+
+            $warga = User::find($transfer->receiver_id);
+            if ($warga) {
+                $warga->increment('points_balance', $transfer->amount);
+            }
+        }
+    }
+
+
+    // ========================================================================
+    // BLOK 4: STATISTIK AKUMULASI PLATFORM
     // ========================================================================
 
     public function statistics()
@@ -206,10 +278,14 @@ class AdminController extends Controller
         $depositsByCategory = Deposit::select(
                 'sub_category',
                 'category',
+                'kecamatan',
+                'kelurahan',
                 DB::raw('COUNT(*) as total'),
                 DB::raw('COALESCE(SUM(actual_weight), 0) as total_weight')
             )
-            ->groupBy('sub_category', 'category')
+            ->groupBy('sub_category', 'category', 'kecamatan', 'kelurahan')
+            ->orderBy('kecamatan')
+            ->orderBy('kelurahan')
             ->orderBy('category')
             ->get();
 
@@ -262,10 +338,14 @@ class AdminController extends Controller
         $rows = Deposit::select(
                 'sub_category',
                 'category',
+                'kecamatan',
+                'kelurahan',
                 DB::raw('COUNT(*) as total'),
                 DB::raw('COALESCE(SUM(actual_weight), 0) as total_weight')
             )
-            ->groupBy('sub_category', 'category')
+            ->groupBy('sub_category', 'category', 'kecamatan', 'kelurahan')
+            ->orderBy('kecamatan')
+            ->orderBy('kelurahan')
             ->orderBy('category')
             ->get();
 
@@ -273,24 +353,24 @@ class AdminController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Akumulasi Kategori');
 
-        $sheet->mergeCells('A1:D1');
+        $sheet->mergeCells('A1:F1');
         $sheet->setCellValue('A1', 'Akumulasi per Kategori Sampah — SulapaKarya');
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
         $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         $sheet->setCellValue('A2', 'Diekspor: ' . Carbon::now()->translatedFormat('d F Y, H:i') . ' WITA');
-        $sheet->mergeCells('A2:D2');
+        $sheet->mergeCells('A2:F2');
         $sheet->getStyle('A2')->getFont()->setSize(9)->setItalic(true);
         $sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         $headerRow = 4;
-        $headers = ['Nama Barang', 'Kategori Sampah', 'Jumlah Setoran', 'Total Berat (Kg)'];
+        $headers = ['Kecamatan', 'Kelurahan', 'Nama Barang', 'Kategori Sampah', 'Jumlah Setoran', 'Total Berat (Kg)'];
         foreach ($headers as $col => $text) {
             $cell = chr(65 + $col) . $headerRow;
             $sheet->setCellValue($cell, $text);
         }
 
-        $headerRange = 'A' . $headerRow . ':D' . $headerRow;
+        $headerRange = 'A' . $headerRow . ':F' . $headerRow;
         $sheet->getStyle($headerRange)->applyFromArray([
             'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 11],
             'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '2F6B3C']],
@@ -301,17 +381,19 @@ class AdminController extends Controller
 
         $dataRow = $headerRow + 1;
         foreach ($rows as $row) {
-            $sheet->setCellValue('A' . $dataRow, $row->sub_category ?? '-');
-            $sheet->setCellValue('B' . $dataRow, ucfirst($row->category));
-            $sheet->setCellValue('C' . $dataRow, (int) $row->total);
-            $sheet->setCellValue('D' . $dataRow, round($row->total_weight, 1));
+            $sheet->setCellValue('A' . $dataRow, $row->kecamatan ?? '-');
+            $sheet->setCellValue('B' . $dataRow, $row->kelurahan ?? '-');
+            $sheet->setCellValue('C' . $dataRow, $row->sub_category ?? '-');
+            $sheet->setCellValue('D' . $dataRow, ucfirst($row->category));
+            $sheet->setCellValue('E' . $dataRow, (int) $row->total);
+            $sheet->setCellValue('F' . $dataRow, round($row->total_weight, 1));
 
-            $sheet->getStyle('C' . $dataRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle('D' . $dataRow)->getNumberFormat()->setFormatCode('#,##0.0');
-            $sheet->getStyle('D' . $dataRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle('E' . $dataRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('F' . $dataRow)->getNumberFormat()->setFormatCode('#,##0.0');
+            $sheet->getStyle('F' . $dataRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
 
             if ($dataRow % 2 === 0) {
-                $sheet->getStyle('A' . $dataRow . ':D' . $dataRow)->getFill()
+                $sheet->getStyle('A' . $dataRow . ':F' . $dataRow)->getFill()
                     ->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F2F7F3');
             }
 
@@ -320,29 +402,31 @@ class AdminController extends Controller
 
         $lastRow = $dataRow - 1;
         if ($lastRow >= $headerRow + 1) {
-            $dataRange = 'A' . ($headerRow + 1) . ':D' . $lastRow;
+            $dataRange = 'A' . ($headerRow + 1) . ':F' . $lastRow;
             $sheet->getStyle($dataRange)->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'D0D5D1']]],
                 'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            $sheet->setCellValue('B' . $dataRow, 'TOTAL');
-            $sheet->setCellValue('C' . $dataRow, '=SUM(C' . ($headerRow + 1) . ':C' . $lastRow . ')');
-            $sheet->setCellValue('D' . $dataRow, '=SUM(D' . ($headerRow + 1) . ':D' . $lastRow . ')');
-            $sheet->getStyle('A' . $dataRow . ':D' . $dataRow)->applyFromArray([
+            $sheet->setCellValue('D' . $dataRow, 'TOTAL');
+            $sheet->setCellValue('E' . $dataRow, '=SUM(E' . ($headerRow + 1) . ':E' . $lastRow . ')');
+            $sheet->setCellValue('F' . $dataRow, '=SUM(F' . ($headerRow + 1) . ':F' . $lastRow . ')');
+            $sheet->getStyle('A' . $dataRow . ':F' . $dataRow)->applyFromArray([
                 'font' => ['bold' => true, 'size' => 11],
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'E8F0E9']],
                 'borders' => ['top' => ['borderStyle' => Border::BORDER_MEDIUM, 'color' => ['rgb' => '2F6B3C']]],
             ]);
-            $sheet->getStyle('C' . $dataRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle('D' . $dataRow)->getNumberFormat()->setFormatCode('#,##0.0');
-            $sheet->getStyle('D' . $dataRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle('E' . $dataRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('F' . $dataRow)->getNumberFormat()->setFormatCode('#,##0.0');
+            $sheet->getStyle('F' . $dataRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
         }
 
-        $sheet->getColumnDimension('A')->setWidth(36);
-        $sheet->getColumnDimension('B')->setWidth(20);
-        $sheet->getColumnDimension('C')->setWidth(18);
+        $sheet->getColumnDimension('A')->setWidth(22);
+        $sheet->getColumnDimension('B')->setWidth(22);
+        $sheet->getColumnDimension('C')->setWidth(36);
         $sheet->getColumnDimension('D')->setWidth(20);
+        $sheet->getColumnDimension('E')->setWidth(18);
+        $sheet->getColumnDimension('F')->setWidth(20);
 
         $filename = 'akumulasi_kategori_sampah_' . date('Y-m-d') . '.xlsx';
         $tempFile = storage_path('app/' . $filename);
