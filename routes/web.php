@@ -14,8 +14,19 @@ use App\Http\Controllers\CartController;
 // ==========================================
 // 1. RUTE PUBLIK (BISA DIAKSES TANPA LOGIN)
 // ==========================================
-Route::get('/', function () { 
-    return view('welcome'); 
+Route::get('/', function () {
+
+    $products = \App\Models\Product::where('status', 'available')
+        ->orderBy('created_at', 'desc')
+        ->take(8)
+        ->get();
+
+    $totalAvailableProducts = \App\Models\Product::where('status', 'available')->count();
+
+    $showCatalogButton = $totalAvailableProducts > 8;
+
+    return view('welcome', compact('products', 'showCatalogButton'));
+
 })->name('home');
 
 Route::get('/auth/google', [SupabaseAuthController::class, 'redirectToGoogle'])->name('auth.google');

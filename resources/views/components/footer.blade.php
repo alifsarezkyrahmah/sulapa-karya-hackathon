@@ -36,8 +36,8 @@
         </h4>
         <ul class="space-y-3 text-sm font-medium">
           <li>
-            <a href="#tentang" class="text-cream/60 hover:text-white link link-hover underline-offset-4 transition-colors">
-              Tentang Kami
+            <a href="#latar-belakang" class="text-cream/60 hover:text-white link link-hover underline-offset-4 transition-colors">
+              Latar Belakang
             </a>
           </li>
           <li>

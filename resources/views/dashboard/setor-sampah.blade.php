@@ -1,6 +1,7 @@
 @extends('layouts.dashboard', ['title' => 'Setor Sampah — SulapaKarya'])
 
 @section('dashboard-content')
+
 <div class="max-w-4xl mx-auto space-y-6 animate-fadeIn py-8 px-4 sm:px-6">
     
     <div class="text-left bg-gradient-to-r from-forest to-forest-dark p-8 rounded-[2rem] text-white shadow-lg shadow-forest/20 relative overflow-hidden">

@@ -64,8 +64,8 @@
                 <!-- ========================================== -->
                 <!-- MODAL 1: DETAIL PRODUK -->
                 <!-- ========================================== -->
-                <dialog id="detail_modal_{{ $product->id }}" class="modal modal-bottom sm:modal-middle">
-                    <div class="modal-box bg-white max-w-md rounded-[2rem] border border-ink/5 p-6 text-left relative">
+ss="moda                <dialog id="detail_modal_{{ $product->id }}" class="modal modal-bottom sm:modal-middle">
+                    <div clal-box bg-white max-w-md rounded-[2rem] border border-ink/5 p-6 text-left relative">
                         <form method="dialog"><button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft">✕</button></form>
                         
                         <h3 class="font-display font-extrabold text-xl text-ink border-b border-ink/5 pb-3">Detail Hasil Karya</h3>
