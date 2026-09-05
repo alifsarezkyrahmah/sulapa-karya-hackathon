@@ -25,12 +25,18 @@
   <div class="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-10 lg:py-16 relative">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
       
-      <div class="lg:col-span-6 flex flex-col items-start space-y-6 z-10">
-        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-forest leading-[1.15] tracking-tight">
-          Satu Sampah di Tanganmu Dapat Menjadi Nilai yang Berharga
+      <div class="lg:col-span-6 flex flex-col items-start space-y-6 z-10 text-left">
+        <!-- Judul Utama (H1) -->
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-forest leading-[1.2] tracking-tight">
+          Ubah Sampah di Tanganmu Jadi Nilai Berharga
         </h1>
 
-        <div class="pt-8">
+        <!-- Subjudul (P) -->
+        <p class="text-base sm:text-lg text-ink-soft leading-relaxed max-w-xl">
+          Dari satu sampah ditanganmu, .
+        </p>
+
+        <div class="pt-2 flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           @if(session()->has('user_id'))
             <a href="/setor-sampah" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-8 py-3 text-sm normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 hover:scale-105 active:scale-95">
               Mulai Setor Sekarang!
@@ -40,6 +46,9 @@
               Mulai Setor Sekarang!
             </a>
           @endif
+          <a class="btn bg-cream/10 hover:bg-cream/20 text-forest border-forest font-bold rounded-full px-8 py-3 text-sm normal-case border border-cream/20 shadow-md shadow-forest/10 transition-all duration-200 hover:scale-105 active:scale-95 ml-4" href="#kalkulator">
+            Hitung Nilai Sampahmu
+          </a>
         </div>
       </div>
 
@@ -56,59 +65,173 @@
   </div>
 </section>
 
-<!-- ============ Live Count Dampak Webapp ============ -->
-<section id="live-count-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 mb-16 relative z-20">
-  <div class="relative rounded-[2rem] bg-gradient-to-br from-forest-light via-sand to-forest-light border border-ink/10 overflow-hidden">
-    
-    <div class="dot-grid absolute inset-0 text-forest/10"></div>
-    <div class="relative px-6 sm:px-12 py-10 sm:py-16 flex flex-col items-center justify-center gap-10 sm:gap-14">
+<div id="tentang-kami">
+  <!-- ============ Tentang Kami ============ -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
       
-      <div class="text-center">
-        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-forest tracking-tight">
-          Lihat kontribusimu untuk lingkungan, secara langsung!
+      <!-- GAMBAR (SEBELAH KIRI) -->
+      <div class="lg:col-span-6 flex justify-start items-center relative order-2 lg:order-1">
+        <img src="{{ asset('images/tempat-sampah.png') }}" alt="Tentang SulapaKarya" class="w-full max-w-[440px] lg:max-w-[480px] h-auto object-contain drop-shadow-lg hover:scale-105 transition-transform duration-300 pointer-events-none">
+      </div>
+
+      <!-- TEKS (SEBELAH KANAN) -->
+      <div class="lg:col-span-6 flex flex-col items-start space-y-6 order-1 lg:order-2">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
+          Tentang SulapaKarya
         </h2>
+        <p class="text-sm sm:text-base text-ink-soft leading-relaxed">
+          Sampah anorganik yang menumpuk setiap hari, padahal masih punya nilai jual. SulapaKarya hadir untuk menjembatani masyarakat yang ingin berkontribusi menjaga lingkungan dalam nilai sambil mendapatkan penghasilan tambahan.      </p>
+        <p class="text-sm sm:text-base text-ink-soft leading-relaxed">
+          SulapaKarya membantu masyarakat dalam gerakan daur ulang yang berkelanjutan di Kota Makassar sehingga mewujudkan Makassar Kota Bebas Sampah.
       </div>
-
-      <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 lg:gap-24 items-start max-w-5xl mx-auto">
-
-        <div class="flex flex-col items-center text-center">
-          <div class="flex items-baseline gap-2 mb-3">
-            <span class="counter-number text-4xl sm:text-5xl font-extrabold text-ink tracking-tight" data-target="1450">0</span>
-            <span class="text-base sm:text-lg font-bold text-forest">Kg</span>
-          </div>
-          <span class="text-xs sm:text-sm font-semibold text-ink-soft max-w-[180px] leading-snug">
-            Total Sampah Diselamatkan
-          </span>
-        </div>
-
-        <div class="flex flex-col items-center text-center">
-          <div class="flex items-baseline gap-2 mb-3">
-            <span class="counter-number text-4xl sm:text-5xl font-extrabold text-ink tracking-tight" data-target="420">0</span>
-            <span class="text-base sm:text-lg font-bold text-forest">Pcs</span>
-          </div>
-          <span class="text-xs sm:text-sm font-semibold text-ink-soft max-w-[180px] leading-snug">
-            Produk Kriya Terjual
-          </span>
-        </div>
-
-        <div class="flex flex-col items-center text-center">
-          <div class="flex items-baseline gap-2 mb-3">
-            <span class="counter-number text-4xl sm:text-5xl font-extrabold text-ink tracking-tight" data-target="15">0</span>
-            <span class="text-base sm:text-lg font-bold text-forest">Orang</span>
-          </div>
-          <span class="text-xs sm:text-sm font-semibold text-ink-soft max-w-[180px] leading-snug">
-            Pengrajin Lokal Diberdayakan
-          </span>
-        </div>
-
-      </div>
-
     </div>
-  </div>
-</section>
+  </section>
+
+  <!-- ============ CARA KERJA / PROSES ============ -->
+  <section id="cara-kerja" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+    
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-forest tracking-tight">Bagaimana SulapaKarya Bekerja</h2>
+      <p class="text-xs sm:text-sm text-ink-soft mt-2">Dari sampah di rumahmu, hingga menjadi karya bernilai tinggi.</p>
+    </div>
+
+    <div class="relative">
+      
+      <div class="absolute left-1/2 top-5 bottom-5 w-0.5 bg-forest/20 -translate-x-1/2 z-0 hidden sm:block"></div>
+
+      <div class="space-y-4 sm:space-y-5 relative z-10">
+
+        <!-- STEP 1 (KIRI) -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <div class="w-full sm:w-[42%] text-center sm:text-right order-2 sm:order-1">
+            <h3 class="text-sm font-bold text-ink">Pilah Sampah</h3>
+            <p class="text-xs text-ink-soft mt-1 leading-relaxed">Pisahkan sampahmu sesuai jenisnya di rumah.</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
+            1
+          </div>
+          <div class="w-full sm:w-[42%] hidden sm:block order-3"></div>
+        </div>
+
+        <!-- STEP 2 (KANAN) -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <div class="w-full sm:w-[42%] hidden sm:block order-3 sm:order-1"></div>
+          <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
+            2
+          </div>
+          <div class="w-full sm:w-[42%] text-center sm:text-left order-2 sm:order-3">
+            <h3 class="text-sm font-bold text-ink">Setor ke Kami</h3>
+            <p class="text-xs text-ink-soft mt-1 leading-relaxed">Antar langsung ke titik kumpul terdekat atau jadwalkan penjemputan oleh kurir kami.</p>
+          </div>
+        </div>
+
+        <!-- STEP 3 (KIRI) -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <div class="w-full sm:w-[42%] text-center sm:text-right order-2 sm:order-1">
+            <h3 class="text-sm font-bold text-ink">Verifikasi & Penimbangan</h3>
+            <p class="text-xs text-ink-soft mt-1 leading-relaxed">Tim kami akan mengecek serta menimbang sampahmu.</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
+            3
+          </div>
+          <div class="w-full sm:w-[42%] hidden sm:block order-3"></div>
+        </div>
+
+        <!-- STEP 4 (KANAN) -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <div class="w-full sm:w-[42%] hidden sm:block order-3 sm:order-1"></div>
+          <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
+            4
+          </div>
+          <div class="w-full sm:w-[42%] text-center sm:text-left order-2 sm:order-3">
+            <h3 class="text-sm font-bold text-ink">Dapatkan Poin</h3>
+            <p class="text-xs text-ink-soft mt-1 leading-relaxed">Poin langsung masuk ke akunmu setelah verifikasi selesai.</p>
+          </div>
+        </div>
+
+        <!-- STEP 5 (KIRI) -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <div class="w-full sm:w-[42%] text-center sm:text-right order-2 sm:order-1">
+            <h3 class="text-sm font-bold text-ink">Tukar & Belanja</h3>
+            <p class="text-xs text-ink-soft mt-1 leading-relaxed">Pakai poin untuk diskon belanja produk kriya atau cairkan jadi uang tunai.</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
+            5
+          </div>
+          <div class="w-full sm:w-[42%] hidden sm:block order-3"></div>
+        </div>
+
+        <!-- STEP 6 (KANAN) -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <div class="w-full sm:w-[42%] hidden sm:block order-3 sm:order-1"></div>
+          <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
+            6
+          </div>
+          <div class="w-full sm:w-[42%] text-center sm:text-left order-2 sm:order-3">
+            <h3 class="text-sm font-bold text-ink">Langganan Layanan</h3>
+            <p class="text-xs text-ink-soft mt-1 leading-relaxed">Akses fitur khusus seperti jadwal rutin dan promo eksklusif untuk warga maupun perusahaan.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Live Count Dampak Webapp ============ -->
+  <section id="live-count-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 mb-16 relative z-20">
+    <div class="relative rounded-[2rem] bg-gradient-to-br from-forest-light via-sand to-forest-light border border-ink/10 overflow-hidden">
+      
+      <div class="dot-grid absolute inset-0 text-forest/10"></div>
+      <div class="relative px-6 sm:px-12 py-10 sm:py-16 flex flex-col items-center justify-center gap-10 sm:gap-14">
+        
+        <div class="text-center">
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-forest tracking-tight">
+            Lihat kontribusimu untuk lingkungan!
+          </h2>
+        </div>
+
+        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 lg:gap-24 items-start max-w-5xl mx-auto">
+
+          <div class="flex flex-col items-center text-center">
+            <div class="flex items-baseline gap-2 mb-3">
+              <span class="counter-number text-4xl sm:text-5xl font-extrabold text-ink tracking-tight" data-target="1450">0</span>
+              <span class="text-base sm:text-lg font-bold text-forest">Kg</span>
+            </div>
+            <span class="text-xs sm:text-sm font-semibold text-ink-soft max-w-[180px] leading-snug">
+              Total Sampah Diselamatkan
+            </span>
+          </div>
+
+          <div class="flex flex-col items-center text-center">
+            <div class="flex items-baseline gap-2 mb-3">
+              <span class="counter-number text-4xl sm:text-5xl font-extrabold text-ink tracking-tight" data-target="420">0</span>
+              <span class="text-base sm:text-lg font-bold text-forest">Pcs</span>
+            </div>
+            <span class="text-xs sm:text-sm font-semibold text-ink-soft max-w-[180px] leading-snug">
+              Produk Kriya Terjual
+            </span>
+          </div>
+
+          <div class="flex flex-col items-center text-center">
+            <div class="flex items-baseline gap-2 mb-3">
+              <span class="counter-number text-4xl sm:text-5xl font-extrabold text-ink tracking-tight" data-target="15">0</span>
+              <span class="text-base sm:text-lg font-bold text-forest">Orang</span>
+            </div>
+            <span class="text-xs sm:text-sm font-semibold text-ink-soft max-w-[180px] leading-snug">
+              Pengrajin Lokal Diberdayakan
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
 
 <!-- ============ SECTION: JENIS SAMPAH YANG DITERIMA ============ -->
-<section id="katalog-sampah" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+<section id="cara-memilah" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
   <div class="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
     <h2 class="text-3xl sm:text-4xl font-extrabold text-forest tracking-tight mt-4">
       Jenis Sampah yang Kami Terima
@@ -324,7 +447,7 @@
           <div class="flex-1">
             <select class="waste-select w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/40 cursor-pointer">
               <option value="" selected class="text-ink">-- Pilih Jenis Sampah --</option>
-              <option value="gelas-plastik" data-price="2500" selected class="text-ink">Gelas Plastik</option>
+              <option value="gelas-plastik" data-price="2500" class="text-ink">Gelas Plastik</option>
               <option value="botol-plastik" data-price="3000" class="text-ink">Botol Plastik</option>
               <option value="kertas-hvs" data-price="1500" class="text-ink">Kertas HVS / Buku Bekas</option>
               <option value="kertas-koran" data-price="1200" class="text-ink">Kertas Koran</option>
@@ -393,14 +516,15 @@
   </div>
 </section>
 
+
 <!-- ============ Katalog Produk Daur Ulang ============ -->
-<section id="produk" class="py-12 sm:py-16 lg:py-20">
+<section id="katalog" class="py-12 sm:py-16 lg:py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
     <!-- Section Header (Tengah/Center & Tanpa Background Pemisah) -->
     <div class="text-center max-w-2xl mx-auto mb-12">
       <h2 class="text-3xl sm:text-4xl font-extrabold text-forest tracking-tight">
-        Katalog Produk Daur Ulang
+        Katalog Kriya Daur Ulang
       </h2>
       <p class="text-ink-soft text-sm sm:text-base mt-2">
         Dukung pengrajin lokal dengan membeli produk hasil olahan sampah berkualitas.
