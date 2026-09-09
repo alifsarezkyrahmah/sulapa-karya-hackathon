@@ -259,7 +259,7 @@
 
       <!-- TEKS HERO (Di bawah gambar di HP via order-2) -->
       <div class="order-2 md:order-1 md:col-span-6 flex flex-col items-center md:items-start space-y-4 md:space-y-6 z-10 text-center md:text-left" id="hero-text-container">
-        <h1 class="hero-animate-item delay-100 text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-extrabold text-forest leading-[1.2] tracking-tight">
+        <h1 class="hero-animate-item delay-100 text-4xl sm:text-4xl md:text-4xl lg:text-5xl font-extrabold text-forest leading-[1.2] tracking-tight">
           Ubah Sampah di Tanganmu Jadi Nilai Berharga
         </h1>
 
