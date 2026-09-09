@@ -82,4 +82,28 @@ class DashboardController extends Controller
     {
         return view('dashboard.admin.index');
     }
+
+
+    public static function checkAndReleaseExpiredDeposits()
+    {
+        $threshold = \Carbon\Carbon::now()->subHours(24);
+
+        $expiredDeposits = \App\Models\Deposit::where('status', 'sedang_diproses')
+            ->where('updated_at', '<=', $threshold)
+            ->get();
+
+        foreach ($expiredDeposits as $deposit) {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($deposit) {
+                $warga = \App\Models\User::find($deposit->user_id);
+                if ($warga && $deposit->points_earned > 0) {
+                    $warga->increment('points', $deposit->points_earned);
+                }
+
+                $deposit->update([
+                    'status'   => 'berhasil_dikirim',
+                    'qc_notes' => trim(($deposit->qc_notes ?? '') . ' [Auto-Released: Lewat 1x24 Jam]'),
+                ]);
+            });
+        }
+    }
 }

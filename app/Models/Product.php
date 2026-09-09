@@ -11,6 +11,11 @@ class Product extends Model
 
     protected $table = 'products';
 
+    // Kolom id di database adalah bigint (auto-increment)
+    protected $primaryKey = 'id';
+    public $incrementing = true;
+    protected $keyType = 'int';
+
     protected $fillable = [
         'artisan_id',
         'name',
@@ -24,8 +29,14 @@ class Product extends Model
         'status',
     ];
 
+    protected $casts = [
+        'is_featured' => 'boolean',
+        'price'       => 'integer',
+        'stock'       => 'integer',
+    ];
+
     /**
-     * Relasi ke Pengrajin (User) yang membuat produk ini
+     * Relasi ke Pengrajin (User)
      */
     public function artisan()
     {
@@ -34,7 +45,6 @@ class Product extends Model
 
     public function transactions()
     {
-        // Sesuaikan 'product_id' dengan nama kolom asli di tabel transactions kamu
         return $this->hasMany(Transaction::class, 'product_id'); 
     }
 }

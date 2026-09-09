@@ -19,6 +19,7 @@ class Deposit extends Model
      */
     protected $fillable = [
         'user_id',
+        'deposit_type',
         'penjemput_id', // Kolom penugasan kurir
         'deposit_code',
         'category',

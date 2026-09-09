@@ -1,439 +1,579 @@
 @extends('layouts.dashboard', ['title' => 'Kelola Produk Kriya — SulapaKarya'])
 
 @section('dashboard-content')
-<div class="space-y-6 animate-fadeIn text-left">
+<div class="space-y-6 text-left">
 
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div class="text-left">
-            <h1 class="font-display font-extrabold text-2xl text-ink tracking-tight">Katalog Produk Kriya</h1>
-            <p class="text-xs text-ink-soft/80 font-medium mt-1">Kelola data produk daur ulang (upcycling) yang dijual dalam mata uang Rupiah via Midtrans.</p>
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-ink/5">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-bold text-ink tracking-tight">Katalog Produk Kriya</h1>
+            <p class="text-xs text-ink-soft mt-0.5">Kelola inventaris hasil karya daur ulang (upcycling) mitra artisan dan pantau riwayat penjualan.</p>
         </div>
-        <button onclick="add_product_modal.showModal()" class="btn btn-sm bg-forest border-none text-white hover:bg-forest-dark rounded-xl normal-case shadow-md font-bold px-4 gap-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
+        <button type="button" onclick="document.getElementById('add_product_modal').showModal()" 
+            class="btn btn-sm bg-forest hover:bg-forest-dark text-white border-none rounded-xl text-xs font-semibold px-4 h-10 shadow-sm transition-all w-full sm:w-auto">
+            <svg class="w-4 h-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Upload Produk Baru
         </button>
     </div>
 
+    <!-- Alert Notifikasi -->
     @if($errors->any())
-    <div class="alert alert-error bg-terracotta/10 border-terracotta/20 text-terracotta rounded-2xl text-xs font-bold text-left p-4 shadow-sm">
-        <ul class="list-disc list-inside space-y-0.5">
-            @foreach($errors->all() as $error) <li>{{ $error }}</li> @endforeach
-        </ul>
-    </div>
+        <div class="alert alert-error bg-terracotta/10 border border-terracotta/20 text-terracotta rounded-2xl text-xs font-semibold p-4 shadow-none">
+            <ul class="list-disc list-inside space-y-0.5">
+                @foreach($errors->all() as $error) <li>{{ $error }}</li> @endforeach
+            </ul>
+        </div>
     @endif
     @if(session('success'))
-    <div class="alert alert-success bg-forest/10 border-forest/20 text-forest rounded-2xl text-xs font-bold text-left p-4 shadow-sm">
-        {{ session('success') }}
-    </div>
+        <div class="alert alert-success bg-forest/10 border border-forest/20 text-forest rounded-2xl text-xs font-semibold p-4 shadow-none">
+            {{ session('success') }}
+        </div>
     @endif
 
-    <div class="bg-white border border-ink/5 rounded-[1.5rem] p-6 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto rounded-xl border border-ink/5">
-            <table class="table w-full text-sm">
+    <!-- Toolbar Pencarian & Filter -->
+    <div class="bg-white border border-ink/5 rounded-2xl p-4 shadow-none">
+        <form method="GET" action="{{ route('admin.products.index') }}" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center text-xs">
+            <!-- Pencarian Kata Kunci -->
+            <div class="sm:col-span-5 relative">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama produk atau material..." 
+                    class="input input-bordered input-sm w-full rounded-xl text-xs focus:outline-none focus:border-forest bg-cream/20 pl-9 text-ink font-medium">
+                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+
+            <!-- Filter Kategori -->
+            <div class="sm:col-span-3">
+                <select name="category" onchange="this.form.submit()" class="select select-bordered select-sm w-full rounded-xl text-xs focus:outline-none focus:border-forest bg-cream/20 font-semibold text-ink">
+                    <option value="">Semua Kategori</option>
+                    <option value="Tas & Dompet" {{ request('category') == 'Tas & Dompet' ? 'selected' : '' }}>Tas & Dompet</option>
+                    <option value="Dekorasi Rumah" {{ request('category') == 'Dekorasi Rumah' ? 'selected' : '' }}>Dekorasi Rumah</option>
+                    <option value="Aksesoris Diri" {{ request('category') == 'Aksesoris Diri' ? 'selected' : '' }}>Aksesoris Diri</option>
+                    <option value="Perlengkapan" {{ request('category') == 'Perlengkapan' ? 'selected' : '' }}>Perlengkapan Lainnya</option>
+                </select>
+            </div>
+
+            <!-- Filter Status -->
+            <div class="sm:col-span-2">
+                <select name="status" onchange="this.form.submit()" class="select select-bordered select-sm w-full rounded-xl text-xs focus:outline-none focus:border-forest bg-cream/20 font-semibold text-ink">
+                    <option value="">Semua Status</option>
+                    <option value="available" {{ request('status') == 'available' ? 'selected' : '' }}>Tersedia</option>
+                    <option value="sold_out" {{ request('status') == 'sold_out' ? 'selected' : '' }}>Habis</option>
+                </select>
+            </div>
+
+            <!-- Tombol Aksi -->
+            <div class="sm:col-span-2 flex items-center gap-2">
+                <button type="submit" class="btn btn-sm bg-forest hover:bg-forest-dark text-white border-none rounded-xl text-xs font-semibold flex-1 h-9 shadow-none">
+                    Terapkan
+                </button>
+                @if(request()->filled('search') || request()->filled('category') || request()->filled('status'))
+                    <a href="{{ route('admin.products.index') }}" class="btn btn-sm bg-white hover:bg-cream text-ink border border-ink/10 rounded-xl text-xs font-semibold h-9 px-3 shadow-none">
+                        Reset
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 1. TAMPILAN MOBILE / TABLET (< md): KARTU LIST PRODUK -->
+    <!-- ========================================================================= -->
+    <div class="space-y-3 md:hidden">
+        @forelse($products as $p)
+            @php
+                $allTransactions = \App\Models\Transaction::where('product_id', $p->id)->get();
+                $totalSold = 0;
+                foreach($allTransactions as $t) {
+                    $st = strtolower($t->status ?? '');
+                    if(str_contains($st, 'siap') || str_contains($st, 'paid') || str_contains($st, 'success') || str_contains($st, 'picked')) {
+                        $totalSold += ($t->quantity ?? 1);
+                    }
+                }
+            @endphp
+            <div class="bg-white border border-ink/5 rounded-2xl p-4 shadow-none space-y-3">
+                <div class="flex items-start gap-3">
+                    <div class="w-14 h-14 rounded-xl overflow-hidden bg-cream/30 border border-ink/10 shrink-0">
+                        @if(!empty($p->photo_path))
+                            <img src="{{ asset('storage/' . $p->photo_path) }}" alt="{{ $p->name }}" class="w-full h-full object-cover">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center text-ink-soft/40 font-mono text-[10px]">No Pic</div>
+                        @endif
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-1">
+                            <span class="font-bold text-ink text-xs truncate">{{ $p->name }}</span>
+                            @if($p->is_featured)
+                                <span class="badge bg-amber-50 text-amber-700 border-none text-[9px] font-bold px-1.5 py-0.2 rounded">Unggulan</span>
+                            @endif
+                        </div>
+                        <span class="text-[10px] text-ink-soft block mt-0.5">{{ $p->product_category }}</span>
+                        <span class="font-mono font-bold text-forest text-xs block mt-1">Rp {{ number_format($p->price, 0, ',', '.') }}</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 bg-cream/30 p-2.5 rounded-xl border border-ink/5 text-center text-xs">
+                    <div>
+                        <span class="text-[9px] text-ink-soft uppercase font-bold block">Sisa Stok</span>
+                        <span class="font-mono font-bold text-ink text-xs">{{ $p->stock }} item</span>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-ink-soft uppercase font-bold block">Terjual</span>
+                        <span class="font-mono font-bold text-maritime text-xs">{{ $totalSold }} pcs</span>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-ink-soft uppercase font-bold block">Status</span>
+                        @if(strtolower($p->status) === 'available' && $p->stock > 0)
+                            <span class="inline-flex items-center whitespace-nowrap bg-forest/10 text-forest text-[10px] font-bold px-1.5 py-0.5 rounded">Tersedia</span>
+                        @else
+                            <span class="inline-flex items-center whitespace-nowrap bg-terracotta/10 text-terracotta text-[10px] font-bold px-1.5 py-0.5 rounded">Habis</span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-1 border-t border-ink/5">
+                    <span class="text-[10px] text-ink-soft font-mono">Diupload: {{ $p->created_at ? $p->created_at->format('d M Y') : '-' }}</span>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="document.getElementById('edit_product_modal_{{ $p->id }}').showModal()"
+                            class="btn btn-xs bg-forest hover:bg-forest-dark text-white border-none rounded-lg text-[10px] font-semibold px-2.5 shadow-none">
+                            Detail / Edit
+                        </button>
+                        <form action="{{ route('admin.products.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk {{ $p->name }}?')" class="inline m-0 p-0">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-xs bg-white hover:bg-terracotta/10 text-terracotta border border-terracotta/30 rounded-lg text-[10px] font-semibold px-2 shadow-none">
+                                Hapus
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="bg-white rounded-2xl p-8 text-center text-ink-soft/60 text-xs border border-ink/5">
+                Belum ada produk kriya yang terdaftar.
+            </div>
+        @endforelse
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 2. TAMPILAN DESKTOP (>= md): TABEL LEBAR -->
+    <!-- ========================================================================= -->
+    <div class="hidden md:block bg-white border border-ink/5 rounded-2xl p-6 shadow-none">
+        <div class="overflow-x-auto">
+            <table class="table w-full text-xs">
                 <thead>
-                    <tr class="border-b border-ink/5 text-ink/70 font-bold uppercase tracking-wider text-xs bg-cream/60">
-                        <th class="py-3.5 pl-5">Nama Produk & Gambar</th>
-                        <th class="py-3.5">Kategori / Material</th>
-                        <th class="py-3.5">Harga Produk (IDR)</th>
-                        <th class="py-3.5">Stok Sisa</th>
-                        <th class="py-3.5 font-bold text-maritime">Total Terjual</th>
-                        <th class="py-3.5 text-center">Status</th>
-                        <th class="py-3.5 text-center">Aksi</th>
+                    <tr class="bg-cream/40 text-ink-soft border-b border-ink/5 font-semibold text-[10px] uppercase">
+                        <th class="py-3 pl-3">Produk & Material</th>
+                        <th class="py-3">Kategori</th>
+                        <th class="py-3">Harga Produk (IDR)</th>
+                        <th class="py-3 text-center">Stok</th>
+                        <th class="py-3 text-center font-bold text-maritime">Terjual</th>
+                        <th class="py-3 text-center min-w-[100px]">Status</th>
+                        <th class="py-3 pr-3 text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="font-medium text-ink/90">
+                <tbody class="divide-y divide-ink/5 font-medium">
                     @forelse($products as $p)
-                    @php
-                    // 🔥 STRATEGI PENYELAMAT: Tarik paksa data mentah dari tabel database transactions
-                    // Kita pakai 'whereRaw' dengan casting 'TO_CHAR' / 'VARCHAR' untuk menjamin kecocokan UUID vs Integer di Supabase
-                    $allTransactions = \App\Models\Transaction::where('product_id', $p->id)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-
-                    // Hitung baris data yang statusnya mengandung kata 'Siap', 'paid', 'success', atau 'picked_up'
-                    $totalSold = 0;
-                    foreach($allTransactions as $t) {
-                    $st = strtolower($t->status);
-                    if(str_contains($st, 'siap') || str_contains($st, 'pickup') || str_contains($st, 'paid') || str_contains($st, 'success') || str_contains($st, 'picked_up')) {
-                    $totalSold += ($t->quantity ?? 1);
-                    }
-                    }
-                    @endphp
-                    <tr class="hover:bg-cream/10 border-b border-ink/5 transition-colors">
-                        <td class="py-4 pl-5">
-                            <div class="flex items-center gap-3">
-                                <div class="avatar">
-                                    <div class="w-12 h-12 rounded-lg border border-ink/10 shadow-sm overflow-hidden flex items-center justify-center text-ink-soft/30 bg-sand/20">
+                        @php
+                            $allTransactions = \App\Models\Transaction::where('product_id', $p->id)->get();
+                            $totalSold = 0;
+                            foreach($allTransactions as $t) {
+                                $st = strtolower($t->status ?? '');
+                                if(str_contains($st, 'siap') || str_contains($st, 'paid') || str_contains($st, 'success') || str_contains($st, 'picked')) {
+                                    $totalSold += ($t->quantity ?? 1);
+                                }
+                            }
+                        @endphp
+                        <tr class="hover:bg-cream/20 transition-colors">
+                            <td class="py-3.5 pl-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-11 h-11 rounded-xl overflow-hidden bg-cream/40 border border-ink/10 shrink-0">
                                         @if(!empty($p->photo_path))
-                                        <img src="{{ \Illuminate\Support\Facades\Storage::url($p->photo_path) }}" alt="{{ $p->name }}" class="object-cover w-full h-full" />
+                                            <img src="{{ asset('storage/' . $p->photo_path) }}" alt="{{ $p->name }}" class="w-full h-full object-cover">
                                         @else
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                                            <circle cx="8.5" cy="8.5" r="1.5" />
-                                            <polyline points="21 15 16 10 5 21" />
-                                        </svg>
+                                            <div class="w-full h-full flex items-center justify-center text-ink-soft/40 font-mono text-[9px]">No Pic</div>
                                         @endif
                                     </div>
+                                    <div class="min-w-0 max-w-[200px]">
+                                        <span class="font-bold text-ink block text-xs truncate flex items-center gap-1">
+                                            {{ $p->name }}
+                                            @if($p->is_featured)
+                                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" title="Produk Unggulan"></span>
+                                            @endif
+                                        </span>
+                                        <span class="text-[10px] text-ink-soft block truncate">
+                                            {{ $p->material_source ? 'Bahan: ' . $p->material_source : 'Diupload ' . ($p->created_at ? $p->created_at->format('d/m/y') : '-') }}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="text-left max-w-[200px] truncate">
-                                    <p class="font-bold text-ink truncate leading-tight flex items-center gap-1">
-                                        {{ $p->name }}
-                                        @if($p->is_featured) <span class="text-maritime" title="Produk Unggulan">⭐</span> @endif
-                                    </p>
-                                    <p class="text-[10px] text-ink-soft/70 font-mono mt-0.5 truncate">Diupload: {{ $p->created_at->format('d M Y') }}</p>
-                                </div>
-                            </div>
-                        </td>
+                            </td>
 
-                        <td class="py-4">
-                            <span class="badge bg-cream border border-ink/10 text-ink-soft font-bold text-[10px] px-2 py-1 rounded-md">{{ $p->product_category }}</span>
-                            @if($p->material_source)
-                            <p class="text-[10px] text-gray-400 mt-1 truncate max-w-[120px]">Bahan: {{ $p->material_source }}</p>
-                            @endif
-                        </td>
+                            <td class="py-3.5">
+                                <span class="badge bg-cream border border-ink/10 text-ink text-[10px] font-semibold px-2 py-0.5 rounded capitalize">
+                                    {{ $p->product_category }}
+                                </span>
+                            </td>
 
-                        <td class="py-4 font-mono font-bold text-forest">
-                            Rp {{ number_format($p->price, 0, ',', '.') }}
-                        </td>
+                            <td class="py-3.5 font-mono font-bold text-forest text-xs">
+                                Rp {{ number_format($p->price, 0, ',', '.') }}
+                            </td>
 
-                        <td class="py-4 font-mono font-bold text-ink">
-                            {{ $p->stock }} <span class="text-[10px] font-sans font-normal text-ink-soft">item</span>
-                        </td>
+                            <td class="py-3.5 text-center font-mono font-semibold text-ink">
+                                {{ $p->stock }} <span class="text-[10px] font-sans text-ink-soft">item</span>
+                            </td>
 
-                        <td class="py-4 font-mono font-bold text-maritime">
-                            {{ $totalSold }} <span class="text-[10px] font-sans font-normal text-ink-soft">terjual</span>
-                        </td>
+                            <td class="py-3.5 text-center font-mono font-bold text-maritime">
+                                {{ $totalSold }} <span class="text-[10px] font-sans font-normal text-ink-soft">terjual</span>
+                            </td>
 
-                        <td class="py-4 text-center">
-                            @if($p->stock > 0)
-                            <span class="badge bg-forest/10 border-none text-forest text-[11px] font-bold px-2.5 py-2 rounded-lg">Tersedia</span>
-                            @else
-                            <span class="badge bg-terracotta/10 border-none text-terracotta text-[11px] font-bold px-2.5 py-2 rounded-lg">Habis</span>
-                            @endif
-                        </td>
+                            <td class="py-3.5 text-center min-w-[100px]">
+                                @if(strtolower($p->status) === 'available' && $p->stock > 0)
+                                    <span class="inline-flex items-center justify-center whitespace-nowrap bg-forest/10 text-forest border border-forest/20 text-[10px] font-bold px-2.5 py-1 rounded-md">
+                                        Tersedia
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center justify-center whitespace-nowrap bg-terracotta/10 text-terracotta border border-terracotta/20 text-[10px] font-bold px-2.5 py-1 rounded-md">
+                                        Habis
+                                    </span>
+                                @endif
+                            </td>
 
-                        <td class="py-4 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="document.getElementById('edit_product_modal_{{ $p->id }}').showModal()" class="btn btn-xs bg-maritime border-none text-white hover:bg-maritime-dark rounded-md font-bold px-2.5">
-                                    Edit / Histori
-                                </button>
-
-                                <form action="{{ route('admin.products.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk {{ $p->name }} secara permanen?')" class="inline m-0 p-0">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-xs bg-terracotta border-none text-white hover:bg-red-600 rounded-md font-bold px-2.5">
-                                        Hapus
+                            <td class="py-3.5 pr-3 text-right">
+                                <div class="flex items-center justify-end gap-1.5">
+                                    <button type="button" onclick="document.getElementById('edit_product_modal_{{ $p->id }}').showModal()"
+                                        class="btn btn-xs bg-forest hover:bg-forest-dark text-white border-none rounded-lg text-[10px] font-semibold px-2.5 shadow-none whitespace-nowrap">
+                                        Detail / Edit
                                     </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <dialog id="edit_product_modal_{{ $p->id }}" class="modal modal-bottom sm:modal-middle">
-                        <div class="modal-box bg-white max-w-4xl rounded-[2rem] border border-ink/5 p-6 text-left relative overflow-hidden max-h-[90vh] flex flex-col">
-                            <form method="dialog"><button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft z-50">✕</button></form>
-
-                            <div class="tabs tabs-lifted w-full flex-1 flex flex-col overflow-hidden">
-
-                                <input type="radio" name="tabs_{{ $p->id }}" class="tab font-bold text-xs" aria-label="Ubah Data Produk" checked />
-                                <div class="tab-content bg-white border-base-300 rounded-box p-4 pt-6 overflow-y-auto flex-1">
-                                    <form action="{{ route('admin.products.update', $p->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                                    <form action="{{ route('admin.products.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk {{ $p->name }}?')" class="inline m-0 p-0">
                                         @csrf
-                                        @method('PUT')
-
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div class="form-control">
-                                                <label class="label py-1"><span class="label-text font-bold text-xs">Nama Produk</span></label>
-                                                <input type="text" name="name" value="{{ old('name', $p->name) }}" required class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20">
-                                            </div>
-
-                                            <div class="form-control">
-                                                <label class="label py-1"><span class="label-text font-bold text-xs">Kategori</span></label>
-                                                <select name="product_category" required class="select select-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 font-bold">
-                                                    <option value="Tas & Dompet" {{ $p->product_category == 'Tas & Dompet' ? 'selected' : '' }}>Tas & Dompet</option>
-                                                    <option value="Dekorasi Rumah" {{ $p->product_category == 'Dekorasi Rumah' ? 'selected' : '' }}>Dekorasi Rumah</option>
-                                                    <option value="Aksesoris Diri" {{ $p->product_category == 'Aksesoris Diri' ? 'selected' : '' }}>Aksesoris Diri</option>
-                                                    <option value="Perlengkapan" {{ $p->product_category == 'Perlengkapan' ? 'selected' : '' }}>Perlengkapan Lainnya</option>
-                                                </select>
-                                            </div>
-
-                                            <div class="form-control">
-                                                <label class="label py-1"><span class="label-text font-bold text-xs text-forest">Harga Jual (Rp)</span></label>
-                                                <div class="relative">
-                                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-soft">Rp</span>
-                                                    <input type="number" name="price" value="{{ old('price', $p->price) }}" required class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 font-mono font-bold text-forest pl-10">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-control">
-                                                <label class="label py-1"><span class="label-text font-bold text-xs">Stok Sisa</span></label>
-                                                <input type="number" name="stock" value="{{ old('stock', $p->stock) }}" min="0" required class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20">
-                                            </div>
-
-                                            <div class="form-control md:col-span-2">
-                                                <label class="label py-1"><span class="label-text font-bold text-xs">Sumber Material Dasar</span></label>
-                                                <input type="text" name="material_source" value="{{ old('material_source', $p->material_source) }}" class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-control">
-                                            <label class="label py-1"><span class="label-text font-bold text-xs">Deskripsi Lengkap</span></label>
-                                            <textarea name="description" rows="3" class="textarea textarea-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20">{{ old('description', $p->description) }}</textarea>
-                                        </div>
-
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-                                            <div class="form-control">
-                                                <label class="label py-1"><span class="label-text font-bold text-xs">Ganti Foto (Biarkan kosong jika tetap)</span></label>
-                                                <input type="file" name="photo" accept="image/*" class="file-input file-input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20" />
-                                            </div>
-
-                                            <div class="flex flex-col gap-2">
-                                                <select name="status" class="select select-bordered w-full rounded-xl text-xs font-bold focus:outline-none focus:border-forest bg-cream/20 mb-1">
-                                                    <option value="available" {{ $p->status == 'available' ? 'selected' : '' }}>Set Status: Tersedia</option>
-                                                    <option value="sold_out" {{ $p->status == 'sold_out' ? 'selected' : '' }}>Set Status: Habis / Sold Out</option>
-                                                </select>
-                                                <label class="cursor-pointer label justify-start gap-3 bg-cream/30 p-2.5 rounded-xl border border-ink/5">
-                                                    <input type="checkbox" name="is_featured" class="checkbox checkbox-sm checkbox-primary border-forest checked:border-forest [--chkbg:theme(colors.forest.DEFAULT)]" {{ $p->is_featured ? 'checked' : '' }} />
-                                                    <span class="label-text font-bold text-xs">Rekomendasi Unggulan ⭐</span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" class="btn w-full bg-forest text-white border-none rounded-xl font-extrabold normal-case mt-4 shadow-md">
-                                            Simpan Perubahan Data Produk
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-xs bg-white hover:bg-terracotta/10 text-terracotta border border-terracotta/30 rounded-lg text-[10px] font-semibold px-2 shadow-none">
+                                            Hapus
                                         </button>
                                     </form>
                                 </div>
-
-                                <input type="radio" name="tabs_{{ $p->id }}" class="tab font-bold text-xs" aria-label="Histori Penjualan ({{ $allTransactions->count() }})" />
-                                <div class="tab-content bg-white border-base-300 rounded-box p-4 pt-6 overflow-y-auto flex-1">
-                                    <div class="overflow-x-auto rounded-xl border border-ink/5">
-                                        <table class="table w-full text-xs">
-                                            <thead>
-                                                <tr class="bg-sand/20 text-ink border-b border-ink/5">
-                                                    <th class="font-bold py-3 pl-4">Tanggal</th>
-                                                    <th class="font-bold py-3">ID Invoice</th>
-                                                    <th class="font-bold py-3">Nama Pembeli</th>
-                                                    <th class="font-bold py-3 text-center">Qty</th>
-                                                    <th class="font-bold py-3 text-center">Status Pickup</th>
-                                                    <th class="font-bold py-3 text-center">Aksi</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="font-medium text-ink-soft">
-                                                @forelse($allTransactions as $sh)
-                                                @php
-                                                $buyer = \App\Models\User::find($sh->user_id);
-                                                @endphp
-                                                <tr class="border-b border-ink/5 hover:bg-cream/5">
-                                                    <td class="py-3 pl-4 font-mono">{{ $sh->created_at->format('d M Y') }}</td>
-                                                    <td class="py-3 font-mono font-bold text-ink">{{ $sh->order_id }}</td>
-                                                    <td class="py-3 font-bold text-ink">{{ $buyer->name ?? 'Warga SulapaKarya' }}</td>
-                                                    <td class="py-3 text-center font-mono font-bold text-ink">{{ $sh->quantity ?? 1 }}x</td>
-
-                                                    <td class="py-3 text-center">
-                                                        @if(str_contains(strtolower($sh->status), 'pending'))
-                                                        <span class="badge bg-amber-500/10 border-none text-amber-600 font-extrabold rounded-md text-[10px] py-2 px-2">⏳ Belum Bayar</span>
-                                                        @elseif(str_contains(strtolower($sh->status), 'siap') || str_contains(strtolower($sh->status), 'paid') || str_contains(strtolower($sh->status), 'success'))
-                                                        <span class="badge bg-maritime/10 border-none text-maritime font-extrabold rounded-md text-[10px] py-2 px-2">📦 Siap Diambil</span>
-                                                        @elseif(str_contains(strtolower($sh->status), 'picked'))
-                                                        <span class="badge bg-forest/10 border-none text-forest font-extrabold rounded-md text-[10px] py-2 px-2">✓ Selesai Diambil</span>
-                                                        @else
-                                                        <span class="badge bg-terracotta/10 border-none text-terracotta font-extrabold rounded-md text-[10px] py-2 px-2">✕ Batal</span>
-                                                        @endif
-                                                    </td>
-
-                                                    <td class="py-3 text-center flex items-center justify-center gap-1.5">
-                                                        @if(str_contains(strtolower($sh->status), 'siap') || str_contains(strtolower($sh->status), 'paid') || str_contains(strtolower($sh->status), 'success'))
-                                                        <form action="/admin/transaksi/pickup/{{ $sh->id }}" method="POST" class="m-0 p-0">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <button type="submit" class="btn btn-xs bg-forest border-none text-white hover:bg-forest-dark rounded-md font-bold px-2">
-                                                                Konfirmasi Serah Barang 🤝
-                                                            </button>
-                                                        </form>
-                                                        @else
-                                                        <span class="text-[10px] text-gray-400 font-semibold italic">Tidak ada aksi</span>
-                                                        @endif
-
-                                                        <button onclick="document.getElementById('receipt_modal_{{ $sh->id }}').showModal()" class="btn btn-xs btn-outline border-ink/10 hover:bg-ink hover:text-white rounded-md font-bold px-2">
-                                                            🔍 Nota
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                @empty
-                                                <tr>
-                                                    <td colspan="6" class="py-8 text-center text-gray-400 font-medium">
-                                                        📦 Belum ada lembar transaksi untuk karya kriya ini.
-                                                    </td>
-                                                </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <form method="dialog" class="modal-backdrop bg-ink/30 backdrop-blur-sm"><button>close</button></form>
-                    </dialog>
-
-                    @foreach($allTransactions as $sh)
-                    @php
-                    $buyer = \App\Models\User::find($sh->user_id);
-                    @endphp
-                    <dialog id="receipt_modal_{{ $sh->id }}" class="modal modal-bottom sm:modal-middle z-[70]">
-                        <div class="modal-box bg-cream max-w-md rounded-[2rem] border border-ink/10 p-6 text-left relative shadow-2xl">
-                            <form method="dialog">
-                                <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft">✕</button>
-                            </form>
-
-                            <div class="text-center border-b border-dashed border-ink/20 pb-4">
-                                <h4 class="font-display font-black text-xl text-ink">SulapaKarya</h4>
-                                <p class="text-[10px] text-ink-soft font-semibold tracking-wide uppercase mt-0.5">Pusat Kerajinan Daur Ulang Makassar</p>
-                                <div class="badge border-none text-[9px] font-bold mt-2 uppercase px-2.5 py-2
-                                            {{ str_contains(strtolower($sh->status), 'picked') ? 'bg-forest/10 text-forest' : '' }}
-                                            {{ str_contains(strtolower($sh->status), 'siap') || str_contains(strtolower($sh->status), 'paid') || str_contains(strtolower($sh->status), 'success') ? 'bg-maritime/10 text-maritime' : '' }}
-                                            {{ str_contains(strtolower($sh->status), 'pending') ? 'bg-amber-500/10 text-amber-600' : '' }}
-                                            {{ str_contains(strtolower($sh->status), 'cancel') ? 'bg-terracotta/10 text-terracotta' : '' }} ">
-                                    Status: {{ $sh->status }}
-                                </div>
-                            </div>
-
-                            <div class="py-4 space-y-2 border-b border-dashed border-ink/20 text-[11px] font-medium text-ink-soft">
-                                <div class="flex justify-between"><span>Nomor Transaksi</span> <span class="font-mono font-bold text-ink">{{ $sh->order_id }}</span></div>
-                                <div class="flex justify-between"><span>Waktu Transaksi</span> <span class="font-mono text-ink">{{ $sh->created_at->format('d M Y, H:i') }} WITA</span></div>
-                                <div class="flex justify-between"><span>Nama Pembeli (Warga)</span> <span class="font-bold text-ink">{{ $buyer->name ?? 'Warga SulapaKarya' }}</span></div>
-                                <div class="flex justify-between"><span>No. Telepon Kontak</span> <span class="font-mono text-ink">{{ $buyer->phone ?? '082XXXXXXXXX' }}</span></div>
-                            </div>
-
-                            <div class="py-4 space-y-3 border-b border-ink/10 text-xs">
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-ink/40 block">Item Produk</span>
-                                <div class="flex justify-between items-start gap-4">
-                                    <div>
-                                        <p class="font-bold text-ink leading-tight">{{ $p->name }}</p>
-                                        <p class="text-[10px] text-ink-soft font-mono mt-0.5">Harga Satuan: Rp {{ number_format($p->price, 0, ',', '.') }}</p>
-                                    </div>
-                                    <span class="font-mono font-bold text-ink shrink-0">{{ $sh->quantity ?? 1 }}x</span>
-                                </div>
-                            </div>
-
-                            <div class="py-4 space-y-2 text-xs font-semibold">
-                                <div class="flex justify-between text-ink-soft">
-                                    <span>Subtotal Tagihan</span>
-                                    <span class="font-mono text-ink">Rp {{ number_format($sh->original_price ?? ($p->price * ($sh->quantity ?? 1)), 0, ',', '.') }}</span>
-                                </div>
-
-                                @if(($sh->points_used ?? 0) > 0)
-                                <div class="flex justify-between text-terracotta">
-                                    <span>Potongan Poin Kriya</span>
-                                    <span class="font-mono font-bold">- Rp {{ number_format($sh->points_used, 0, ',', '.') }}</span>
-                                </div>
-                                @endif
-
-                                <div class="flex justify-between items-center text-sm font-bold border-t border-ink/5 pt-3 mt-1">
-                                    <span class="text-ink">Total Nominal Pembayaran</span>
-                                    <span class="font-mono font-black text-forest text-base">Rp {{ number_format($sh->final_price ?? 0, 0, ',', '.') }}</span>
-                                </div>
-                            </div>
-
-                            <div class="text-center pt-2 text-[10px] text-ink-soft/60 font-medium">
-                                <p>Terima kasih telah mendukung pengrajin lokal kriya</p>
-                                <p class="mt-0.5">& melestarikan ekosistem lingkungan kota Makassar!</p>
-                            </div>
-                        </div>
-                        <form method="dialog" class="modal-backdrop bg-ink/20 backdrop-blur-xs"><button>close</button></form>
-                    </dialog>
-                    @endforeach
-
+                            </td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="7" class="py-12 text-center text-ink-soft/60 font-medium text-xs">
-                            📭 Belum ada produk kriya yang diunggah ke dalam sistem.
-                        </td>
-                    </tr>
+                        <tr>
+                            <td colspan="7" class="py-12 text-center text-ink-soft/60 text-xs font-medium">
+                                Belum ada produk kriya yang sesuai dengan filter atau pencarian Anda.
+                            </td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
+</div>
 
-    <dialog id="add_product_modal" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box bg-white max-w-2xl rounded-[2rem] border border-ink/5 p-6 text-left relative">
-            <form method="dialog"><button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft">✕</button></form>
-            <h3 class="font-display font-extrabold text-xl text-ink">Upload Produk Baru</h3>
-            <p class="text-xs text-ink-soft font-semibold mt-1">Masukkan data produk kriya hasil daur ulang (upcycling) beserta tarif Rupiahnya.</p>
+<!-- ========================================================================= -->
+<!-- MODAL EDIT & HISTORI PRODUK (PRESISI DI TENGAH LAYAR) -->
+<!-- ========================================================================= -->
+@foreach($products as $p)
+    @php
+        $allTransactions = \App\Models\Transaction::where('product_id', $p->id)->orderBy('created_at', 'desc')->get();
+    @endphp
+    
+    <dialog id="edit_product_modal_{{ $p->id }}" class="modal modal-middle">
+        <div class="modal-box w-11/12 max-w-2xl bg-white rounded-3xl border border-ink/10 p-5 sm:p-7 text-left shadow-2xl overflow-y-auto max-h-[88vh] my-auto">
+            <form method="dialog"><button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft hover:bg-cream">✕</button></form>
+            
+            <div class="border-b border-ink/5 pb-3 mb-4">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-forest bg-forest/10 px-2 py-0.5 rounded">
+                    Manajemen Produk
+                </span>
+                <h3 class="font-bold text-base sm:text-lg text-ink mt-1">{{ $p->name }}</h3>
+                <p class="text-xs text-ink-soft">Atur informasi harga, sisa stok, atau tinjau catatan riwayat penjualan item ini.</p>
+            </div>
 
-            <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4 mt-6">
-                @csrf
+            <!-- Tab Switcher Modal -->
+            <div class="space-y-4">
+                <div class="flex items-center gap-2 border-b border-ink/5 pb-2">
+                    <button type="button" onclick="switchProductModalTab('{{ $p->id }}', 'edit')" id="pmodal_tab_edit_btn_{{ $p->id }}"
+                        class="px-3 py-1.5 rounded-xl text-xs font-bold bg-forest text-white shadow-none transition-all">
+                        Ubah Data Produk
+                    </button>
+                    <button type="button" onclick="switchProductModalTab('{{ $p->id }}', 'history')" id="pmodal_tab_hist_btn_{{ $p->id }}"
+                        class="px-3 py-1.5 rounded-xl text-xs font-bold bg-cream text-ink-soft hover:bg-cream/60 shadow-none transition-all">
+                        Riwayat Penjualan ({{ $allTransactions->count() }})
+                    </button>
+                </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="form-control">
-                        <label class="label py-1"><span class="label-text font-bold text-xs">Nama Produk <span class="text-terracotta">*</span></span></label>
-                        <input type="text" name="name" value="{{ old('name') }}" placeholder="Contoh: Tas Anyaman Plastik" required class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20">
-                    </div>
+                <!-- Panel 1: Ubah Data Form -->
+                <div id="pmodal_panel_edit_{{ $p->id }}">
+                    <form action="{{ route('admin.products.update', $p->id) }}" method="POST" enctype="multipart/form-data" class="space-y-3.5">
+                        @csrf
+                        @method('PUT')
 
-                    <div class="form-control">
-                        <label class="label py-1"><span class="label-text font-bold text-xs">Kategori <span class="text-terracotta">*</span></span></label>
-                        <select name="product_category" required class="select select-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 font-bold">
-                            <option value="Tas & Dompet">Tas & Dompet</option>
-                            <option value="Dekorasi Rumah">Dekorasi Rumah</option>
-                            <option value="Aksesoris Diri">Aksesoris Diri</option>
-                            <option value="Perlengkapan">Perlengkapan Lainnya</option>
-                        </select>
-                    </div>
-
-                    <div class="form-control">
-                        <label class="label py-1"><span class="label-text font-bold text-xs text-forest">Harga Jual Asli (Rupiah Rp) <span class="text-terracotta">*</span></span></label>
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-soft">Rp</span>
-                            <input type="number" name="price" value="{{ old('price') }}" placeholder="Contoh: 25000" required class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 font-mono font-bold text-forest pl-10">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-ink mb-1">Nama Produk <span class="text-terracotta">*</span></label>
+                                <input type="text" name="name" value="{{ $p->name }}" required 
+                                    class="input input-bordered input-sm w-full rounded-xl text-xs bg-cream/20 font-semibold text-ink focus:outline-none focus:border-forest">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-ink mb-1">Kategori Produk <span class="text-terracotta">*</span></label>
+                                <select name="product_category" required class="select select-bordered select-sm w-full rounded-xl text-xs bg-cream/20 font-semibold text-ink focus:outline-none focus:border-forest">
+                                    <option value="Tas & Dompet" {{ $p->product_category == 'Tas & Dompet' ? 'selected' : '' }}>Tas & Dompet</option>
+                                    <option value="Dekorasi Rumah" {{ $p->product_category == 'Dekorasi Rumah' ? 'selected' : '' }}>Dekorasi Rumah</option>
+                                    <option value="Aksesoris Diri" {{ $p->product_category == 'Aksesoris Diri' ? 'selected' : '' }}>Aksesoris Diri</option>
+                                    <option value="Perlengkapan" {{ $p->product_category == 'Perlengkapan' ? 'selected' : '' }}>Perlengkapan Lainnya</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-ink mb-1">Harga Jual (Rp) <span class="text-terracotta">*</span></label>
+                                <input type="number" name="price" value="{{ $p->price }}" required 
+                                    class="input input-bordered input-sm w-full rounded-xl text-xs font-mono font-bold text-forest bg-cream/20 focus:outline-none focus:border-forest">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-ink mb-1">Stok Tersedia <span class="text-terracotta">*</span></label>
+                                <input type="number" name="stock" value="{{ $p->stock }}" min="0" required 
+                                    class="input input-bordered input-sm w-full rounded-xl text-xs font-mono font-bold text-ink bg-cream/20 focus:outline-none focus:border-forest">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-semibold text-ink mb-1">Sumber Material Limbah</label>
+                                <input type="text" name="material_source" value="{{ $p->material_source }}" placeholder="Contoh: Limbah Botol Plastik HDPE Makassar"
+                                    class="input input-bordered input-sm w-full rounded-xl text-xs bg-cream/20 text-ink focus:outline-none focus:border-forest">
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-control">
-                        <label class="label py-1"><span class="label-text font-bold text-xs">Stok Awal <span class="text-terracotta">*</span></span></label>
-                        <input type="number" name="stock" value="{{ old('stock', 1) }}" min="0" required class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20">
-                    </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-ink mb-1">Deskripsi Produk</label>
+                            <textarea name="description" rows="2" class="textarea textarea-bordered w-full rounded-xl text-xs bg-cream/20 text-ink leading-relaxed focus:outline-none focus:border-forest">{{ $p->description }}</textarea>
+                        </div>
 
-                    <div class="form-control md:col-span-2">
-                        <label class="label py-1"><span class="label-text font-bold text-xs">Sumber Material Dasar (Opsional)</span></label>
-                        <input type="text" name="material_source" value="{{ old('material_source') }}" placeholder="Contoh: 100% Limbah Botol Plastik HDPE kota Makassar" class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20">
-                    </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end pt-1">
+                            <div>
+                                <label class="block text-xs font-semibold text-ink mb-1">Perbarui Foto (Opsional)</label>
+                                <input type="file" name="photo" accept="image/*" class="file-input file-input-bordered file-input-sm w-full rounded-xl text-xs bg-cream/20 focus:outline-none focus:border-forest" />
+                            </div>
+                            <div class="space-y-2">
+                                <select name="status" class="select select-bordered select-sm w-full rounded-xl text-xs font-semibold bg-cream/20 focus:outline-none focus:border-forest">
+                                    <option value="available" {{ $p->status == 'available' ? 'selected' : '' }}>Status: Tersedia</option>
+                                    <option value="sold_out" {{ $p->status == 'sold_out' ? 'selected' : '' }}>Status: Habis / Sold Out</option>
+                                </select>
+                                <label class="flex items-center gap-2 cursor-pointer bg-cream/30 p-2 rounded-xl border border-ink/5">
+                                    <input type="checkbox" name="is_featured" value="1" class="checkbox checkbox-xs checkbox-success rounded" {{ $p->is_featured ? 'checked' : '' }} />
+                                    <span class="text-xs font-semibold text-ink">Rekomendasi Unggulan</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-sm w-full bg-forest hover:bg-forest-dark text-white border-none rounded-xl text-xs font-semibold h-11 shadow-sm transition-all mt-3">
+                            Simpan Perubahan Produk &rarr;
+                        </button>
+                    </form>
                 </div>
 
-                <div class="form-control">
-                    <label class="label py-1"><span class="label-text font-bold text-xs">Deskripsi Lengkap</span></label>
-                    <textarea name="description" rows="3" placeholder="Ceritakan keunikan seni dan proses pembuatan upcycling produk ini..." class="textarea textarea-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20">{{ old('description') }}</textarea>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-                    <div class="form-control">
-                        <label class="label py-1"><span class="label-text font-bold text-xs">Foto Hasil Karya (Max 3MB) <span class="text-terracotta">*</span></span></label>
-                        <input type="file" name="photo" accept="image/*" required class="file-input file-input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20" />
+                <!-- Panel 2: Histori Penjualan -->
+                <div id="pmodal_panel_hist_{{ $p->id }}" class="hidden space-y-3">
+                    <div class="overflow-x-auto rounded-xl border border-ink/5">
+                        <table class="table w-full text-xs">
+                            <thead>
+                                <tr class="bg-cream/40 text-ink-soft border-b border-ink/5 font-semibold text-[10px] uppercase">
+                                    <th class="py-2.5 pl-3">Waktu</th>
+                                    <th class="py-2.5">Invoice</th>
+                                    <th class="py-2.5">Pembeli</th>
+                                    <th class="py-2.5 text-center">Qty</th>
+                                    <th class="py-2.5 text-center">Status</th>
+                                    <th class="py-2.5 pr-3 text-right">Nota</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-ink/5 font-medium">
+                                @forelse($allTransactions as $sh)
+                                    @php $buyer = \App\Models\User::find($sh->user_id); @endphp
+                                    <tr class="hover:bg-cream/20">
+                                        <td class="py-2.5 pl-3 font-mono text-[11px] text-ink-soft">{{ $sh->created_at ? $sh->created_at->format('d/m/Y') : '-' }}</td>
+                                        <td class="py-2.5 font-mono font-bold text-ink">{{ $sh->order_id }}</td>
+                                        <td class="py-2.5 font-semibold text-ink truncate max-w-[120px]">{{ $buyer->name ?? 'Warga' }}</td>
+                                        <td class="py-2.5 text-center font-mono font-bold text-ink">{{ $sh->quantity ?? 1 }}x</td>
+                                        <td class="py-2.5 text-center">
+                                            @if(str_contains(strtolower($sh->status), 'pending'))
+                                                <span class="inline-flex items-center whitespace-nowrap bg-amber-50 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded">Pending</span>
+                                            @elseif(str_contains(strtolower($sh->status), 'picked') || str_contains(strtolower($sh->status), 'success'))
+                                                <span class="inline-flex items-center whitespace-nowrap bg-forest/10 text-forest text-[10px] font-bold px-2 py-0.5 rounded">Selesai</span>
+                                            @else
+                                                <span class="inline-flex items-center whitespace-nowrap bg-maritime/10 text-maritime text-[10px] font-bold px-2 py-0.5 rounded">Diproses</span>
+                                            @endif
+                                        </td>
+                                        <td class="py-2.5 pr-3 text-right">
+                                            <button type="button" onclick="document.getElementById('receipt_modal_{{ $sh->id }}').showModal()"
+                                                class="btn btn-xs bg-cream hover:bg-forest hover:text-white text-ink border border-ink/10 rounded-lg text-[10px] font-semibold px-2 shadow-none">
+                                                Nota
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="py-6 text-center text-ink-soft/60 text-xs">Belum ada transaksi pembelian untuk produk ini.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
-
-                    <div class="flex flex-col gap-2">
-                        <select name="status" class="select select-bordered w-full rounded-xl text-xs font-bold focus:outline-none focus:border-forest bg-cream/20 mb-1">
-                            <option value="available">Set Status: Tersedia</option>
-                            <option value="sold_out">Set Status: Habis / Sold Out</option>
-                        </select>
-                        <label class="cursor-pointer label justify-start gap-3 bg-cream/30 p-2.5 rounded-xl border border-ink/5">
-                            <input type="checkbox" name="is_featured" class="checkbox checkbox-sm checkbox-primary border-forest checked:border-forest [--chkbg:theme(colors.forest.DEFAULT)]" />
-                            <span class="label-text font-bold text-xs">Tandai sebagai Rekomendasi Unggulan ⭐</span>
-                        </label>
-                    </div>
                 </div>
-
-                <button type="submit" class="btn w-full bg-forest text-white border-none rounded-xl font-extrabold normal-case mt-4 shadow-md shadow-forest/10">
-                    Publish Produk Baru 🚀
-                </button>
-            </form>
+            </div>
         </div>
-        <form method="dialog" class="modal-backdrop bg-ink/30 backdrop-blur-sm"><button>close</button></form>
+        <form method="dialog" class="modal-backdrop bg-ink/40 backdrop-blur-xs"><button>close</button></form>
     </dialog>
 
-</div>
+    <!-- Modal Nota Transaksi Per Baris -->
+    @foreach($allTransactions as $sh)
+        @php $buyer = \App\Models\User::find($sh->user_id); @endphp
+        <dialog id="receipt_modal_{{ $sh->id }}" class="modal modal-middle z-[80]">
+            <div class="modal-box w-11/12 max-w-sm bg-white rounded-3xl border border-ink/10 p-5 sm:p-6 text-left relative shadow-2xl my-auto">
+                <form method="dialog"><button class="btn btn-sm btn-circle btn-ghost absolute right-3.5 top-3.5 text-ink-soft hover:bg-cream">✕</button></form>
+
+                <div class="text-center border-b border-ink/5 pb-3">
+                    <h4 class="font-bold text-base text-ink">SulapaKarya Makassar</h4>
+                    <p class="text-[10px] text-ink-soft font-medium uppercase tracking-wider mt-0.5">Nota Penjualan Produk Kriya</p>
+                    <span class="inline-flex items-center whitespace-nowrap bg-forest/10 text-forest text-[10px] font-bold px-2 py-0.5 rounded mt-1.5 uppercase">
+                        {{ $sh->status }}
+                    </span>
+                </div>
+
+                <div class="py-3 space-y-1.5 border-b border-ink/5 text-xs text-ink-soft">
+                    <div class="flex justify-between"><span>No. Invoice</span> <strong class="font-mono text-ink">{{ $sh->order_id }}</strong></div>
+                    <div class="flex justify-between"><span>Waktu Transaksi</span> <span class="font-mono text-ink">{{ $sh->created_at ? $sh->created_at->format('d M Y, H:i') : '-' }} WITA</span></div>
+                    <div class="flex justify-between"><span>Nama Pembeli</span> <strong class="text-ink">{{ $buyer->name ?? 'Warga' }}</strong></div>
+                </div>
+
+                <div class="py-3 border-b border-ink/5 text-xs space-y-1">
+                    <span class="text-[10px] font-bold uppercase text-ink-soft block">Item Produk</span>
+                    <div class="flex justify-between items-start">
+                        <span class="font-semibold text-ink">{{ $p->name }}</span>
+                        <span class="font-mono font-bold text-ink">{{ $sh->quantity ?? 1 }}x</span>
+                    </div>
+                    <span class="text-[10px] text-ink-soft font-mono block">@ Rp {{ number_format($p->price, 0, ',', '.') }}</span>
+                </div>
+
+                <div class="pt-3 space-y-1 text-xs">
+                    <div class="flex justify-between text-ink-soft">
+                        <span>Subtotal</span>
+                        <span class="font-mono text-ink">Rp {{ number_format($sh->original_price ?? ($p->price * ($sh->quantity ?? 1)), 0, ',', '.') }}</span>
+                    </div>
+                    @if(($sh->points_used ?? 0) > 0)
+                        <div class="flex justify-between text-terracotta">
+                            <span>Diskon Poin</span>
+                            <span class="font-mono font-bold">- Rp {{ number_format($sh->points_used, 0, ',', '.') }}</span>
+                        </div>
+                    @endif
+                    <div class="flex justify-between items-center font-bold text-sm text-ink pt-2 border-t border-ink/5 mt-1">
+                        <span>Total Bayar</span>
+                        <span class="font-mono font-bold text-forest">Rp {{ number_format($sh->final_price ?? 0, 0, ',', '.') }}</span>
+                    </div>
+                </div>
+            </div>
+            <form method="dialog" class="modal-backdrop bg-ink/40 backdrop-blur-xs"><button>close</button></form>
+        </dialog>
+    @endforeach
+@endforeach
+
+<!-- ========================================================================= -->
+<!-- MODAL TAMBAH PRODUK BARU (PRESISI DI TENGAH LAYAR) -->
+<!-- ========================================================================= -->
+<dialog id="add_product_modal" class="modal modal-middle">
+    <div class="modal-box w-11/12 max-w-xl bg-white rounded-3xl border border-ink/10 p-5 sm:p-7 text-left shadow-2xl overflow-y-auto max-h-[88vh] my-auto">
+        <form method="dialog"><button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft hover:bg-cream">✕</button></form>
+        
+        <div class="border-b border-ink/5 pb-3 mb-4">
+            <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-forest bg-forest/10 px-2 py-0.5 rounded">
+                Karya Baru
+            </span>
+            <h3 class="font-bold text-base sm:text-lg text-ink mt-1">Upload Produk Kriya</h3>
+            <p class="text-xs text-ink-soft mt-0.5">Daftarkan produk daur ulang baru hasil kerajinan tangan mitra artisan.</p>
+        </div>
+
+        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="space-y-3.5">
+            @csrf
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-ink mb-1">Nama Produk <span class="text-terracotta">*</span></label>
+                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Contoh: Tas Anyaman Plastik" required 
+                        class="input input-bordered input-sm w-full rounded-xl text-xs bg-cream/20 font-semibold text-ink focus:outline-none focus:border-forest">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-ink mb-1">Kategori <span class="text-terracotta">*</span></label>
+                    <select name="product_category" required class="select select-bordered select-sm w-full rounded-xl text-xs bg-cream/20 font-semibold text-ink focus:outline-none focus:border-forest">
+                        <option value="Tas & Dompet">Tas & Dompet</option>
+                        <option value="Dekorasi Rumah">Dekorasi Rumah</option>
+                        <option value="Aksesoris Diri">Aksesoris Diri</option>
+                        <option value="Perlengkapan">Perlengkapan Lainnya</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-ink mb-1">Harga Jual (Rp) <span class="text-terracotta">*</span></label>
+                    <input type="number" name="price" value="{{ old('price') }}" placeholder="25000" required 
+                        class="input input-bordered input-sm w-full rounded-xl text-xs font-mono font-bold text-forest bg-cream/20 focus:outline-none focus:border-forest">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-ink mb-1">Stok Awal <span class="text-terracotta">*</span></label>
+                    <input type="number" name="stock" value="{{ old('stock', 1) }}" min="0" required 
+                        class="input input-bordered input-sm w-full rounded-xl text-xs font-mono font-bold text-ink bg-cream/20 focus:outline-none focus:border-forest">
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-semibold text-ink mb-1">Sumber Material Dasar</label>
+                    <input type="text" name="material_source" value="{{ old('material_source') }}" placeholder="Contoh: Limbah Botol Plastik HDPE Makassar" 
+                        class="input input-bordered input-sm w-full rounded-xl text-xs bg-cream/20 text-ink focus:outline-none focus:border-forest">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-ink mb-1">Deskripsi Lengkap</label>
+                <textarea name="description" rows="2" placeholder="Ceritakan proses pembuatan dan keunggulan produk ini..." 
+                    class="textarea textarea-bordered w-full rounded-xl text-xs bg-cream/20 text-ink leading-relaxed focus:outline-none focus:border-forest">{{ old('description') }}</textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end pt-1">
+                <div>
+                    <label class="block text-xs font-semibold text-ink mb-1">Foto Hasil Karya <span class="text-terracotta">*</span></label>
+                    <input type="file" name="photo" accept="image/*" required class="file-input file-input-bordered file-input-sm w-full rounded-xl text-xs bg-cream/20 focus:outline-none focus:border-forest" />
+                </div>
+                <div class="space-y-2">
+                    <select name="status" class="select select-bordered select-sm w-full rounded-xl text-xs font-semibold bg-cream/20 focus:outline-none focus:border-forest">
+                        <option value="available">Status: Tersedia</option>
+                        <option value="sold_out">Status: Habis</option>
+                    </select>
+                    <label class="flex items-center gap-2 cursor-pointer bg-cream/30 p-2 rounded-xl border border-ink/5">
+                        <input type="checkbox" name="is_featured" value="1" class="checkbox checkbox-xs checkbox-success rounded" />
+                        <span class="text-xs font-semibold text-ink">Tandai sebagai Rekomendasi Unggulan</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-sm w-full bg-forest hover:bg-forest-dark text-white border-none rounded-xl text-xs font-semibold h-11 shadow-sm transition-all mt-3">
+                Simpan & Publikasikan Produk &rarr;
+            </button>
+        </form>
+    </div>
+    <form method="dialog" class="modal-backdrop bg-ink/40 backdrop-blur-xs"><button>close</button></form>
+</dialog>
+
+<script>
+    function switchProductModalTab(productId, tab) {
+        const panelEdit = document.getElementById('pmodal_panel_edit_' + productId);
+        const panelHist = document.getElementById('pmodal_panel_hist_' + productId);
+        const btnEdit = document.getElementById('pmodal_tab_edit_btn_' + productId);
+        const btnHist = document.getElementById('pmodal_tab_hist_btn_' + productId);
+
+        if (!panelEdit || !panelHist) return;
+
+        if (tab === 'edit') {
+            panelEdit.classList.remove('hidden');
+            panelHist.classList.add('hidden');
+            btnEdit.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-forest text-white shadow-none transition-all";
+            btnHist.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-cream text-ink-soft hover:bg-cream/60 shadow-none transition-all";
+        } else {
+            panelEdit.classList.add('hidden');
+            panelHist.classList.remove('hidden');
+            btnHist.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-forest text-white shadow-none transition-all";
+            btnEdit.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-cream text-ink-soft hover:bg-cream/60 shadow-none transition-all";
+        }
+    }
+</script>
 @endsection

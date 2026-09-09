@@ -17,7 +17,6 @@
   .animate-slide-in {
     animation: slideInRight 1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   }
-
 </style>
 
 <!-- Hero Section -->
@@ -107,235 +106,217 @@
   </div>
 </section>
 
-<!-- ============ SECTION: JENIS SAMPAH YANG DITERIMA ============ -->
+<!-- ============ SECTION: SULAPAKARYA PRO (KEMITRAAN BISNIS) ============ -->
+<section id="mitra-bisnis" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+  <div class="relative rounded-3xl bg-white border border-ink/10 p-6 sm:p-10 lg:p-14 overflow-hidden shadow-sm">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+      
+      <div class="lg:col-span-7 space-y-5 sm:space-y-6 text-left">
+        <div class="inline-flex items-center gap-2 border border-forest/20 bg-forest/5 px-3 py-1 rounded-full">
+          <span class="w-1.5 h-1.5 rounded-full bg-forest"></span>
+          <span class="text-[10px] font-mono font-semibold tracking-widest uppercase text-forest">SulapaKarya PRO &bull; Solusi B2B</span>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-forest tracking-tight leading-tight">
+          Pengelolaan sampah terpadu untuk efisiensi operasional usaha Anda.
+        </h2>
+
+        <p class="text-xs sm:text-sm text-ink-soft leading-relaxed max-w-xl">
+          Dirancang khusus untuk warkop, kafe, restoran, dan gerai usaha di Makassar. Bebaskan area kerja dari tumpukan material sisa dengan armada logistik penjemputan terjadwal rutin.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+          <div class="p-4 rounded-2xl bg-cream/40 border border-ink/5 space-y-1.5">
+            <div class="flex items-center gap-2 text-ink">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-forest"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <h4 class="text-xs font-bold">Penjemputan Terjadwal</h4>
+            </div>
+            <p class="text-[11px] text-ink-soft leading-relaxed">Pengaturan jadwal hari dan jam jemput berkala tanpa perlu order manual setiap waktu.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-cream/40 border border-ink/5 space-y-1.5">
+            <div class="flex items-center gap-2 text-ink">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-forest"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              <h4 class="text-xs font-bold">Prioritas Armada</h4>
+            </div>
+            <p class="text-[11px] text-ink-soft leading-relaxed">Kepastian waktu kedatangan kurir lapangan sebelum jam sibuk operasional usaha dimulai.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-cream/40 border border-ink/5 space-y-1.5">
+            <div class="flex items-center gap-2 text-ink">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-forest"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              <h4 class="text-xs font-bold">Diskon Produk Kriya</h4>
+            </div>
+            <p class="text-[11px] text-ink-soft leading-relaxed">Potongan harga eksklusif untuk pengadaan cinderamata dan dekorasi daur ulang.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-cream/40 border border-ink/5 space-y-1.5">
+            <div class="flex items-center gap-2 text-ink">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-forest"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <h4 class="text-xs font-bold">Rekapitulasi Lingkungan</h4>
+            </div>
+            <p class="text-[11px] text-ink-soft leading-relaxed">Pantau data akumulasi tonase sampah terkelola beserta poin yang siap dicairkan ke kas usaha.</p>
+          </div>
+        </div>
+
+        <div class="pt-2 flex flex-col sm:flex-row items-start sm:items-center gap-3.5">
+          @if(session()->has('user_id'))
+            <a href="/mitra-bisnis" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-8 py-3 text-xs normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 w-full sm:w-auto text-center">
+              Daftar sebagai Mitra Bisnis &rarr;
+            </a>
+          @else
+            <a href="{{ route('login') }}" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-8 py-3 text-xs normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 w-full sm:w-auto text-center">
+              Daftar sebagai Mitra Bisnis &rarr;
+            </a>
+          @endif
+          <span class="text-[11px] text-ink-soft font-mono">Verifikasi akun kemitraan bebas biaya</span>
+        </div>
+      </div>
+
+      <!-- Kartu Harga & Paket Kemitraan PRO (Sisi Kanan) -->
+      <div class="lg:col-span-5 flex justify-center w-full">
+        <div class="w-full max-w-sm rounded-3xl bg-[#1C1A16] text-[#E5DFD5] border border-white/10 p-6 sm:p-7 space-y-4 text-left shadow-lg relative overflow-hidden">
+          
+          <div class="flex items-center justify-between pb-3 border-b border-white/10">
+            <div>
+              <span class="text-[10px] uppercase font-mono tracking-widest text-[#8C8478] block">Paket Kemitraan</span>
+              <h4 class="text-sm font-bold text-white mt-0.5">SulapaKarya PRO</h4>
+            </div>
+            <span class="text-[9px] font-mono font-bold text-amber-400 bg-amber-400/15 px-2 py-0.5 rounded border border-amber-400/30 uppercase tracking-wider">
+              B2B Partner
+            </span>
+          </div>
+
+          <!-- Blok Penampilan Harga 67rb -->
+          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10 text-center space-y-1">
+            <span class="text-[10px] text-[#A8A095] uppercase font-mono tracking-wider block">Biaya Layanan Operasional</span>
+            <div class="flex items-baseline justify-center gap-1">
+              <span class="text-xs font-bold text-[#A8A095]">Rp</span>
+              <span class="text-3xl sm:text-4xl font-black font-mono text-white tracking-tight">67.000</span>
+              <span class="text-xs text-[#A8A095] font-sans">/ bulan</span>
+            </div>
+            <p class="text-[10px] text-forest font-mono font-semibold pt-1">Termasuk seluruh rute penjemputan berkala</p>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+              <span class="text-[#A8A095]">Rute Armada</span>
+              <span class="font-mono text-white font-bold">Terjadwal Rutin</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+              <span class="text-[#A8A095]">Prioritas Penanganan</span>
+              <span class="font-semibold text-white">Jalur Utama</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+              <span class="text-[#A8A095]">Konversi Insentif</span>
+              <span class="font-mono text-forest font-bold">Poin Reward Usaha</span>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-white/10 text-[11px] text-[#8C8478] leading-relaxed text-center">
+            Mendukung pelaporan tanggung jawab lingkungan dan integrasi ekonomi sirkular lokal di Makassar.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION: JENIS SAMPAH YANG DITERIMA (DINAMIS DARI DATABASE) ============ -->
 <section id="katalog-sampah" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-  <div class="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+  <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
     <h2 class="text-3xl sm:text-4xl font-extrabold text-forest tracking-tight mt-4">
       Jenis Sampah yang Kami Terima
     </h2>
     <p class="text-ink-soft text-sm sm:text-base mt-2">
-      Pilih jenis sampah di bawah ini untuk melihat panduan cara memilahnya secara benar.
+      Setorkan sampah terpilah untuk mendapatkan poin tukar kriya bernilai manfaat.
     </p>
+
+    <!-- Ringkasan Standar QC Terpadu -->
+    <div class="mt-6 p-4 sm:p-5 bg-white rounded-2xl border border-ink/10 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 text-left">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="badge badge-xs bg-forest/15 text-forest border-none font-bold text-[10px] px-2 py-0.5">STANDAR QC</span>
+          <span class="text-xs font-bold text-ink">Verifikasi Kelayakan Sampah</span>
+        </div>
+        <p class="text-xs text-ink-soft leading-relaxed">
+          QC (Quality Control) adalah syarat kelayakan fisik sampah sebelum ditimbang oleh kurir—wajib terpilah bersih dari residu minyak atau sisa makanan, dalam kondisi kering, dan terkemas rapi.
+        </p>
+      </div>
+      <a href="https://drive.google.com/file/d/1wmkeqhpKQgUlFeEltqR7b7xnTHrDIE32/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn btn-sm bg-forest hover:bg-forest/90 text-white rounded-xl text-xs font-bold normal-case px-4 py-2 shrink-0 border-none shadow-sm flex items-center gap-1.5 w-full sm:w-auto justify-center">
+        <span>Buka Panduan QC</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+    </div>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+    @forelse($wastePrices as $wp)
+      @php
+        $nameLower = strtolower($wp->name);
+        $imageName = 'gelas-plastik.png';
+        if (str_contains($nameLower, 'botol plastik')) $imageName = 'botol-plastik.png';
+        elseif (str_contains($nameLower, 'hvs') || str_contains($nameLower, 'buku')) $imageName = 'kertas-hvs.png';
+        elseif (str_contains($nameLower, 'koran')) $imageName = 'kertas-koran.png';
+        elseif (str_contains($nameLower, 'kain') || str_contains($nameLower, 'tekstil')) $imageName = 'kain-perca.png';
+        elseif (str_contains($nameLower, 'kresek')) $imageName = 'plastik-kresek.png';
+        elseif (str_contains($nameLower, 'kaleng') || str_contains($nameLower, 'seng')) $imageName = 'kaleng-besi.png';
+        elseif (str_contains($nameLower, 'kaca')) $imageName = 'botol-kaca.png';
+        elseif (str_contains($nameLower, 'tembaga')) $imageName = 'logam-tembaga.png';
+        elseif (str_contains($nameLower, 'besi')) $imageName = 'besi-tua.png';
+        elseif (str_contains($nameLower, 'elektronik') || str_contains($nameLower, 'e-waste')) $imageName = 'elektronik-bekas.png';
+        elseif (str_contains($nameLower, 'karton') || str_contains($nameLower, 'dupleks') || str_contains($nameLower, 'kardus')) $imageName = 'karton-makanan.png';
+      @endphp
 
-    <!-- Card 1: Gelas Plastik -->
-    <a href="/cara-memilah#gelas-plastik" class="group w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-      <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
-        <img src="{{ asset('images/sampah/gelas-plastik.png') }}" alt="Gelas Plastik" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
+      <div class="w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+        <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden">
+          <img src="{{ asset('images/sampah/' . $imageName) }}" alt="{{ $wp->name }}" class="w-full h-full object-contain" onerror="this.src='{{ asset('images/tangan-botol.png') }}'">
+        </div>
+        <div>
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="text-base sm:text-lg font-bold text-ink">{{ $wp->name }}</h3>
+            <span class="badge bg-maritime/10 text-maritime border-none font-mono font-bold text-xs shrink-0 py-2.5 px-2">
+              {{ number_format($wp->point_per_kg, 0, ',', '.') }} Poin/kg
+            </span>
+          </div>
+          <p class="text-xs text-ink-soft mt-2 line-clamp-2">{{ $wp->description ?? 'Pastikan sampah dalam kondisi bersih dan kering sebelum disetor.' }}</p>
+        </div>
       </div>
-      <div>
-        <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">Gelas Plastik</h3>
-        <p class="text-sm text-ink-soft mt-1 line-clamp-2">Gelas minuman kemasan plastik bersih dan kering.</p>
+    @empty
+      <div class="col-span-3 py-12 text-center text-ink-soft/60">
+        Belum ada data jenis sampah yang dimuat.
       </div>
-      <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-        <span>Cara Memilah</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </div>
-    </a>
-
-    <!-- Card 2: Botol Plastik -->
-    <a href="/cara-memilah#botol-plastik" class="group w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-      <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
-        <img src="{{ asset('images/sampah/botol-plastik.png') }}" alt="Botol Plastik" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <div>
-        <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">Botol Plastik</h3>
-        <p class="text-sm text-ink-soft mt-1 line-clamp-2">Botol PET bening/warna tanpa label atau tutup.</p>
-      </div>
-      <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-        <span>Cara Memilah</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </div>
-    </a>
-
-    <!-- Card 3: Kertas HVS/Buku Bekas -->
-    <a href="/cara-memilah#kertas-hvs" class="group w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-      <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
-        <img src="{{ asset('images/sampah/kertas-hvs.png') }}" alt="Kertas HVS/Buku Bekas" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <div>
-        <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">Kertas HVS / Buku</h3>
-        <p class="text-sm text-ink-soft mt-1 line-clamp-2">Kertas dokumen, majalah, dan buku bekas tak terpakai.</p>
-      </div>
-      <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-        <span>Cara Memilah</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </div>
-    </a>
-
-    <!-- Card 4: Kertas Koran -->
-    <a href="/cara-memilah#kertas-koran" class="group w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-      <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
-        <img src="{{ asset('images/sampah/kertas-koran.png') }}" alt="Kertas Koran" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <div>
-        <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">Kertas Koran</h3>
-        <p class="text-sm text-ink-soft mt-1 line-clamp-2">Koran bekas kering dalam kondisi terlipat rapi.</p>
-      </div>
-      <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-        <span>Cara Memilah</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </div>
-    </a>
-
-    <!-- Card 5: Kain Perca / Tekstil -->
-    <a href="/cara-memilah#kain-perca" class="group w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-      <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
-        <img src="{{ asset('images/sampah/kain-perca.png') }}" alt="Kain Perca" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <div>
-        <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">Kain Perca / Tekstil</h3>
-        <p class="text-sm text-ink-soft mt-1 line-clamp-2">Sisa potongan kain konveksi atau pakaian rusak.</p>
-      </div>
-      <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-        <span>Cara Memilah</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </div>
-    </a>
-
-    <!-- Card 6: Plastik Kresek -->
-    <a href="/cara-memilah#plastik-kresek" class="group w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-      <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
-        <img src="{{ asset('images/sampah/plastik-kresek.png') }}" alt="Plastik Kresek" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <div>
-        <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">Plastik Kresek</h3>
-        <p class="text-sm text-ink-soft mt-1 line-clamp-2">Kantong belanja limbah plastik tipis bersih.</p>
-      </div>
-      <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-        <span>Cara Memilah</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </div>
-    </a>
-
-    <!-- Card 7: Kaleng Besi/Seng -->
-    <a href="/cara-memilah#kaleng-besi" class="group w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-      <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
-        <img src="{{ asset('images/sampah/kaleng-besi.png') }}" alt="Kaleng Besi" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <div>
-        <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">Kaleng Besi / Seng</h3>
-        <p class="text-sm text-ink-soft mt-1 line-clamp-2">Kaleng bekas minuman, biskuit, atau makanan kaleng.</p>
-      </div>
-      <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-        <span>Cara Memilah</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </div>
-    </a>
-
-    <!-- Card 8: Botol Kaca -->
-    <a href="/cara-memilah#botol-kaca" class="group w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-      <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
-        <img src="{{ asset('images/sampah/botol-kaca.png') }}" alt="Botol Kaca" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <div>
-        <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">Botol Kaca</h3>
-        <p class="text-sm text-ink-soft mt-1 line-clamp-2">Botol kecap, sirup, atau toples kaca utuh tak retak.</p>
-      </div>
-      <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-        <span>Cara Memilah</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </div>
-    </a>
-
-    <!-- Card 9: Logam Tembaga -->
-    <a href="/cara-memilah#logam-tembaga" class="group w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-      <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
-        <img src="{{ asset('images/sampah/logam-tembaga.png') }}" alt="Logam Tembaga" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <div>
-        <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">Logam Tembaga</h3>
-        <p class="text-sm text-ink-soft mt-1 line-clamp-2">Kabel tembaga bekas, kumparan, atau peralatan kuningan.</p>
-      </div>
-      <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-        <span>Cara Memilah</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </div>
-    </a>
-
-    <!-- Card 10: Besi Tua/Padat -->
-    <a href="/cara-memilah#besi-tua" class="group w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-      <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
-        <img src="{{ asset('images/sampah/besi-tua.png') }}" alt="Besi Tua" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <div>
-        <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">Besi Tua / Padat</h3>
-        <p class="text-sm text-ink-soft mt-1 line-clamp-2">Pipa besi, rangka kendaraan, atau peralatan teknik bekas.</p>
-      </div>
-      <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-        <span>Cara Memilah</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </div>
-    </a>
-
-    <!-- Card 11: Elektronik Bekas -->
-    <a href="/cara-memilah#elektronik-bekas" class="group w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-      <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
-        <img src="{{ asset('images/sampah/elektronik-bekas.png') }}" alt="Elektronik Bekas" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <div>
-        <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">Elektronik Bekas</h3>
-        <p class="text-sm text-ink-soft mt-1 line-clamp-2">Komponen HP, laptop bekas, dan sirkuit elektronik.</p>
-      </div>
-      <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-        <span>Cara Memilah</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </div>
-    </a>
-
-    <!-- Card 12: Karton Makanan -->
-    <a href="/cara-memilah#karton-makanan" class="group w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-      <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
-        <img src="{{ asset('images/sampah/karton-makanan.png') }}" alt="Karton Makanan" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <div>
-        <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">Karton Makanan</h3>
-        <p class="text-sm text-ink-soft mt-1 line-clamp-2">Dus kemasan susu, jus (tetrapak), dan kemasan makanan.</p>
-      </div>
-      <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-        <span>Cara Memilah</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </div>
-    </a>
-
+    @endforelse
   </div>
 </section>
 
-<!-- ============ SECTION: KALKULATOR ESTIMASI NILAI SAMPAH ============ -->
+<!-- ============ SECTION: KALKULATOR ESTIMASI NILAI POIN SAMPAH ============ -->
 <section id="kalkulator" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
   <div class="bg-forest rounded-3xl p-6 sm:p-12 text-white relative overflow-hidden shadow-xl">
     
     <div class="text-center max-w-2xl mx-auto mb-10">
       <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
-        Hitung Nilai Sampahmu
+        Hitung Estimasi Poin Sampahmu
       </h2>
       <p class="text-white/80 text-sm sm:text-base mt-3">
-        Simulasikan berapa banyak nilai yang bisa kamu dapatkan dengan menukarkan sampah rumah tanggamu.
+        Simulasikan perolehan <strong>Poin Kriya</strong> dari sampah terpilah yang siap kamu setorkan.
       </p>
     </div>
 
-    <div id="kalkulator" class="max-w-xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-white/15 shadow-inner">
+    <div class="max-w-xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-white/15 shadow-inner">
       
       <div id="calculator-rows" class="space-y-4">
         
         <div class="calc-row flex items-center gap-2 sm:gap-3 py-2 border-b border-white/10 pb-4">
           <div class="flex-1">
             <select class="waste-select w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/40 cursor-pointer">
-              <option value="" selected class="text-ink">-- Pilih Jenis Sampah --</option>
-              <option value="gelas-plastik" data-price="2500" selected class="text-ink">Gelas Plastik</option>
-              <option value="botol-plastik" data-price="3000" class="text-ink">Botol Plastik</option>
-              <option value="kertas-hvs" data-price="1500" class="text-ink">Kertas HVS / Buku Bekas</option>
-              <option value="kertas-koran" data-price="1200" class="text-ink">Kertas Koran</option>
-              <option value="kain-perca" data-price="800" class="text-ink">Kain Perca / Limbah Tekstil</option>
-              <option value="plastik-kresek" data-price="500" class="text-ink">Plastik Kresek</option>
-              <option value="kaleng-besi" data-price="3500" class="text-ink">Kaleng Besi / Seng</option>
-              <option value="botol-kaca" data-price="1000" class="text-ink">Botol Kaca</option>
-              <option value="logam-tembaga" data-price="60000" class="text-ink">Logam Tembaga</option>
-              <option value="besi-tua" data-price="4500" class="text-ink">Besi Tua / Padat</option>
-              <option value="elektronik-bekas" data-price="8000" class="text-ink">Elektronik Bekas</option>
-              <option value="karton-makanan" data-price="1000" class="text-ink">Karton Makanan</option>
+              <option value="" disabled class="text-ink">-- Pilih Jenis Sampah --</option>
+              @foreach($wastePrices as $index => $wp)
+                <option value="{{ $wp->id }}" data-points="{{ $wp->point_per_kg }}" {{ $index === 0 ? 'selected' : '' }} class="text-ink">
+                  {{ $wp->name }} ({{ number_format($wp->point_per_kg, 0, ',', '.') }} Poin/kg)
+                </option>
+              @endforeach
             </select>
           </div>
 
@@ -343,8 +324,8 @@
             <button type="button" class="btn-minus w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center font-bold text-base sm:text-lg transition-colors cursor-pointer select-none">
               -
             </button>
-            <input type="number" step="0.1" min="0" value="1" class="weight-input w-12 sm:w-16 text-center bg-transparent font-bold text-sm sm:text-base text-white outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-            <span class="text-xs text-white/70">Kg</span>
+            <input type="number" step="0.5" min="0" value="1" class="weight-input w-12 sm:w-16 text-center bg-transparent font-bold text-sm sm:text-base text-white outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+            <span class="text-xs text-white/70 font-semibold">Kg</span>
             <button type="button" class="btn-plus w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center font-bold text-base sm:text-lg transition-colors cursor-pointer select-none">
               +
             </button>
@@ -363,30 +344,33 @@
       </button>
 
       <div class="mt-6 pt-6 border-t border-white/20 flex items-center justify-between">
-        <span class="text-base sm:text-lg font-bold text-white/90">Estimasi Nilai</span>
-        <span id="total-estimation" class="text-2xl sm:text-3xl font-extrabold text-white">Rp 2.500</span>
+        <div>
+          <span class="text-base sm:text-lg font-bold text-white/90 block">Estimasi Total Poin</span>
+          <span class="text-[11px] text-white/60">Dapat ditukarkan produk kriya</span>
+        </div>
+        <div class="text-right">
+          <span id="total-estimation" class="text-2xl sm:text-4xl font-extrabold text-cream tracking-tight">0</span>
+          <span class="text-sm font-bold text-cream/80 ml-1">Poin</span>
+        </div>
       </div>
     </div>
 
-      <div class="mt-8 text-center">
-         @if(session()->has('user_id'))
-          <a href="/setor-sampah" class="inline-flex items-center justify-center bg-cream hover:bg-white text-forest font-extrabold text-sm sm:text-base px-8 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-            Mulai Setor Sampah Sekarang!
-          </a>
-        @else
-          <a href="{{ route('login') }}" class="inline-flex items-center justify-center bg-cream hover:bg-white text-forest font-extrabold text-sm sm:text-base px-8 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-            Mulai Setor Sampah Sekarang!
-          </a>
-        @endif
-      </div>
+    <div class="mt-8 text-center">
+      @if(session()->has('user_id'))
+        <a href="/setor-sampah" class="inline-flex items-center justify-center bg-cream hover:bg-white text-forest font-extrabold text-sm sm:text-base px-8 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+          Mulai Setor Sampah Sekarang!
+        </a>
+      @else
+        <a href="{{ route('login') }}" class="inline-flex items-center justify-center bg-cream hover:bg-white text-forest font-extrabold text-sm sm:text-base px-8 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+          Mulai Setor Sampah Sekarang!
+        </a>
+      @endif
+    </div>
 
     <div class="mt-6 text-center text-xs text-white/70 space-y-1">
       <p class="flex items-center justify-center gap-1.5">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span>Harga berlaku sejak: <strong class="text-white font-semibold">{{ $lastUpdatedDate ?? '26 Agustus 2026' }}</strong></span>
-      </p>
-      <p class="italic text-white/60">
-        *Estimasi harga bersifat tidak mengikat dan dapat berubah sewaktu-waktu sesuai penyesuaian dari pengelola SulapaKarya.
+        <span>Tarif resmi berlaku per: <strong class="text-white font-semibold">{{ $lastUpdatedDate ?? 'Terbaru' }}</strong></span>
       </p>
     </div>
 
@@ -397,7 +381,6 @@
 <section id="produk" class="py-12 sm:py-16 lg:py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
-    <!-- Section Header (Tengah/Center & Tanpa Background Pemisah) -->
     <div class="text-center max-w-2xl mx-auto mb-12">
       <h2 class="text-3xl sm:text-4xl font-extrabold text-forest tracking-tight">
         Katalog Produk Daur Ulang
@@ -408,17 +391,14 @@
     </div>
 
   @if(isset($products))  
-    <!-- Grid Produk (Menampilkan Produk + Card CTA Katalog di Akhir) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       
       @forelse($products->take(3) as $product)
-        <!-- CARD PRODUK -->
         <div class="bg-white rounded-3xl border border-ink/10 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
           
-          <!-- Foto Produk -->
           <div class="aspect-square bg-cream/30 overflow-hidden relative">
             @if($product->photo_path)
-              <img src="{{ \Illuminate\Support\Facades\Storage::url($product->photo_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              <img src="{{ asset('storage/' . $product->photo_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
             @else
               <div class="w-full h-full grid place-items-center text-forest/50 bg-sand/30">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
@@ -426,15 +406,13 @@
             @endif
           </div>
 
-          <!-- Informasi Produk & Tombol Detail -->
           <div class="p-5 flex flex-col justify-between flex-grow">
             <div>
               <h3 class="text-base font-bold text-ink leading-snug line-clamp-1 mb-1">{{ $product->name }}</h3>
               <p class="text-forest font-bold text-base mb-4">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
             </div>
 
-            <!-- Tombol Detail Produk -->
-             @if(session()->has('user_id'))
+            @if(session()->has('user_id'))
               <button type="button" onclick="document.getElementById('detail_modal_{{ $product->id }}').showModal()" class="w-full bg-forest hover:bg-forest/90 text-white text-xs font-bold py-3 rounded-full transition-colors text-center cursor-pointer">
                 Detail Produk
               </button>
@@ -457,7 +435,7 @@
             <div class="mt-4 space-y-4">
               <div class="w-full h-52 rounded-2xl overflow-hidden bg-cream/30 border border-ink/5">
                 @if($product->photo_path)
-                  <img src="{{ \Illuminate\Support\Facades\Storage::url($product->photo_path) }}" class="w-full h-full object-cover">
+                  <img src="{{ asset('storage/' . $product->photo_path) }}" class="w-full h-full object-cover">
                 @else
                   <div class="w-full h-full grid place-items-center text-forest/50 bg-cream/50">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
@@ -496,13 +474,11 @@
             <button>close</button>
           </form>
         </dialog>
-
       @empty
       @endforelse
 
       <!-- CARD KHUSUS: TOMBOL HALAMAN KATALOG KRIYA -->
-       @if(session()->has('user_id'))
-        <!-- Jika Sudah Login: Langsung ke Halaman Katalog -->
+      @if(session()->has('user_id'))
         <a href="/katalog" class="group bg-white rounded-3xl border border-forest/40 hover:border-forest p-6 flex flex-col justify-center items-center text-center transition-all duration-300 shadow-sm hover:shadow-md min-h-[320px]">
           <div class="w-14 h-14 rounded-full bg-forest/10 text-forest flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-forest group-hover:text-white transition-all duration-300">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -514,7 +490,6 @@
           <p class="text-xs text-ink-soft max-w-[180px]">Jelajahi seluruh karya daur ulang di halaman Katalog Kriya</p>
         </a>
       @else
-        <!-- Jika Belum Login: Redirect ke Halaman Login -->
         <a href="{{ route('login') }}" class="group bg-white rounded-3xl border border-forest/40 hover:border-forest p-6 flex flex-col justify-center items-center text-center transition-all duration-300 shadow-sm hover:shadow-md min-h-[320px]">
           <div class="w-14 h-14 rounded-full bg-forest/10 text-forest flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-forest group-hover:text-white transition-all duration-300">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -538,37 +513,18 @@
     “Satu langkah kecilmu hari ini, adalah harapan besar untuk bumi esok hari.”
   </p>
 </section>
-@endsection
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    
+    // Animasi Counter Angka Dampak
     const counterSection = document.getElementById("live-count-section");
     const counters = document.querySelectorAll(".counter-number");
     let hasAnimated = false;
 
-    const bottleImg = document.getElementById("hero-bottle-image");
-
-    if (bottleImg) {
-      const bottleObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Pasang animasi saat terlihat di layar
-            bottleImg.classList.add("animate-slide-in");
-          } else {
-            // Reset state saat keluar dari pandangan layar
-            bottleImg.classList.remove("animate-slide-in");
-          }
-        });
-      }, { threshold: 0.2 });
-
-      bottleObserver.observe(bottleImg);
-    }
-
     const animateCounters = () => {
       counters.forEach((counter) => {
         const target = +counter.getAttribute("data-target");
-        const duration = 1800; // Durasi animasi (ms)
+        const duration = 1800;
         const frameRate = 1000 / 60;
         const totalFrames = Math.round(duration / frameRate);
         let currentFrame = 0;
@@ -576,10 +532,7 @@
         const countUp = setInterval(() => {
           currentFrame++;
           const progress = currentFrame / totalFrames;
-          // Easing formula (easeOutQuad) agar animasi melambat mulus di akhir
           const currentCount = Math.floor(target * (1 - Math.pow(1 - progress, 2)));
-
-          // Format ribuan (contoh: 1.450)
           counter.innerText = currentCount.toLocaleString("id-ID");
 
           if (currentFrame === totalFrames) {
@@ -599,22 +552,20 @@
           }
         });
       },
-      { threshold: 0.3 } // Animasi dipicu saat 30% elemen terlihat di layar
+      { threshold: 0.3 }
     );
 
-    if (counterSection) {
-      observer.observe(counterSection);
-    }
-  });
+    if (counterSection) observer.observe(counterSection);
 
-  document.addEventListener('DOMContentLoaded', function () {
+    // ==========================================
+    // LOGIKA KALKULATOR ESTIMASI POIN
+    // ==========================================
     const container = document.getElementById('calculator-rows');
     const addBtn = document.getElementById('add-row-btn');
     const totalDisplay = document.getElementById('total-estimation');
 
-    // Hitung total nilai sampah
-    function calculateTotal() {
-      let total = 0;
+    function calculateTotalPoints() {
+      let totalPoints = 0;
       const rows = container.querySelectorAll('.calc-row');
 
       rows.forEach(row => {
@@ -622,16 +573,14 @@
         const input = row.querySelector('.weight-input');
         const selectedOption = select.options[select.selectedIndex];
         
-        const price = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+        const pointPerKg = parseFloat(selectedOption?.getAttribute('data-points')) || 0;
         const weight = parseFloat(input.value) || 0;
 
-        total += price * weight;
+        totalPoints += Math.round(pointPerKg * weight);
       });
 
-      // Format ke mata uang Rupiah
-      totalDisplay.textContent = 'Rp ' + total.toLocaleString('id-ID');
+      totalDisplay.textContent = totalPoints.toLocaleString('id-ID');
 
-      // Tampilkan/Sembunyikan tombol hapus jika baris > 1
       rows.forEach(row => {
         const deleteBtn = row.querySelector('.btn-delete');
         if (rows.length > 1) {
@@ -642,59 +591,52 @@
       });
     }
 
-    // Event Listener untuk tombol Tambah Baris
     addBtn.addEventListener('click', function () {
       const firstRow = container.querySelector('.calc-row');
       const newRow = firstRow.cloneNode(true);
 
-      // Reset nilai input & select pada baris baru
       newRow.querySelector('.waste-select').selectedIndex = 0;
       newRow.querySelector('.weight-input').value = 1;
 
       container.appendChild(newRow);
-      calculateTotal();
+      calculateTotalPoints();
     });
 
-    // Delegasi Event untuk Plus, Minus, Hapus, dan Input Change
     container.addEventListener('click', function (e) {
       const row = e.target.closest('.calc-row');
       if (!row) return;
 
       const input = row.querySelector('.weight-input');
 
-      // Tombol Plus (+)
       if (e.target.closest('.btn-plus')) {
         let currentVal = parseFloat(input.value) || 0;
-        input.value = (currentVal + 1).toFixed(1).replace(/\.0$/, '');
-        calculateTotal();
+        input.value = (currentVal + 0.5).toFixed(1).replace(/\.0$/, '');
+        calculateTotalPoints();
       }
 
-      // Tombol Minus (-)
       if (e.target.closest('.btn-minus')) {
         let currentVal = parseFloat(input.value) || 0;
         if (currentVal > 0.5) {
-          input.value = (currentVal - 1).toFixed(1).replace(/\.0$/, '');
+          input.value = (currentVal - 0.5).toFixed(1).replace(/\.0$/, '');
         } else if (currentVal > 0) {
           input.value = 0;
         }
-        calculateTotal();
+        calculateTotalPoints();
       }
 
-      // Tombol Hapus (X)
       if (e.target.closest('.btn-delete')) {
         const rows = container.querySelectorAll('.calc-row');
         if (rows.length > 1) {
           row.remove();
-          calculateTotal();
+          calculateTotalPoints();
         }
       }
     });
 
-    // Event saat dropdown atau isi angka berubah langsung
-    container.addEventListener('input', calculateTotal);
-    container.addEventListener('change', calculateTotal);
+    container.addEventListener('input', calculateTotalPoints);
+    container.addEventListener('change', calculateTotalPoints);
 
-    // Jalankan kalkulasi awal
-    calculateTotal();
+    calculateTotalPoints();
   });
 </script>
+@endsection

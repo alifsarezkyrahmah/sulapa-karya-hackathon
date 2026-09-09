@@ -9,31 +9,41 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     /**
-     * READ: Tampilan Utama Tabel Produk
+     * READ: Tampilan Utama Tabel Produk Admin
      */
-/**
-     * READ: Tampilan Utama Tabel Produk (Garansi Hitungan Akurat)
-     */
-    /**
-     * READ: Tampilan Utama Tabel Produk (Solusi Tanpa Kolom Quantity)
-     */
-    // public function index()
-    // {
-    //     // Menghitung jumlah baris data transaksi dengan toleransi segala format teks status di DB
-    //     $products = Product::withCount(['transactions as total_terjual' => function ($query) {
-    //         $query->whereIn('status', ['success', 'paid', 'picked_up'])
-    //               ->orWhere('status', 'LIKE', '%Siap%')
-    //               ->orWhere('status', 'LIKE', '%Pickup%')
-    //               ->orWhere('status', 'LIKE', '%pickup%');
-    //     }])->orderBy('created_at', 'desc')->get();
-
-    //     return view('dashboard.admin.kelola-produk', compact('products'));
-    // }
-
-    public function index()
+    public function index(Request $request)
     {
-        // Mengambil data murni produk kriya tanpa sub-query SQL yang berisiko eror tipe data
-        $products = Product::orderBy('created_at', 'desc')->get();
+        $query = Product::query();
+
+        // 1. Filter Pencarian
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'ilike', "%{$search}%")
+                  ->orWhere('material_source', 'ilike', "%{$search}%");
+            });
+        }
+
+        // 2. Filter Kategori
+        if ($request->filled('category')) {
+            $query->where('product_category', trim($request->category));
+        }
+
+        // 3. Filter Status
+        if ($request->filled('status')) {
+            $status = strtolower(trim($request->status));
+            if ($status === 'available') {
+                $query->whereRaw("LOWER(status) = 'available'");
+            } elseif ($status === 'sold_out') {
+                $query->where(function ($q) {
+                    $q->whereRaw("LOWER(status) = 'sold_out'")
+                      ->orWhere('stock', '<=', 0);
+                });
+            }
+        }
+
+        $products = $query->orderBy('created_at', 'desc')->get();
+
         return view('dashboard.admin.kelola-produk', compact('products'));
     }
 
@@ -59,6 +69,7 @@ class ProductController extends Controller
                 $photoPath = $request->file('photo')->store('products', 'public');
             }
 
+            // Hapus 'id' => Str::uuid(), biarkan PostgreSQL mengisi auto-increment
             Product::create([
                 'artisan_id'       => null, 
                 'name'             => $request->name,
@@ -99,9 +110,8 @@ class ProductController extends Controller
         try {
             $photoPath = $product->photo_path;
             
-            // Jika admin mengganti foto, hapus foto lama agar storage tidak penuh
             if ($request->hasFile('photo')) {
-                if ($product->photo_path) {
+                if ($product->photo_path && Storage::disk('public')->exists($product->photo_path)) {
                     Storage::disk('public')->delete($product->photo_path);
                 }
                 $photoPath = $request->file('photo')->store('products', 'public');
@@ -119,7 +129,7 @@ class ProductController extends Controller
                 'status'           => $request->status,
             ]);
 
-            return back()->with('success', 'Produk berhasil diperbarui!');
+            return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui!');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Gagal memperbarui: ' . $e->getMessage()]);
         }
@@ -133,8 +143,7 @@ class ProductController extends Controller
         try {
             $product = Product::findOrFail($id);
             
-            // Hapus file foto dari local storage
-            if ($product->photo_path) {
+            if ($product->photo_path && Storage::disk('public')->exists($product->photo_path)) {
                 Storage::disk('public')->delete($product->photo_path);
             }
 

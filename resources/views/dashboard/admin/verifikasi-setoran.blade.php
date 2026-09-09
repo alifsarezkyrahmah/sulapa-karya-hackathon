@@ -1,219 +1,301 @@
 @extends('layouts.dashboard', ['title' => 'Verifikasi Setoran — SulapaKarya'])
 
 @section('dashboard-content')
-<div class="space-y-6 animate-fadeIn">
+@php
+    $selectedTab = request('tab', 'all');
     
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div class="text-left">
-            <h1 class="font-display font-extrabold text-2xl text-ink tracking-tight">Verifikasi Setoran Sampah</h1>
-            <p class="text-xs text-ink-soft/80 font-medium mt-1">Kelola dan verifikasi permintaan penjemputan sampah daur ulang dari warga secara teliti.</p>
+    // Filter koleksi berdasarkan tab
+    $filteredDeposits = $deposits->filter(function($item) use ($selectedTab) {
+        $isBiz = ($item->deposit_type === 'business') || (($item->user->business_status ?? '') === 'approved');
+        if ($selectedTab === 'pro') return $isBiz;
+        if ($selectedTab === 'regular') return !$isBiz;
+        return true;
+    });
+
+    $countAll = $deposits->count();
+    $countPro = $deposits->filter(fn($i) => ($i->deposit_type === 'business') || (($i->user->business_status ?? '') === 'approved'))->count();
+    $countReg = $countAll - $countPro;
+@endphp
+
+<div class="space-y-6 text-left">
+    
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-ink/5">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-bold text-ink tracking-tight">Verifikasi Setoran Masuk</h1>
+            <p class="text-xs text-ink-soft mt-0.5">Tinjau kelayakan sampah daur ulang warga/mitra dan delegasikan armada kurir untuk penjemputan lapangan.</p>
         </div>
+        <span class="badge bg-forest/10 text-forest border border-forest/20 text-[11px] font-semibold px-3 py-1 rounded-lg">
+            Panel Verifikasi Admin
+        </span>
     </div>
 
+    <!-- Alert Notifikasi -->
     @if($errors->any())
-        <div class="alert alert-error bg-terracotta/10 border-terracotta/20 text-terracotta rounded-2xl text-xs font-bold text-left p-4 shadow-sm">
+        <div class="alert alert-error bg-terracotta/10 border border-terracotta/20 text-terracotta rounded-2xl text-xs font-semibold p-4 shadow-none">
             <ul class="list-disc list-inside space-y-0.5">
                 @foreach($errors->all() as $error) <li>{{ $error }}</li> @endforeach
             </ul>
         </div>
     @endif
     @if(session('success'))
-        <div class="alert alert-success bg-forest/10 border-forest/20 text-forest rounded-2xl text-xs font-bold text-left p-4 shadow-sm">
+        <div class="alert alert-success bg-forest/10 border border-forest/20 text-forest rounded-2xl text-xs font-semibold p-4 shadow-none">
             {{ session('success') }}
         </div>
     @endif
 
-    <div class="bg-white border border-ink/5 rounded-[1.5rem] p-6 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto rounded-xl border border-ink/5">
-            <table class="table w-full text-sm">
+    <!-- Tab Pembeda: Semua vs PRO vs Warga -->
+    <div class="flex items-center gap-2 border-b border-ink/10 pb-3 overflow-x-auto">
+        <a href="?tab=all" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-2 {{ $selectedTab === 'all' ? 'bg-forest text-white shadow-sm' : 'bg-white border border-ink/10 text-ink hover:bg-cream/50' }}">
+            <span>Semua Setoran</span>
+            <span class="badge badge-xs {{ $selectedTab === 'all' ? 'bg-white/20 text-white' : 'bg-ink/5 text-ink-soft' }} border-none font-mono font-bold">{{ $countAll }}</span>
+        </a>
+        <a href="?tab=pro" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-2 {{ $selectedTab === 'pro' ? 'bg-amber-400 text-amber-950 shadow-sm' : 'bg-white border border-amber-300 text-amber-900 hover:bg-amber-50' }}">
+            <span>★ Mitra Bisnis PRO</span>
+            <span class="badge badge-xs {{ $selectedTab === 'pro' ? 'bg-amber-950/20 text-amber-950' : 'bg-amber-100 text-amber-900' }} border-none font-mono font-bold">{{ $countPro }}</span>
+        </a>
+        <a href="?tab=regular" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-2 {{ $selectedTab === 'regular' ? 'bg-ink text-white shadow-sm' : 'bg-white border border-ink/10 text-ink hover:bg-cream/50' }}">
+            <span>Warga Reguler</span>
+            <span class="badge badge-xs {{ $selectedTab === 'regular' ? 'bg-white/20 text-white' : 'bg-ink/5 text-ink-soft' }} border-none font-mono font-bold">{{ $countReg }}</span>
+        </a>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 1. TAMPILAN MOBILE (< md) -->
+    <!-- ========================================================================= -->
+    <div class="space-y-3.5 md:hidden">
+        @forelse($filteredDeposits as $d)
+            @php 
+                $warga = $d->user ?? \App\Models\User::find($d->user_id); 
+                $kurir = $d->penjemput ?? ($d->penjemput_id ? \App\Models\User::find($d->penjemput_id) : null);
+                $isBusiness = ($d->deposit_type === 'business') || (($warga->business_status ?? '') === 'approved');
+            @endphp
+            <div class="bg-white border-2 {{ $isBusiness ? 'border-amber-400/80 bg-amber-50/20' : 'border-ink/10' }} rounded-2xl p-4 shadow-none space-y-3">
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-1.5">
+                        @if($isBusiness)
+                            <span class="badge badge-sm bg-amber-400 text-amber-950 font-black border-none text-[9px] font-mono uppercase px-2">★ PRO B2B</span>
+                        @else
+                            <span class="badge badge-sm bg-cream text-ink border border-ink/10 font-bold text-[9px] font-mono px-2">WARGA</span>
+                        @endif
+                        <span class="text-[10px] text-ink-soft font-mono">{{ $d->deposit_code }}</span>
+                    </div>
+
+                    <div>
+                        @if($d->status === 'pending' || $d->status === 'menunggu_admin')
+                            <span class="inline-flex items-center bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-md">Menunggu Verifikasi</span>
+                        @elseif($d->status === 'menunggu_penjemput')
+                            <span class="inline-flex items-center bg-maritime/10 text-maritime border border-maritime/20 text-[10px] font-bold px-2 py-0.5 rounded-md">Menunggu Kurir</span>
+                        @elseif($d->status === 'penjemput_menuju_lokasi')
+                            <span class="inline-flex items-center bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold px-2 py-0.5 rounded-md">Kurir OTW</span>
+                        @elseif($d->status === 'penjemput_tiba')
+                            <span class="inline-flex items-center bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-bold px-2 py-0.5 rounded-md">Kurir di Lokasi</span>
+                        @elseif($d->status === 'sedang_diproses')
+                            <span class="inline-flex items-center bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-md">Sedang Diproses</span>
+                        @elseif(in_array($d->status, ['berhasil_dikirim', 'completed', 'selesai']))
+                            <span class="inline-flex items-center bg-forest/10 text-forest border border-forest/20 text-[10px] font-bold px-2 py-0.5 rounded-md">Selesai</span>
+                        @elseif(in_array($d->status, ['ditolak', 'ditolak_qc', 'rejected']))
+                            <span class="inline-flex items-center bg-terracotta/10 text-terracotta border border-terracotta/20 text-[10px] font-bold px-2 py-0.5 rounded-md">Ditolak</span>
+                        @else
+                            <span class="badge badge-xs bg-cream text-ink text-[10px]">{{ $d->status }}</span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="text-xs pt-1 border-t border-ink/5">
+                    <span class="text-[10px] text-ink-soft block font-bold uppercase tracking-wider">{{ $isBusiness ? 'Unit Usaha Mitra:' : 'Warga Pemohon:' }}</span>
+                    <span class="font-bold text-ink text-sm block mt-0.5">{{ $isBusiness && $warga->business_name ? $warga->business_name : ($warga->name ?? 'Anonim') }}</span>
+                    @if($isBusiness)
+                        <span class="text-[11px] text-amber-900 font-semibold block">PIC: {{ $warga->name ?? '-' }} ({{ $warga->phone ?? '-' }})</span>
+                    @else
+                        <span class="text-ink-soft font-mono text-[11px] block">{{ $warga->phone ?? '-' }}</span>
+                    @endif
+                </div>
+
+                <div class="flex items-center gap-3 bg-cream/30 p-2.5 rounded-xl border border-ink/5">
+                    <div class="w-14 h-14 rounded-lg overflow-hidden bg-white shrink-0 border border-ink/10 cursor-pointer"
+                        onclick="document.getElementById('photo_modal_{{ $d->id }}').showModal()">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::url($d->photo_path) }}" alt="Foto" class="w-full h-full object-cover">
+                    </div>
+                    <div class="min-w-0 flex-1 text-xs">
+                        <span class="font-bold text-ink block truncate">{{ $d->category }}</span>
+                        <span class="font-mono font-bold text-forest text-xs mt-0.5 block">Est: {{ number_format($d->estimated_weight, 1) }} kg</span>
+                        <span class="text-[10px] text-ink-soft block">Jadwal: {{ $d->pickup_date ? \Carbon\Carbon::parse($d->pickup_date)->translatedFormat('d M Y') : '-' }}</span>
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-ink/5 flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] text-ink-soft block">Kurir Ditugaskan:</span>
+                        @if($kurir)
+                            <strong class="text-xs text-maritime font-semibold">{{ $kurir->name }}</strong>
+                        @else
+                            <span class="text-xs text-ink-soft/60 italic">Belum ditentukan</span>
+                        @endif
+                    </div>
+
+                    @if($d->status === 'pending' || $d->status === 'menunggu_admin')
+                        <button type="button" onclick="document.getElementById('verify_modal_{{ $d->id }}').showModal()"
+                            class="btn btn-xs bg-forest hover:bg-forest-dark text-white border-none rounded-lg text-xs font-bold px-3 py-1.5 shadow-none">
+                            Tugaskan &rarr;
+                        </button>
+                    @endif
+                </div>
+            </div>
+        @empty
+            <div class="bg-white rounded-2xl p-8 text-center text-ink-soft/60 text-xs border border-ink/5">
+                Tidak ada data setoran yang sesuai dengan tab filter.
+            </div>
+        @endforelse
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 2. TAMPILAN DESKTOP (>= md): TABEL RAPI & TERSTRUKTUR -->
+    <!-- ========================================================================= -->
+    <div class="hidden md:block bg-white border border-ink/10 rounded-2xl p-6 shadow-none">
+        <div class="overflow-x-auto">
+            <table class="table w-full text-xs">
                 <thead>
-                    <tr class="border-b border-ink/5 text-ink/70 font-bold uppercase tracking-wider text-xs bg-cream/60">
-                        <th class="py-3.5 pl-5">No. Referensi & Tanggal</th>
-                        <th class="py-3.5">Detail Sampah & Est. Berat</th>
-                        <th class="py-3.5">Foto Wujud</th>
-                        <th class="py-3.5 text-center">Status Lacak</th>
-                        <th class="py-3.5 text-center pr-5">Aksi / Verifikasi</th>
+                    <tr class="bg-cream/40 text-ink-soft border-b border-ink/5 font-semibold text-[10px] uppercase tracking-wider">
+                        <th class="py-3 pl-4 w-24">Tipe</th>
+                        <th class="py-3">Pemohon / Unit Usaha</th>
+                        <th class="py-3 w-56">Detail Sampah & Est.</th>
+                        <th class="py-3 text-center w-20">Foto Wujud</th>
+                        <th class="py-3 w-40">Jadwal & Wilayah</th>
+                        <th class="py-3 text-center w-36">Status</th>
+                        <th class="py-3 pr-4 text-right w-36">Aksi Verifikasi</th>
                     </tr>
                 </thead>
-                <tbody class="font-medium text-ink/90">
-                    @forelse($deposits as $d)
+                <tbody class="divide-y divide-ink/5 font-medium">
+                    @forelse($filteredDeposits as $d)
                         @php 
-                            $warga = \App\Models\User::find($d->user_id); 
+                            $warga = $d->user ?? \App\Models\User::find($d->user_id); 
+                            $kurir = $d->penjemput ?? ($d->penjemput_id ? \App\Models\User::find($d->penjemput_id) : null);
+                            $isBusiness = ($d->deposit_type === 'business') || (($warga->business_status ?? '') === 'approved');
                         @endphp
-                        <tr class="hover:bg-cream/10 border-b border-ink/5 transition-colors">
+                        <tr class="hover:bg-cream/20 transition-colors {{ $isBusiness ? 'bg-amber-400/[0.03]' : '' }}">
                             
-                            <td class="py-4 pl-5">
-                                <span class="text-ink-soft font-mono font-bold block">{{ $d->deposit_code }}</span>
-                                <span class="text-[10px] text-ink-soft/60 block tracking-wide mt-0.5">Diajukan: {{ \Carbon\Carbon::parse($d->created_at)->translatedFormat('d M Y - H:i') }}</span>
-                                <span class="text-xs font-bold text-maritime block mt-1">Oleh: {{ $warga->name ?? 'Anonim' }}</span>
-                                @if($d->pickup_date)
-                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-forest-dark bg-forest/10 border border-forest/15 px-2 py-1 rounded-md mt-1.5">
-                                        🗓 {{ \Carbon\Carbon::parse($d->pickup_date)->translatedFormat('d M Y') }}@if($d->pickup_time) • {{ \Carbon\Carbon::parse($d->pickup_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($d->pickup_time)->addHour()->format('H:i') }}@endif
+                            <!-- Tipe Badge -->
+                            <td class="py-3.5 pl-4 align-middle">
+                                @if($isBusiness)
+                                    <span class="inline-flex items-center justify-center bg-amber-400 text-amber-950 font-mono font-black text-[9px] px-2.5 py-1 rounded shadow-2xs whitespace-nowrap">
+                                        ★ PRO B2B
                                     </span>
                                 @else
-                                    <span class="text-[10px] text-ink-soft/50 block mt-1.5 italic">Jadwal jemput belum diisi</span>
+                                    <span class="inline-flex items-center justify-center bg-cream text-ink border border-ink/10 font-mono font-bold text-[9px] px-2.5 py-1 rounded whitespace-nowrap">
+                                        WARGA
+                                    </span>
                                 @endif
                             </td>
 
-                            <td class="py-4">
-                                <span class="badge bg-cream border border-ink/10 text-ink-soft font-bold text-[10px] px-2 py-1 rounded-md mb-1">{{ $d->category }}</span>
-                                <p class="text-xs font-bold text-ink">Est: {{ number_format($d->estimated_weight, 2, ',', '.') }} kg</p>
-                                <p class="text-[10px] text-gray-400 mt-1 truncate max-w-[150px]">Reward: {{ strtoupper($d->reward_type) }}</p>
+                            <!-- Pemohon -->
+                            <td class="py-3.5 align-middle">
+                                <span class="font-bold text-ink block text-xs truncate max-w-[170px]">
+                                    {{ $isBusiness && $warga->business_name ? $warga->business_name : ($warga->name ?? 'Anonim') }}
+                                </span>
+                                @if($isBusiness)
+                                    <span class="text-[10px] text-amber-900 block truncate font-sans">
+                                        PIC: {{ $warga->name ?? '-' }} ({{ $warga->phone ?? '-' }})
+                                    </span>
+                                @else
+                                    <span class="text-[10px] text-ink-soft font-mono block">{{ $warga->phone ?? '-' }}</span>
+                                @endif
                             </td>
 
-                            <td class="py-4">
-                                <div class="avatar">
-                                    <div class="w-14 h-14 rounded-lg border border-ink/10 shadow-sm cursor-pointer hover:scale-105 transition-transform" onclick="document.getElementById('photo_modal_{{ $d->id }}').showModal()" title="Klik untuk perbesar">
-                                        <img src="{{ \Illuminate\Support\Facades\Storage::url($d->photo_path) }}" alt="Foto Sampah" class="object-cover" />
+                            <!-- Detail Sampah & Estimasi -->
+                            <td class="py-3.5 align-middle">
+                                <div class="space-y-1">
+                                    <div class="inline-block bg-cream border border-ink/10 text-ink text-[10px] font-semibold px-2 py-0.5 rounded leading-tight">
+                                        {{ $d->category }}
+                                    </div>
+                                    @if($d->sub_category)
+                                        <span class="text-[10px] text-ink-soft block truncate max-w-[200px]">{{ $d->sub_category }}</span>
+                                    @endif
+                                    <div class="font-mono font-bold text-forest text-xs">
+                                        Est: {{ number_format($d->estimated_weight, 1) }} kg
                                     </div>
                                 </div>
                             </td>
 
-                            <td class="py-4 text-center">
+                            <!-- Foto -->
+                            <td class="py-3.5 text-center align-middle">
+                                <div class="w-11 h-11 mx-auto rounded-xl overflow-hidden border border-ink/10 cursor-pointer hover:opacity-80 transition-opacity bg-cream/40 shrink-0"
+                                    onclick="document.getElementById('photo_modal_{{ $d->id }}').showModal()" title="Klik untuk lihat foto asli">
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($d->photo_path) }}" alt="Foto Sampah" class="w-full h-full object-cover">
+                                </div>
+                            </td>
+
+                            <!-- Jadwal & Lokasi -->
+                            <td class="py-3.5 align-middle">
+                                <span class="font-semibold text-ink block text-xs">
+                                    {{ $d->pickup_date ? \Carbon\Carbon::parse($d->pickup_date)->translatedFormat('d M Y') : 'Belum diisi' }}
+                                </span>
+                                <span class="text-[10px] text-ink-soft font-mono block">
+                                    {{ $d->pickup_time ? \Carbon\Carbon::parse($d->pickup_time)->format('H:i') . ' WITA' : '-' }}
+                                </span>
+                                <span class="text-[10px] text-ink-soft/80 block truncate max-w-[140px] font-semibold">
+                                    Kec. {{ $d->kecamatan ?? '-' }}
+                                </span>
+                            </td>
+
+                            <!-- Status Alur -->
+                            <td class="py-3.5 text-center align-middle">
                                 @if($d->status === 'pending' || $d->status === 'menunggu_admin')
-                                    <span class="badge bg-amber-100 text-amber-700 border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Menunggu Verifikasi</span>
-                                @elseif($d->status === 'ditolak')
-                                    <span class="badge bg-terracotta/10 text-terracotta border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Ditolak Admin</span>
+                                    <span class="inline-flex items-center justify-center bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2.5 py-1 rounded-md whitespace-nowrap">
+                                        Menunggu Verifikasi
+                                    </span>
                                 @elseif($d->status === 'menunggu_penjemput')
-                                    <span class="badge bg-maritime/10 text-maritime border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Mencari Kurir</span>
+                                    <span class="inline-flex items-center justify-center bg-maritime/10 text-maritime border border-maritime/20 text-[10px] font-bold px-2.5 py-1 rounded-md whitespace-nowrap">
+                                        Menunggu Kurir
+                                    </span>
                                 @elseif($d->status === 'penjemput_menuju_lokasi')
-                                    <span class="badge bg-blue-100 text-blue-700 border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Kurir OTW</span>
+                                    <span class="inline-flex items-center justify-center bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold px-2.5 py-1 rounded-md whitespace-nowrap">
+                                        Kurir OTW Lokasi
+                                    </span>
                                 @elseif($d->status === 'penjemput_tiba')
-                                    <span class="badge bg-purple-100 text-purple-700 border-none text-[10px] font-bold px-2 py-1.5 rounded-md">Kurir Tiba (Timbang)</span>
-                                @elseif($d->status === 'selesai')
-                                    <span class="badge bg-forest/20 text-forest-dark border-none text-[10px] font-bold px-2 py-1.5 rounded-md">✓ Selesai & Ditransfer</span>
+                                    <span class="inline-flex items-center justify-center bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-bold px-2.5 py-1 rounded-md whitespace-nowrap">
+                                        Kurir di Lokasi
+                                    </span>
+                                @elseif($d->status === 'sedang_diproses')
+                                    <span class="inline-flex items-center justify-center bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2.5 py-1 rounded-md whitespace-nowrap">
+                                        Sedang Diproses
+                                    </span>
+                                @elseif(in_array($d->status, ['berhasil_dikirim', 'completed', 'selesai']))
+                                    <span class="inline-flex items-center justify-center bg-forest/10 text-forest border border-forest/20 text-[10px] font-bold px-2.5 py-1 rounded-md whitespace-nowrap">
+                                        Selesai
+                                    </span>
+                                @elseif(in_array($d->status, ['ditolak', 'ditolak_qc', 'rejected']))
+                                    <span class="inline-flex items-center justify-center bg-terracotta/10 text-terracotta border border-terracotta/20 text-[10px] font-bold px-2.5 py-1 rounded-md whitespace-nowrap">
+                                        Ditolak
+                                    </span>
                                 @else
-                                    <span class="badge badge-ghost text-[10px] uppercase">{{ $d->status }}</span>
+                                    <span class="inline-flex items-center justify-center bg-cream text-ink border border-ink/10 text-[10px] font-bold px-2.5 py-1 rounded-md whitespace-nowrap uppercase">
+                                        {{ str_replace('_', ' ', $d->status) }}
+                                    </span>
                                 @endif
                             </td>
 
-                            <td class="py-4 text-center pr-5">
+                            <!-- Aksi / Info Kurir -->
+                            <td class="py-3.5 pr-4 text-right align-middle">
                                 @if($d->status === 'pending' || $d->status === 'menunggu_admin')
-                                    <button onclick="document.getElementById('verify_modal_{{ $d->id }}').showModal()" class="btn btn-xs bg-maritime border-none text-white hover:bg-maritime-dark rounded-md font-bold px-3 shadow-sm">
-                                        🔍 Cek Detail & Proses
+                                    <button type="button" onclick="document.getElementById('verify_modal_{{ $d->id }}').showModal()"
+                                        class="btn btn-xs bg-forest hover:bg-forest-dark text-white border-none rounded-lg text-xs font-bold px-3 py-1.5 shadow-none whitespace-nowrap">
+                                        Tugaskan Kurir
                                     </button>
                                 @else
-                                    @if($d->penjemput_id)
-                                        @php $kurir = \App\Models\User::find($d->penjemput_id); @endphp
-                                        <span class="text-[10px] text-ink-soft/60 block font-semibold bg-gray-50 py-1 px-2 rounded border border-ink/5">Penjemput: <br> <b class="text-ink">{{ $kurir->name ?? 'Tidak diketahui' }}</b></span>
+                                    @if($kurir)
+                                        <span class="text-[10px] text-ink-soft block font-medium">Kurir:</span>
+                                        <span class="font-bold text-maritime text-xs block truncate max-w-[120px] ml-auto">{{ $kurir->name }}</span>
+                                    @else
+                                        <span class="text-[10px] text-ink-soft/40 font-mono">-</span>
                                     @endif
                                 @endif
                             </td>
                         </tr>
-
-                        <dialog id="photo_modal_{{ $d->id }}" class="modal modal-bottom sm:modal-middle">
-                            <div class="modal-box bg-white rounded-2xl p-2 relative max-w-sm">
-                                <form method="dialog"><button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-white drop-shadow-md z-10">✕</button></form>
-                                <img src="{{ \Illuminate\Support\Facades\Storage::url($d->photo_path) }}" class="w-full h-auto rounded-xl object-contain">
-                            </div>
-                            <form method="dialog" class="modal-backdrop bg-ink/70 backdrop-blur-sm"><button>close</button></form>
-                        </dialog>
-
-                        @if($d->status === 'pending' || $d->status === 'menunggu_admin')
-                        <dialog id="verify_modal_{{ $d->id }}" class="modal modal-bottom sm:modal-middle">
-                            <div class="modal-box bg-white max-w-2xl rounded-[2rem] border border-ink/5 p-6 sm:p-8 text-left relative">
-                                <form method="dialog"><button class="btn btn-sm btn-circle btn-ghost absolute right-6 top-6 text-ink-soft bg-gray-100 hover:bg-gray-200">✕</button></form>
-                                
-                                <h3 class="font-display font-extrabold text-2xl text-ink">Verifikasi Setoran Warga</h3>
-                                <p class="text-sm text-ink-soft mt-1 mb-6 border-b border-ink/5 pb-4">Tinjau dengan seksama data pengajuan di bawah ini sebelum mengirimkan unit penjemputan.</p>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
-                                    
-                                    <div class="md:col-span-3 space-y-4">
-                                        <div class="bg-cream/30 p-4 rounded-xl border border-ink/5">
-                                            <span class="text-[10px] font-bold text-ink-soft uppercase tracking-widest block mb-2">Informasi Pemohon</span>
-                                            <div class="flex flex-col gap-1 text-sm">
-                                                <div class="flex justify-between"><span class="text-ink-soft">Nama:</span> <span class="font-bold text-ink">{{ $warga->name ?? 'Anonim' }}</span></div>
-                                                <div class="flex justify-between"><span class="text-ink-soft">No. HP:</span> <span class="font-bold text-ink">{{ $warga->phone ?? '-' }}</span></div>
-                                            </div>
-                                        </div>
-
-                                        <div class="bg-forest/5 p-4 rounded-xl border border-forest/10">
-                                            <span class="text-[10px] font-bold text-forest-dark uppercase tracking-widest block mb-2">Detail Sampah Daur Ulang</span>
-                                            <div class="flex flex-col gap-1 text-sm">
-                                                <div class="flex justify-between"><span class="text-forest-dark/70">Kategori Utama:</span> <span class="font-bold text-forest-dark">{{ strtoupper($d->category) }}</span></div>
-                                                <div class="flex justify-between"><span class="text-forest-dark/70">Sub-Kategori:</span> <span class="font-semibold text-forest-dark">{{ $d->sub_category ?? 'Tidak spesifik' }}</span></div>
-                                                <div class="flex justify-between"><span class="text-forest-dark/70">Estimasi Timbangan:</span> <span class="font-mono font-bold text-xl text-forest">{{ number_format($d->estimated_weight, 2, ',', '.') }} Kg</span></div>
-                                                <div class="flex justify-between"><span class="text-forest-dark/70">Pilihan Imbalan:</span> <span class="font-bold text-maritime">{{ strtoupper($d->reward_type) }}</span></div>
-                                            </div>
-                                        </div>
-
-                                        <div class="bg-cream/30 p-4 rounded-xl border border-ink/5">
-                                            <span class="text-[10px] font-bold text-ink-soft uppercase tracking-widest block mb-2">Lokasi Penjemputan</span>
-                                            <p class="font-semibold text-sm leading-snug text-ink">{{ $d->pickup_address }}</p>
-                                        </div>
-
-                                        <div class="bg-maritime/5 p-4 rounded-xl border border-maritime/10">
-                                            <span class="text-[10px] font-bold text-maritime-dark uppercase tracking-widest block mb-2">Jadwal Penjemputan</span>
-                                            <div class="flex flex-col gap-1 text-sm">
-                                                <div class="flex justify-between">
-                                                    <span class="text-maritime-dark/70">Tanggal Jemput:</span>
-                                                    <span class="font-bold text-maritime-dark">{{ $d->pickup_date ? \Carbon\Carbon::parse($d->pickup_date)->translatedFormat('l, d M Y') : 'Belum diisi' }}</span>
-                                                </div>
-                                                <div class="flex justify-between">
-                                                    <span class="text-maritime-dark/70">Jam Jemput:</span>
-                                                    <span class="font-bold text-maritime-dark">{{ $d->pickup_time ? \Carbon\Carbon::parse($d->pickup_time)->format('H:i') . ' - ' . \Carbon\Carbon::parse($d->pickup_time)->addHour()->format('H:i') : 'Belum diisi' }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="md:col-span-2 flex flex-col">
-                                        <span class="text-[10px] font-bold text-ink-soft uppercase tracking-widest block mb-2">Foto Fisik Kondisi</span>
-                                        <div class="flex-1 rounded-xl border border-ink/10 overflow-hidden bg-gray-50 flex items-center justify-center p-1 shadow-inner relative group">
-                                            <img src="{{ \Illuminate\Support\Facades\Storage::url($d->photo_path) }}" alt="Bukti Foto" class="object-contain w-full h-full max-h-[250px] rounded-lg">
-                                            <div class="absolute inset-0 bg-ink/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer" onclick="document.getElementById('photo_modal_{{ $d->id }}').showModal()">
-                                                <span class="text-white font-bold text-xs bg-ink px-3 py-1.5 rounded-lg flex items-center gap-2">🔍 Perbesar Foto</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <form action="{{ route('admin.deposits.approve', $d->id) }}" method="POST" class="bg-maritime/5 p-5 rounded-2xl border border-maritime/10">
-                                    @csrf
-                                    <h4 class="font-bold text-sm text-maritime-dark mb-3 flex items-center gap-2">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                                        Tindakan Admin
-                                    </h4>
-                                    
-                                    <div class="form-control mb-3">
-                                        <label class="label py-1"><span class="label-text font-bold text-xs text-ink">Keputusan Akhir <span class="text-terracotta">*</span></span></label>
-                                        <select name="keputusan" id="keputusan_select_{{ $d->id }}" required class="select select-bordered select-readable w-full rounded-xl text-sm focus:outline-none focus:border-maritime font-bold bg-white text-ink" onchange="toggleKurir(this.value, 'kurir_box_{{ $d->id }}')">
-                                            <option value="" disabled selected>-- Tentukan Sikap... --</option>
-                                            <option value="terima">Terima & Tugaskan Penjemput</option>
-                                            <option value="tolak">Tolak Setoran (Bukan sampah daur ulang)</option>
-                                        </select>
-                                    </div>
-
-                                    <div id="kurir_box_{{ $d->id }}" class="form-control hidden mb-3 bg-white p-3 rounded-xl border border-ink/10 shadow-sm">
-                                        <label class="label py-1"><span class="label-text font-bold text-xs text-maritime">Tugaskan ke Kurir <span class="text-terracotta">*</span></span></label>
-                                        <select name="penjemput_id" class="select select-bordered select-readable w-full rounded-xl text-sm focus:outline-none focus:border-maritime font-bold bg-cream/20 text-ink">
-                                            <option value="" disabled selected>Pilih staf kurir yang sedang aktif...</option>
-                                            @foreach($penjemputs as $kurir)
-                                                <option value="{{ $kurir->id }}">{{ $kurir->name }} - (HP: {{ $kurir->phone ?? '-' }})</option>
-                                            @endforeach
-                                        </select>
-                                        <span class="text-[10px] text-ink-soft/70 mt-1 block">Tugas ini akan otomatis dikirim ke Dashboard Penjemput terpilih.</span>
-                                    </div>
-
-                                    <div class="form-control mb-4">
-                                        <label class="label py-1"><span class="label-text font-bold text-xs text-ink">Catatan Instruksi (Opsional)</span></label>
-                                        <textarea name="admin_notes" rows="2" placeholder="Contoh instruksi ke kurir atau alasan penolakan ke warga..." class="textarea textarea-bordered w-full rounded-xl text-sm focus:outline-none focus:border-maritime bg-white"></textarea>
-                                    </div>
-
-                                    <button type="submit" class="btn w-full bg-ink text-white border-none rounded-xl font-extrabold normal-case shadow-md hover:bg-ink-soft">
-                                        Eksekusi Keputusan
-                                    </button>
-                                </form>
-                            </div>
-                            <form method="dialog" class="modal-backdrop bg-ink/50 backdrop-blur-sm"><button>close</button></form>
-                        </dialog>
-                        @endif
-
                     @empty
                         <tr>
-                            <td colspan="5" class="py-12 text-center text-ink-soft/60 font-medium text-xs">
-                                📭 Belum ada data permohonan setoran sampah masuk.
+                            <td colspan="7" class="py-12 text-center text-ink-soft/60 text-xs font-medium">
+                                Tidak ada antrean setoran yang cocok dengan filter saat ini.
                             </td>
                         </tr>
                     @endforelse
@@ -223,32 +305,175 @@
     </div>
 </div>
 
-<style>
-    /* Perbaiki keterbacaan dropdown: opsi sebelumnya gelap di atas latar gelap. */
-    select.select-readable {
-        background-color: #ffffff;
-        color: #1f2937;
-    }
-    select.select-readable option {
-        background-color: #ffffff;
-        color: #1f2937;
-    }
-    /* Tetap ada highlight saat opsi disorot/terpilih. */
-    select.select-readable option:checked,
-    select.select-readable option:hover,
-    select.select-readable option:focus {
-        background-color: #2f6b3c; /* forest */
-        color: #ffffff;
-    }
-</style>
+<!-- ========================================================================= -->
+<!-- MODAL DETAIL POPUP -->
+<!-- ========================================================================= -->
+@foreach($deposits as $d)
+    @php 
+        $warga = $d->user ?? \App\Models\User::find($d->user_id); 
+        $isBiz = ($d->deposit_type === 'business') || (($warga->business_status ?? '') === 'approved');
+    @endphp
+
+    <!-- 1. Modal Foto Bukti Fisik -->
+    <dialog id="photo_modal_{{ $d->id }}" class="modal modal-middle">
+        <div class="modal-box w-11/12 max-w-lg sm:max-w-xl bg-white rounded-3xl border border-ink/10 p-5 sm:p-6 text-center relative shadow-2xl overflow-hidden my-auto">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-3.5 top-3.5 text-ink-soft hover:bg-cream z-20">✕</button>
+            </form>
+            
+            <div class="text-left pb-3 mb-3 border-b border-ink/5">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-forest bg-forest/10 px-2 py-0.5 rounded">
+                    Bukti Fisik Sampah
+                </span>
+            </div>
+            
+            <div class="w-full max-h-[60vh] rounded-2xl overflow-hidden bg-cream/30 border border-ink/5 flex items-center justify-center p-2">
+                <img src="{{ \Illuminate\Support\Facades\Storage::url($d->photo_path) }}" 
+                     alt="Foto Sampah {{ $d->deposit_code }}" 
+                     class="w-auto h-auto max-w-full max-h-[56vh] object-contain rounded-xl shadow-xs" loading="lazy" />
+            </div>
+
+            <div class="mt-3 flex items-center justify-between text-[11px] text-ink-soft">
+                <span>Est. Berat: <strong class="text-ink font-mono">{{ number_format($d->estimated_weight, 1) }} kg</strong></span>
+                <a href="{{ \Illuminate\Support\Facades\Storage::url($d->photo_path) }}" target="_blank" class="text-forest font-semibold hover:underline">
+                    Buka File Asli ↗
+                </a>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop bg-ink/40 backdrop-blur-xs"><button>close</button></form>
+    </dialog>
+
+    <!-- 2. Modal Verifikasi & Delegasi Kurir -->
+    @if($d->status === 'pending' || $d->status === 'menunggu_admin')
+    <dialog id="verify_modal_{{ $d->id }}" class="modal modal-middle">
+        <div class="modal-box w-11/12 max-w-lg bg-white rounded-3xl border border-ink/10 p-5 sm:p-7 text-left shadow-2xl overflow-y-auto max-h-[90vh] my-auto">
+            
+            <div class="flex items-start justify-between pb-3 border-b border-ink/5">
+                <div>
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-forest bg-forest/10 px-2 py-0.5 rounded">
+                        Formulir Penugasan Kurir
+                    </span>
+                    <h3 class="font-bold text-base sm:text-lg text-ink mt-1">
+                        Verifikasi Setoran {{ $isBiz ? 'Mitra PRO B2B' : 'Warga Reguler' }}
+                    </h3>
+                </div>
+                <form method="dialog">
+                    <button class="btn btn-sm btn-circle btn-ghost text-ink-soft hover:bg-cream">✕</button>
+                </form>
+            </div>
+
+            <div class="space-y-4 pt-3.5">
+                
+                <!-- Ringkasan Pemohon & Sampah -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-cream/30 p-3.5 rounded-2xl border border-ink/5 text-xs">
+                    <div>
+                        <span class="text-[10px] text-ink-soft block font-bold uppercase tracking-wider">{{ $isBiz ? 'Unit Usaha' : 'Nama Pemohon' }}</span>
+                        <span class="font-bold text-ink block text-sm mt-0.5">{{ $isBiz && $warga->business_name ? $warga->business_name : ($warga->name ?? 'Anonim') }}</span>
+                        <span class="text-[10px] text-ink-soft font-mono">{{ $warga->phone ?? '-' }}</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-ink-soft block font-bold uppercase tracking-wider">Kategori & Bobot</span>
+                        <span class="font-bold text-ink block text-xs mt-0.5 capitalize">{{ $d->category }}</span>
+                        <span class="font-mono text-forest font-bold text-xs">{{ number_format($d->estimated_weight, 1) }} kg (Estimasi)</span>
+                    </div>
+                </div>
+
+                <!-- Alamat & Jadwal -->
+                <div class="p-3.5 rounded-2xl border border-ink/5 bg-white space-y-2 text-xs">
+                    <div>
+                        <span class="text-[10px] text-ink-soft block font-bold uppercase tracking-wider">Alamat Titik Jemput:</span>
+                        <p class="text-ink font-medium mt-0.5 leading-relaxed">{{ $d->pickup_address }}</p>
+                        <span class="text-[11px] text-forest font-bold font-mono block mt-1">
+                            Kecamatan {{ $d->kecamatan ?? '-' }}, Kelurahan {{ $d->kelurahan ?? '-' }}
+                        </span>
+                    </div>
+                    <div class="pt-2 border-t border-ink/5 flex items-center justify-between text-xs">
+                        <span class="text-ink-soft">Jadwal Diminta:</span>
+                        <span class="font-bold text-ink font-mono">
+                            {{ $d->pickup_date ? \Carbon\Carbon::parse($d->pickup_date)->translatedFormat('d M Y') : '-' }} 
+                            ({{ $d->pickup_time ? \Carbon\Carbon::parse($d->pickup_time)->format('H:i') . ' WITA' : '-' }})
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Formulir Keputusan Admin -->
+                <form action="{{ route('admin.deposits.approve', $d->id) }}" method="POST" class="bg-forest/[0.03] p-4 rounded-2xl border border-forest/15 space-y-3">
+                    @csrf
+                    <span class="text-[10px] font-bold text-forest uppercase tracking-wider block">Tindakan Delegasi Armada</span>
+
+                    <!-- Dropdown Keputusan -->
+                    <div>
+                        <label class="block text-xs font-semibold text-ink mb-1">Keputusan <span class="text-terracotta">*</span></label>
+                        <select name="keputusan" required onchange="toggleKurir(this.value, 'kurir_box_{{ $d->id }}')"
+                            class="select select-bordered select-sm w-full rounded-xl text-xs bg-white text-ink font-semibold focus:outline-none focus:border-forest">
+                            <option value="" disabled selected>-- Pilih Tindakan --</option>
+                            <option value="terima">Terima & Tugaskan Kurir Lapangan</option>
+                            <option value="tolak">Tolak Setoran (Tidak memenuhi standar SOP)</option>
+                        </select>
+                    </div>
+
+                    <!-- Dropdown Pilihan Kurir Berdasarkan Beban Nyata -->
+                    <div id="kurir_box_{{ $d->id }}" class="hidden space-y-1 pt-1">
+                        <label class="block text-xs font-semibold text-maritime mb-1">
+                            Pilih Armada Kurir <span class="text-terracotta">*</span>
+                        </label>
+                        <select name="penjemput_id" class="select select-bordered select-sm w-full rounded-xl text-xs bg-white text-ink font-medium focus:outline-none focus:border-maritime">
+                            <option value="" disabled selected>-- Pilih Kurir yang Bertugas --</option>
+                            @foreach($penjemputs as $kurirItem)
+                                @php
+                                    $isSameArea = strtolower($kurirItem->kecamatan ?? '') === strtolower($d->kecamatan ?? '');
+                                    $activeCount = $kurirItem->active_missions_count ?? 0;
+                                    $isOverloaded = ($activeCount >= 3);
+                                @endphp
+                                <option value="{{ $kurirItem->id }}" {{ $isOverloaded ? 'class=text-terracotta' : '' }}>
+                                    {{ $kurirItem->name }} 
+                                    &bull; Kec. {{ $kurirItem->kecamatan ?? 'Makassar' }}
+                                    [{{ $activeCount }} Tugas Aktif]
+                                    {{ $isSameArea ? '★ Zonasi Sesuai' : '' }}
+                                    {{ $isOverloaded ? '(Penuh)' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <span class="text-[10px] text-ink-soft block mt-1">
+                            Target rute: <strong>Kec. {{ $d->kecamatan }}</strong>. Utamakan kurir dengan beban terendah dan tanda zonasi sesuai.
+                        </span>
+                    </div>
+
+                    <!-- Catatan Instruksi -->
+                    <div>
+                        <label class="block text-xs font-semibold text-ink mb-1">Catatan Tambahan untuk Kurir (Opsional)</label>
+                        <textarea name="admin_notes" rows="2" placeholder="Catatan panduan akses rute..."
+                            class="textarea textarea-bordered w-full rounded-xl text-xs bg-white focus:outline-none focus:border-forest text-ink leading-relaxed"></textarea>
+                    </div>
+
+                    <!-- Tombol Eksekusi -->
+                    <button type="submit" class="btn btn-sm w-full bg-forest hover:bg-forest-dark text-white border-none rounded-xl text-xs font-bold h-11 shadow-sm transition-all mt-2">
+                        Simpan & Kirim Misi ke Kurir &rarr;
+                    </button>
+                </form>
+
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop bg-ink/40 backdrop-blur-xs"><button>close</button></form>
+    </dialog>
+    @endif
+@endforeach
 
 <script>
     function toggleKurir(keputusan, boxId) {
         const box = document.getElementById(boxId);
-        if(keputusan === 'terima') {
+        const kurirSelect = box ? box.querySelector('select[name="penjemput_id"]') : null;
+        if (!box) return;
+
+        if (keputusan === 'terima') {
             box.classList.remove('hidden');
+            if (kurirSelect) kurirSelect.setAttribute('required', 'required');
         } else {
             box.classList.add('hidden');
+            if (kurirSelect) {
+                kurirSelect.removeAttribute('required');
+                kurirSelect.value = '';
+            }
         }
     }
 </script>

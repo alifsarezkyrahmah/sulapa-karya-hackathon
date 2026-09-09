@@ -1,19 +1,31 @@
 @extends('layouts.dashboard', ['title' => 'Setor Sampah — SulapaKarya'])
 
 @section('dashboard-content')
-
-<div class="max-w-4xl mx-auto space-y-6 animate-fadeIn py-8 px-4 sm:px-6">
+@php
+    $user = auth()->user() ?? \App\Models\User::find(session('user_id'));
+    $hasAddress = !blank($user->address) && !blank($user->kecamatan) && !blank($user->kelurahan);
+    $isProPartner = ($user->business_status === 'approved');
     
-    <div class="text-left bg-gradient-to-r from-forest to-forest-dark p-8 rounded-[2rem] text-white shadow-lg shadow-forest/20 relative overflow-hidden">
-        <div class="absolute inset-0 dot-grid text-white/[0.05] pointer-events-none"></div>
-        <div class="relative z-10">
-            <h1 class="font-display font-extrabold text-3xl tracking-tight">Setor Sampah Digital</h1>
-            <p class="text-sm text-forest-light font-medium mt-2 max-w-xl">Pilah sampahmu dari rumah, tentukan titik jemput, dan dapatkan Koin Kriya otomatis dari tim Penjemput SulapaKarya Makassar.</p>
+    // Ambil data harga/kategori sampah dari database jika belum di-pass dari controller
+    $wasteCategories = $wastePrices ?? \App\Models\WastePrice::orderBy('name', 'asc')->get();
+@endphp
+
+<div class="max-w-3xl mx-auto space-y-6 text-left">
+    
+    <!-- Header Ringkas -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-ink/5">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-bold text-ink tracking-tight">Formulir Setor Sampah</h1>
+            <p class="text-xs text-ink-soft mt-0.5">Pilah sampah kering, tentukan jadwal penjemputan, dan dapatkan poin reward.</p>
         </div>
+        <span class="badge bg-forest/10 text-forest border border-forest/20 text-[11px] font-semibold px-2.5 py-1 rounded-lg">
+            Wilayah Makassar
+        </span>
     </div>
 
+    <!-- Alert Notifikasi -->
     @if($errors->any())
-        <div class="alert alert-error bg-terracotta/10 border-terracotta/20 text-terracotta rounded-2xl text-xs font-bold text-left p-4 shadow-sm">
+        <div class="alert alert-error bg-terracotta/10 border-terracotta/20 text-terracotta rounded-2xl text-xs font-semibold p-4 shadow-none">
             <ul class="list-disc list-inside space-y-0.5">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -23,248 +35,349 @@
     @endif
 
     @if(session('success'))
-        <div class="alert alert-success bg-forest/10 border-forest/20 text-forest rounded-2xl text-xs font-bold text-left p-4 shadow-sm">
+        <div class="alert alert-success bg-forest/10 border-forest/20 text-forest rounded-2xl text-xs font-semibold p-4 shadow-none">
             {{ session('success') }}
         </div>
     @endif
 
-    {{-- VALIDASI: Periksa apakah user sudah mengisi alamat di profilnya --}}
-    @if(blank($user->address ?? $user->alamat ?? ''))
-        {{-- Tampilan jika Alamat Profil Masih Kosong --}}
-        <div class="bg-white border border-ink/5 rounded-[2rem] p-8 text-center shadow-sm space-y-4 py-12">
-            <div class="w-16 h-16 bg-terracotta/10 text-terracotta rounded-full flex items-center justify-center mx-auto text-2xl">
-                📍
+    {{-- VALIDASI: Jika user belum melengkapi alamat di profil --}}
+    @if(!$hasAddress)
+        <div class="bg-white border border-ink/5 rounded-2xl p-8 text-center shadow-none space-y-3">
+            <div class="w-10 h-10 bg-terracotta/10 text-terracotta rounded-xl flex items-center justify-center mx-auto">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             </div>
-            <h3 class="font-display font-extrabold text-xl text-ink">Alamat Profil Belum Dilengkapi</h3>
-            <p class="text-sm text-ink-soft max-w-md mx-auto leading-relaxed">
-                Untuk menggunakan layanan Setor Sampah, Anda wajib mengisi alamat utama pada akun Anda terlebih dahulu sebagai titik dasar penjemputan armada kami.
+            <h2 class="font-bold text-base text-ink">Alamat Penjemputan Belum Lengkap</h2>
+            <p class="text-xs text-ink-soft max-w-md mx-auto leading-relaxed">
+                Lengkapi kecamatan, kelurahan, dan detail alamat rumah Anda di profil terlebih dahulu sebelum mengajukan penjemputan armada.
             </p>
             <div class="pt-2">
-                {{-- Sesuaikan nama route profile Anda di bawah ini --}}
-                <a href="/profile" class="btn bg-forest hover:bg-forest-dark text-white border-none rounded-xl font-extrabold text-sm px-6 normal-case transition-all shadow-md shadow-forest/20">
-                    Lengkapi Alamat Profil Sekarang
+                <a href="{{ route('profile.index') }}" class="btn btn-sm bg-forest hover:bg-forest-dark text-white border-none rounded-xl text-xs font-semibold px-5 h-10 shadow-none">
+                    Lengkapi Alamat Profil
                 </a>
             </div>
         </div>
     @else
-        {{-- Tampilan Form jika Alamat Profil Sudah Ada --}}
-        <div class="bg-white border border-ink/5 rounded-[2rem] p-6 sm:p-8 shadow-sm">
-            <form action="{{ route('setor-sampah.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        {{-- Form Pengajuan Setor Sampah --}}
+        <div class="bg-white border border-ink/5 rounded-2xl p-6 sm:p-7 shadow-none">
+                <form id="form_setor_sampah" action="{{ route('setor-sampah.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
-
-                {{-- Hidden input untuk otomatisasi target imbalan menjadi poin --}}
                 <input type="hidden" name="reward_type" value="points">
 
+                {{-- SECTION KHUSUS: PEMILIHAN TIPE SETORAN UNTUK MITRA PRO --}}
+                @if($isProPartner)
+                    <div class="p-4 bg-amber-500/10 border border-amber-400/30 rounded-2xl space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-900 bg-amber-200/60 px-2 py-0.5 rounded">
+                                    Mitra PRO Terdeteksi
+                                </span>
+                                <h3 class="text-xs font-bold text-ink mt-1">Setor Sampah Atas Nama</h3>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <label class="flex items-center gap-2.5 p-2.5 bg-white border border-amber-300/60 rounded-xl cursor-pointer hover:border-forest transition-colors">
+                                <input type="radio" name="is_business_pickup" value="0" checked onchange="togglePickupOrigin(false)" class="radio radio-xs radio-success">
+                                <div>
+                                    <span class="font-bold text-ink block">Pribadi / Warga</span>
+                                    <span class="text-[10px] text-ink-soft">Sampah harian rumah tangga</span>
+                                </div>
+                            </label>
+
+                            <label class="flex items-center gap-2.5 p-2.5 bg-white border border-amber-300/60 rounded-xl cursor-pointer hover:border-forest transition-colors">
+                                <input type="radio" name="is_business_pickup" value="1" onchange="togglePickupOrigin(true)" class="radio radio-xs radio-success">
+                                <div>
+                                    <span class="font-bold text-ink block truncate">{{ $user->business_name }}</span>
+                                    <span class="text-[10px] text-amber-800 font-medium">Limbah operasional unit usaha</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- SECTION 1: INFORMASI SAMPAH -->
                 <div class="space-y-4">
-                    <h2 class="font-display font-extrabold text-lg text-ink border-b border-ink/5 pb-2 flex items-center gap-2">
-                        <span>📦</span> Informasi Sampah
-                    </h2>
+                    <div class="pb-2 border-b border-ink/5">
+                        <h2 class="font-bold text-sm text-ink">1. Klasifikasi & Bobot Sampah</h2>
+                        <p class="text-[11px] text-ink-soft">Pilih kategori sampah yang telah dipilah sesuai standar SOP QC.</p>
+                    </div>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Kategori Sampah dari Database -->
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Kategori Utama <span class="text-terracotta">*</span></span></label>
-                            <select name="category" required class="select select-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 font-bold @error('category') border-terracotta @enderror">
-                                <option value="" disabled {{ old('category') == null ? 'selected' : '' }}>-- Pilih Jenis Sampah --</option>
-                                @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}" {{ old('category') == $cat->id ? 'selected' : '' }}>{{ $cat->nama }}</option>
+                            <label class="label py-1"><span class="label-text font-semibold text-xs text-ink">Kategori Sampah <span class="text-terracotta">*</span></span></label>
+                            <select name="category" id="category_select" required onchange="updatePointRatePreview()"
+                                class="select select-bordered select-sm w-full rounded-xl text-xs focus:outline-none focus:border-forest bg-cream/20 font-semibold text-ink @error('category') border-terracotta @enderror">
+                                <option value="" disabled {{ old('category') ? '' : 'selected' }}>-- Pilih Kategori Sampah --</option>
+                                @foreach($wasteCategories as $cat)
+                                    <option value="{{ $cat->name }}" 
+                                        data-rate="{{ $cat->point_per_kg ?? 0 }}"
+                                        {{ old('category') === $cat->name ? 'selected' : '' }}>
+                                        {{ $cat->name }} ({{ number_format($cat->point_per_kg ?? 0, 0, ',', '.') }} Poin/kg)
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
 
+                        <!-- Sub Kategori / Detail Barang -->
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Jenis Barang <span class="text-terracotta">*</span></span></label>
-                            <select name="sub_category" id="sub_category_select" required class="select select-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 font-bold">
-                                <option value="" disabled selected>-- Pilih kategori dulu --</option>
-                            </select>
+                            <label class="label py-1"><span class="label-text font-semibold text-xs text-ink">Detail / Nama Barang <span class="text-ink-soft/60 font-normal">(Opsional)</span></span></label>
+                            <input type="text" name="sub_category" value="{{ old('sub_category') }}" placeholder="Contoh: Botol Kaca Sirup, Kardus Packing..."
+                                class="input input-bordered input-sm w-full rounded-xl text-xs focus:outline-none focus:border-forest bg-cream/20 font-medium text-ink">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Perkiraan Berat -->
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Perkiraan Berat <span class="text-terracotta">*</span></span></label>
+                            <label class="label py-1"><span class="label-text font-semibold text-xs text-ink">Estimasi Berat (kg) <span class="text-terracotta">*</span></span></label>
                             <div class="relative">
-                                <input type="number" step="0.1" name="estimated_weight" id="estimated_weight_input" value="{{ old('estimated_weight') }}" placeholder="0.0" required class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 pr-12 @error('estimated_weight') border-terracotta @enderror">
-                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-soft">Kg</span>
+                                <input type="number" step="0.1" name="estimated_weight" id="estimated_weight_input" value="{{ old('estimated_weight') }}" placeholder="0.0" required oninput="calculateEstimatedPoints()"
+                                    class="input input-bordered input-sm w-full rounded-xl text-xs focus:outline-none focus:border-forest bg-cream/20 pr-10 font-mono font-bold text-ink @error('estimated_weight') border-terracotta @enderror">
+                                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-ink-soft">kg</span>
+                            </div>
+                        </div>
+
+                        <!-- Preview Estimasi Poin -->
+                        <div class="bg-cream/30 border border-ink/5 p-2.5 rounded-xl flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-ink-soft font-bold uppercase tracking-wider block">Estimasi Poin Reward</span>
+                                <span id="rate_preview_text" class="text-[10px] text-ink-soft font-mono">Pilih jenis sampah</span>
+                            </div>
+                            <div class="text-right">
+                                <span id="estimated_points_display" class="text-base font-bold font-mono text-forest">0</span>
+                                <span class="text-[10px] font-semibold text-forest block">Poin</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-control mt-2">
-                        <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Foto Bukti Fisik Sampah <span class="text-terracotta">*</span></span></label>
-                        <input type="file" name="photo" accept="image/*" capture="environment" required class="file-input file-input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 @error('photo') border-terracotta @enderror" />
-                        <label class="label"><span class="label-text-alt text-[10px] text-ink-soft font-medium">Batas max 3MB. Anda bisa jepret dari kamera HP atau pilih dari galeri.</span></label>
+                    <!-- Upload Foto Fisik Sampah -->
+                    <div class="form-control">
+                        <label class="label py-1"><span class="label-text font-semibold text-xs text-ink">Foto Bukti Fisik Sampah <span class="text-terracotta">*</span></span></label>
+                        <input type="file" name="photo" accept="image/*" capture="environment" required 
+                            class="file-input file-input-bordered file-input-sm w-full rounded-xl text-xs focus:outline-none focus:border-forest bg-cream/20 @error('photo') border-terracotta @enderror" />
+                        <span class="text-[10px] text-ink-soft mt-1">Maksimal ukuran 3MB (format JPG, PNG, atau WebP).</span>
                     </div>
                 </div>
 
-                <div class="space-y-4 pt-6 border-t border-ink/5 mt-6">
-                    <h2 class="font-display font-extrabold text-lg text-ink border-b border-ink/5 pb-2 flex items-center gap-2">
-                        <span>🛵</span> Detail Penjemputan Armada
-                    </h2>
-                    
-                    <div class="bg-cream/30 p-4 rounded-2xl border border-ink/5 space-y-4">
-                        <label class="label py-0">
-                            <span class="label-text font-bold text-xs text-ink">Titik Lokasi Penjemputan <span class="text-terracotta">*</span></span>
-                        </label>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="form-control">
-                                <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Kecamatan <span class="text-terracotta">*</span></span></label>
-                                <select name="kecamatan" id="kecamatan_select" required class="select select-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-white font-bold">
-                                    <option value="" disabled {{ old('kecamatan') ? '' : 'selected' }}>-- Pilih Kecamatan --</option>
-                                    @foreach(array_keys(config('makassar.kecamatan_kelurahan')) as $kec)
-                                        <option value="{{ $kec }}" {{ old('kecamatan') === $kec ? 'selected' : '' }}>{{ $kec }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-control">
-                                <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Kelurahan <span class="text-terracotta">*</span></span></label>
-                                <select name="kelurahan" id="kelurahan_select" required class="select select-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-white font-bold">
-                                    <option value="" disabled selected>-- Pilih kecamatan dulu --</option>
-                                </select>
-                            </div>
+                <!-- SECTION 2: ALAMAT PENJEMPUTAN -->
+                <div class="space-y-4 pt-4 border-t border-ink/5">
+                    <div class="flex items-center justify-between pb-2 border-b border-ink/5">
+                        <div>
+                            <h2 class="font-bold text-sm text-ink">2. Titik Penjemputan Armada</h2>
+                            <p id="pickup_origin_subtitle" class="text-[11px] text-ink-soft">Alamat disesuaikan dengan data profil Anda.</p>
                         </div>
-
-                        <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Detail Alamat (Jalan, No. Rumah, RT/RW, Patokan) <span class="text-terracotta">*</span></span></label>
-                            <textarea name="pickup_address" rows="2" placeholder="Contoh: Jl. Perintis Kemerdekaan No. 12, RT 03/RW 05, dekat Masjid Al-Ikhlas" required class="textarea textarea-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-white shadow-inner @error('pickup_address') border-terracotta @enderror">{{ old('pickup_address', $user->address ?? $user->alamat ?? '') }}</textarea>
-                        </div>
+                        <a href="{{ route('profile.index') }}" class="text-[11px] font-semibold text-forest hover:underline">
+                            Ubah di Profil &rarr;
+                        </a>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-2">
-                        @php
-                            // Fallback tanggal server bila JS mati; nilai sebenarnya diatur ulang oleh flatpickr (tanggal browser real-time).
-                            $minPickupDate = date('Y-m-d', strtotime('+1 day'));
-                        @endphp
-                        <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Rencana Tanggal Jemput</span></label>
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none z-10">📅</span>
-                                <input type="date" name="pickup_date" min="{{ $minPickupDate }}" value="{{ old('pickup_date') }}" placeholder="dd/mm/yyyy" class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 pl-11 cursor-pointer">
+                    <!-- Hidden input data wilayah untuk backend request -->
+                    <input type="hidden" name="kecamatan" id="input_kecamatan" value="{{ $user->kecamatan }}">
+                    <input type="hidden" name="kelurahan" id="input_kelurahan" value="{{ $user->kelurahan }}">
+
+                    <div class="bg-cream/20 p-4 rounded-xl border border-ink/5 space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div>
+                                <span class="text-[10px] text-ink-soft font-bold uppercase block">Kecamatan</span>
+                                <span id="display_kecamatan" class="font-semibold text-ink">{{ $user->kecamatan }}</span>
                             </div>
-                            <label class="label"><span id="pickup-date-hint" class="label-text-alt text-[10px] text-ink-soft">Penjemputan paling cepat besok ({{ \Carbon\Carbon::parse($minPickupDate)->translatedFormat('d M Y') }}).</span></label>
+                            <div>
+                                <span class="text-[10px] text-ink-soft font-bold uppercase block">Kelurahan</span>
+                                <span id="display_kelurahan" class="font-semibold text-ink">{{ $user->kelurahan }}</span>
+                            </div>
                         </div>
 
+                        <div>
+                            <label class="block text-xs font-semibold text-ink mb-1">Detail Alamat Lengkap & Patokan Lokasi <span class="text-terracotta">*</span></label>
+                            <textarea name="pickup_address" id="input_pickup_address" rows="2" required 
+                                class="textarea textarea-bordered w-full rounded-xl text-xs bg-white focus:outline-none focus:border-forest leading-relaxed text-ink @error('pickup_address') border-terracotta @enderror">{{ old('pickup_address', $user->address) }}</textarea>
+                            <span class="text-[10px] text-ink-soft mt-0.5 block">Pastikan nomor bangunan atau patokan tercantum jelas agar kurir mudah menemukan lokasi.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: RENCANA JADWAL & WAKTU PENJEMPUTAN -->
+                <div class="space-y-4 pt-4 border-t border-ink/5">
+                    <div class="pb-2 border-b border-ink/5">
+                        <h2 class="font-bold text-sm text-ink">3. Jadwal Penjemputan</h2>
+                        <p class="text-[11px] text-ink-soft">Pilih hari dan slot waktu penjemputan yang tersedia.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        @php
+                            $minPickupDate = date('Y-m-d', strtotime('+1 day'));
+                        @endphp
+                        
+                        <!-- Input Tanggal -->
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-bold text-xs text-ink-soft">Waktu Penjemputan</span></label>
-                            <input type="hidden" name="pickup_time" id="pickup_time_input" value="{{ old('pickup_time') }}">
+                            <label class="label py-1"><span class="label-text font-semibold text-xs text-ink">Tanggal Jemput <span class="text-terracotta">*</span></span></label>
+                            <div class="relative">
+                                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none z-10">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                </span>
+                                <input type="date" name="pickup_date" min="{{ $minPickupDate }}" value="{{ old('pickup_date') }}" required
+                                    class="input input-bordered input-sm w-full rounded-xl text-xs focus:outline-none focus:border-forest bg-cream/20 pl-10 cursor-pointer font-medium text-ink">
+                            </div>
+                            <span id="pickup-date-hint" class="text-[10px] text-ink-soft mt-1">Penjemputan paling cepat H+1 ({{ \Carbon\Carbon::parse($minPickupDate)->translatedFormat('d M Y') }}).</span>
+                        </div>
+
+                        <!-- Dropdown Slot Jam -->
+                        <div class="form-control">
+                            <label class="label py-1"><span class="label-text font-semibold text-xs text-ink">Waktu Penjemputan <span class="text-terracotta">*</span></span></label>
+                            <input type="hidden" name="pickup_time" id="pickup_time_input" value="{{ old('pickup_time') }}" required>
 
                             <div id="pickup-time-dropdown" class="relative">
-                                {{-- Tombol pemicu (tampilan seperti select) --}}
                                 <button type="button" id="pickup-time-trigger" aria-haspopup="listbox" aria-expanded="false"
-                                    class="input input-bordered w-full rounded-xl text-sm focus:outline-none focus:border-forest bg-cream/20 pl-11 pr-9 flex items-center cursor-pointer text-left">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none z-10">⏰</span>
-                                    <span id="pickup-time-label" class="truncate text-ink-soft">Pilih jam penjemputan</span>
-                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none">▾</span>
+                                    class="input input-bordered input-sm w-full rounded-xl text-xs focus:outline-none focus:border-forest bg-cream/20 pl-10 pr-8 flex items-center cursor-pointer text-left font-medium">
+                                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none z-10">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    </span>
+                                    <span id="pickup-time-label" class="truncate text-ink-soft">Pilih slot jam</span>
+                                    <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none text-[10px]">▼</span>
                                 </button>
 
-                                {{-- Panel opsi (muncul saat tombol ditekan) --}}
-                                <ul id="pickup-time-menu" role="listbox" class="hidden absolute z-30 mt-1 w-full max-h-60 overflow-auto rounded-xl border border-ink/10 bg-white shadow-lg py-1">
+                                <ul id="pickup-time-menu" role="listbox" class="hidden absolute z-30 mt-1 w-full max-h-56 overflow-auto rounded-xl border border-ink/10 bg-white shadow-lg py-1 text-xs">
                                     @for ($hour = 8; $hour <= 16; $hour++)
                                         @php
                                             $slotStart = sprintf('%02d:00', $hour);
                                             $slotEnd   = sprintf('%02d:00', $hour + 1);
                                         @endphp
                                         <li role="option" data-slot="{{ $slotStart }}"
-                                            class="pickup-slot px-4 py-2.5 text-sm font-semibold text-ink cursor-pointer hover:bg-cream/60 transition-colors {{ old('pickup_time') === $slotStart ? 'is-selected' : '' }}">
-                                            {{ $slotStart }} - {{ $slotEnd }}
+                                            class="pickup-slot px-3.5 py-2 font-medium text-ink cursor-pointer hover:bg-cream/60 transition-colors {{ old('pickup_time') === $slotStart ? 'is-selected' : '' }}">
+                                            {{ $slotStart }} - {{ $slotEnd }} WITA
                                         </li>
                                     @endfor
                                 </ul>
                             </div>
-                            <label class="label"><span id="pickup-time-hint" class="label-text-alt text-[10px] text-ink-soft">Pilih tanggal jemput terlebih dahulu, lalu pilih jamnya.</span></label>
+                            <span id="pickup-time-hint" class="text-[10px] text-ink-soft mt-1">Pilih tanggal terlebih dahulu untuk memeriksa kuota armada.</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-6 mt-4 border-t border-ink/5">
-                    <button type="submit" class="btn w-full bg-forest text-white border-none rounded-xl font-extrabold text-base normal-case shadow-lg shadow-forest/30 hover:bg-forest-dark active:scale-[0.98] transition-all h-14">
-                        Kirim Pengajuan Setor Sampah
-                    </button>
-                </div>
+                <!-- Tombol Submit -->
+                    <div class="pt-4 border-t border-ink/5">
+                        <button type="submit" id="btn_submit_setor" class="btn btn-sm w-full bg-forest hover:bg-forest-dark text-white border-none rounded-xl text-xs font-semibold h-11 shadow-sm transition-all">
+                            Kirim Pengajuan Setor Sampah
+                        </button>
+                    </div>
             </form>
         </div>
     @endif
 </div>
 
-{{-- Flatpickr: kalender pilih tanggal penjemputan --}}
+{{-- Flatpickr Kalender --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/id.js"></script>
+
 <style>
-    /* Warna aksen kalender agar selaras dengan tema forest */
-    .flatpickr-day.selected,
-    .flatpickr-day.selected:hover { background: #2f6b3c; border-color: #2f6b3c; }
-    .flatpickr-day.today { border-color: #2f6b3c; }
-    .flatpickr-day.today:hover { background: #2f6b3c; color: #fff; }
-    .flatpickr-months .flatpickr-month,
-    .flatpickr-current-month .flatpickr-monthDropdown-months,
-    .flatpickr-weekday { color: #2f6b3c; }
-    /* Tanggal yang kuotanya penuh: beri tanda merah samar + kursor "tidak boleh" */
-    .flatpickr-day.pickup-date-full {
-        color: #c0392b !important;
-        text-decoration: line-through;
-        cursor: not-allowed !important;
-        pointer-events: auto !important; /* tetap bisa di-hover agar tooltip muncul */
-    }
-    /* Opsi slot waktu penjemputan (dropdown) */
-    #pickup-time-menu .pickup-slot.is-selected {
-        background: #2f6b3c;
-        color: #fff;
-    }
-    #pickup-time-menu .pickup-slot.is-selected:hover { background: #2f6b3c; }
-    #pickup-time-menu .pickup-slot.is-full {
-        color: #c0392b;
-        text-decoration: line-through;
-        background: #f8e6e3;
-        cursor: not-allowed;
-        opacity: .9;
-    }
-    #pickup-time-menu .pickup-slot.is-full:hover { background: #f8e6e3; }
+    .flatpickr-day.selected, .flatpickr-day.selected:hover { background: #2E7D32 !important; border-color: #2E7D32 !important; }
+    .flatpickr-day.today { border-color: #2E7D32 !important; }
+    .flatpickr-day.today:hover { background: #2E7D32 !important; color: #fff !important; }
+    .flatpickr-months .flatpickr-month, .flatpickr-current-month .flatpickr-monthDropdown-months, .flatpickr-weekday { color: #2E7D32 !important; }
+    .flatpickr-day.pickup-date-full { color: #D84315 !important; text-decoration: line-through; cursor: not-allowed !important; pointer-events: auto !important; }
+    #pickup-time-menu .pickup-slot.is-selected { background: #2E7D32; color: #fff; }
+    #pickup-time-menu .pickup-slot.is-full { color: #D84315; text-decoration: line-through; background: #FBE9E7; cursor: not-allowed; }
 </style>
+
 <script>
+    // 1. Live Estimasi Poin
+    function updatePointRatePreview() {
+        calculateEstimatedPoints();
+    }
+
+    function calculateEstimatedPoints() {
+        const catSelect = document.getElementById('category_select');
+        const weightInput = document.getElementById('estimated_weight_input');
+        const ratePreview = document.getElementById('rate_preview_text');
+        const pointsDisplay = document.getElementById('estimated_points_display');
+
+        if (!catSelect || !weightInput) return;
+
+        const selectedOpt = catSelect.options[catSelect.selectedIndex];
+        const rate = selectedOpt ? parseFloat(selectedOpt.getAttribute('data-rate')) || 0 : 0;
+        const weight = parseFloat(weightInput.value) || 0;
+        const total = Math.round(weight * rate);
+
+        if (selectedOpt && selectedOpt.value) {
+            ratePreview.textContent = `${new Intl.NumberFormat('id-ID').format(rate)} Poin/kg`;
+        } else {
+            ratePreview.textContent = 'Pilih jenis sampah';
+        }
+
+        pointsDisplay.textContent = new Intl.NumberFormat('id-ID').format(total);
+    }
+
+    // 2. Logika Toggle Alamat Jemput (Warga Personal vs Mitra Bisnis PRO)
+    const personalAddress = @json($user->address ?? '');
+    const personalKec     = @json($user->kecamatan ?? '');
+    const personalKel     = @json($user->kelurahan ?? '');
+
+    // Default data alamat usaha mitra PRO
+    const businessAddress = @json($user->address ?? '');
+    const businessKec     = @json($user->kecamatan ?? '');
+    const businessKel     = @json($user->kelurahan ?? '');
+
+    function togglePickupOrigin(isBusiness) {
+        const addrField = document.getElementById('input_pickup_address');
+        const kecInput  = document.getElementById('input_kecamatan');
+        const kelInput  = document.getElementById('input_kelurahan');
+        const kecDisp   = document.getElementById('display_kecamatan');
+        const kelDisp   = document.getElementById('display_kelurahan');
+        const subTitle  = document.getElementById('pickup_origin_subtitle');
+
+        if (isBusiness) {
+            addrField.value = businessAddress;
+            kecInput.value  = businessKec;
+            kelInput.value  = businessKel;
+            kecDisp.textContent = businessKec || '-';
+            kelDisp.textContent = businessKel || '-';
+            if (subTitle) subTitle.textContent = "Alamat titik jemput unit usaha (SulapaKarya PRO).";
+        } else {
+            addrField.value = personalAddress;
+            kecInput.value  = personalKec;
+            kelInput.value  = personalKel;
+            kecDisp.textContent = personalKec || '-';
+            kelDisp.textContent = personalKel || '-';
+            if (subTitle) subTitle.textContent = "Alamat titik jemput rumah tinggal pribadi Anda.";
+        }
+    }
+
+    // 3. Kontrol Kalender & Jam Penjemputan
     document.addEventListener('DOMContentLoaded', function () {
         var pickupDateInput = document.querySelector('input[name="pickup_date"]');
         if (pickupDateInput && window.flatpickr) {
             if (window.flatpickr.l10ns && window.flatpickr.l10ns.id) {
                 flatpickr.localize(flatpickr.l10ns.id);
             }
-            var minDate = new Date().fp_incr(1); // paling cepat besok (berdasar tanggal browser real-time)
-            var fullDates = @json($fullPickupDates ?? []); // tanggal yang kuotanya sudah penuh (10 pengangkutan)
+            var minDate = new Date().fp_incr(1);
+            var fullDates = @json($fullPickupDates ?? []);
             var fullDatesSet = fullDates.reduce(function (acc, d) { acc[d] = true; return acc; }, {});
 
             var fp = flatpickr(pickupDateInput, {
-                dateFormat: 'Y-m-d',       // nilai yang dikirim ke server (cocok utk kolom date)
-                altInput: true,            // input tampilan yang mudah dibaca user
+                dateFormat: 'Y-m-d',
+                altInput: true,
                 altFormat: 'd F Y',
-                minDate: minDate,          // blokir hari ini & sebelumnya
-                disable: fullDates,        // blokir tanggal yang sudah penuh
-                disableMobile: true,       // paksa pakai kalender flatpickr, bukan native
+                minDate: minDate,
+                disable: fullDates,
+                disableMobile: true,
                 onDayCreate: function (dObj, dStr, fpInstance, dayElem) {
-                    // Beri keterangan saat kursor diarahkan ke tanggal yang penuh.
                     var ymd = fpInstance.formatDate(dayElem.dateObj, 'Y-m-d');
                     if (fullDatesSet[ymd]) {
                         dayElem.classList.add('pickup-date-full');
-                        dayElem.setAttribute('title', 'Pengantaran penuh, tolong pilih hari lain.');
+                        dayElem.setAttribute('title', 'Kuota pengantaran penuh pada hari ini.');
                     }
                 },
             });
 
-            // Tampilkan placeholder samar pada input tampilan flatpickr.
             if (fp.altInput) {
-                fp.altInput.setAttribute('placeholder', 'dd/mm/yyyy');
-            }
-
-            // Sinkronkan teks bantuan di bawah dengan tanggal minimal kalender (hindari selisih zona waktu server).
-            var hint = document.getElementById('pickup-date-hint');
-            if (hint) {
-                var fmt = fp.formatDate(minDate, 'd F Y');
-                hint.textContent = 'Penjemputan paling cepat besok (' + fmt + ').';
+                fp.altInput.setAttribute('placeholder', 'Pilih tanggal');
             }
         }
 
-        // ===== Kuota slot waktu penjemputan (maksimal 2 user per slot per hari) =====
-        var fullTimeSlots = @json($fullTimeSlots ?? []); // { 'Y-m-d': ['08:00', '13:00', ...] }
+        // Slot Waktu Dropdown
+        var fullTimeSlots = @json($fullTimeSlots ?? []);
         var pickupDateEl  = document.querySelector('input[name="pickup_date"]');
         var timeInput     = document.getElementById('pickup_time_input');
         var timeTrigger   = document.getElementById('pickup-time-trigger');
@@ -273,14 +386,6 @@
         var timeHint      = document.getElementById('pickup-time-hint');
         var slotItems     = Array.prototype.slice.call(document.querySelectorAll('#pickup-time-menu .pickup-slot'));
 
-        function currentPickupDate() {
-            return pickupDateEl ? pickupDateEl.value : '';
-        }
-
-        function isSlotFull(item) {
-            return item.classList.contains('is-full');
-        }
-
         function setTriggerLabel() {
             var selected = slotItems.filter(function (i) { return i.classList.contains('is-selected'); })[0];
             if (selected) {
@@ -288,26 +393,18 @@
                 timeLabel.classList.remove('text-ink-soft');
                 timeLabel.classList.add('text-ink');
             } else {
-                timeLabel.textContent = 'Pilih jam penjemputan';
+                timeLabel.textContent = 'Pilih slot jam';
                 timeLabel.classList.add('text-ink-soft');
                 timeLabel.classList.remove('text-ink');
             }
         }
 
-        function openMenu() {
-            timeMenu.classList.remove('hidden');
-            timeTrigger.setAttribute('aria-expanded', 'true');
-        }
-        function closeMenu() {
-            timeMenu.classList.add('hidden');
-            timeTrigger.setAttribute('aria-expanded', 'false');
-        }
         function toggleMenu() {
-            timeMenu.classList.contains('hidden') ? openMenu() : closeMenu();
+            timeMenu.classList.contains('hidden') ? timeMenu.classList.remove('hidden') : timeMenu.classList.add('hidden');
         }
 
         function refreshTimeSlots() {
-            var date = currentPickupDate();
+            var date = pickupDateEl ? pickupDateEl.value : '';
             var fullList = (date && fullTimeSlots[date]) ? fullTimeSlots[date] : [];
 
             slotItems.forEach(function (item) {
@@ -317,8 +414,6 @@
                 if (isFull) {
                     item.classList.add('is-full');
                     item.setAttribute('aria-disabled', 'true');
-                    item.setAttribute('title', 'Silahkan pilih waktu penjemputan lain');
-                    // Batalkan pilihan bila slot yang sebelumnya dipilih ternyata sudah penuh.
                     if (item.classList.contains('is-selected')) {
                         item.classList.remove('is-selected');
                         if (timeInput) timeInput.value = '';
@@ -326,7 +421,6 @@
                 } else {
                     item.classList.remove('is-full');
                     item.removeAttribute('aria-disabled');
-                    item.removeAttribute('title');
                 }
             });
 
@@ -334,8 +428,8 @@
 
             if (timeHint) {
                 timeHint.textContent = date
-                    ? 'Klik untuk memilih jam. Slot yang penuh tidak bisa dipilih.'
-                    : 'Pilih tanggal jemput terlebih dahulu, lalu pilih jamnya.';
+                    ? 'Klik untuk memilih jam yang tersedia.'
+                    : 'Pilih tanggal terlebih dahulu untuk memeriksa kuota armada.';
             }
         }
 
@@ -348,80 +442,36 @@
 
         slotItems.forEach(function (item) {
             item.addEventListener('click', function () {
-                if (isSlotFull(item)) return; // slot penuh: tidak bisa dipilih
+                if (item.classList.contains('is-full')) return;
                 slotItems.forEach(function (i) { i.classList.remove('is-selected'); });
                 item.classList.add('is-selected');
                 if (timeInput) timeInput.value = item.getAttribute('data-slot');
                 setTriggerLabel();
-                closeMenu();
+                timeMenu.classList.add('hidden');
             });
         });
 
-        // Tutup dropdown saat klik di luar.
         document.addEventListener('click', function (e) {
             if (timeMenu && !timeMenu.classList.contains('hidden')) {
                 var wrap = document.getElementById('pickup-time-dropdown');
-                if (wrap && !wrap.contains(e.target)) closeMenu();
+                if (wrap && !wrap.contains(e.target)) timeMenu.classList.add('hidden');
             }
         });
 
-        // Perbarui slot setiap kali tanggal berubah (flatpickr & native sama-sama memicu 'change').
         if (pickupDateEl) {
             pickupDateEl.addEventListener('change', refreshTimeSlots);
         }
-        refreshTimeSlots(); // status awal (termasuk setelah validasi gagal / old input)
-
-        // ===== Sub-kategori dinamis =====
-        var subCatData = @json($subCategories ?? []);
-        var categorySelect = document.querySelector('select[name="category"]');
-        var subCategorySelect = document.getElementById('sub_category_select');
-        var oldSubCategory = @json(old('sub_category', ''));
-
-        function populateSubCategories() {
-            var cat = categorySelect ? categorySelect.value : '';
-            if (!subCategorySelect) return;
-            subCategorySelect.innerHTML = '<option value="" disabled selected>-- Pilih jenis barang --</option>';
-            if (cat && subCatData[cat]) {
-                Object.keys(subCatData[cat]).forEach(function(name) {
-                    var opt = document.createElement('option');
-                    opt.value = name;
-                    opt.textContent = name;
-                    if (name === oldSubCategory) opt.selected = true;
-                    subCategorySelect.appendChild(opt);
-                });
-            }
-        }
-
-        if (categorySelect) {
-            categorySelect.addEventListener('change', populateSubCategories);
-            if (categorySelect.value) populateSubCategories();
-        }
-
-        // ===== Kecamatan → Kelurahan dinamis =====
-        var kecKelData = @json(config('makassar.kecamatan_kelurahan'));
-        var kecSelect = document.getElementById('kecamatan_select');
-        var kelSelect = document.getElementById('kelurahan_select');
-        var oldKelurahan = @json(old('kelurahan', ''));
-
-        function populateKelurahan() {
-            var kec = kecSelect ? kecSelect.value : '';
-            if (!kelSelect) return;
-            kelSelect.innerHTML = '<option value="" disabled selected>-- Pilih kelurahan --</option>';
-            if (kec && kecKelData[kec]) {
-                kecKelData[kec].forEach(function(kel) {
-                    var opt = document.createElement('option');
-                    opt.value = kel;
-                    opt.textContent = kel;
-                    if (kel === oldKelurahan) opt.selected = true;
-                    kelSelect.appendChild(opt);
-                });
-            }
-        }
-
-        if (kecSelect) {
-            kecSelect.addEventListener('change', populateKelurahan);
-            if (kecSelect.value) populateKelurahan();
-        }
+        refreshTimeSlots();
+        calculateEstimatedPoints();
     });
+
+    document.getElementById('form_setor_sampah')?.addEventListener('submit', function (e) {
+    const btn = document.getElementById('btn_submit_setor');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Mengunggah data & foto...';
+        btn.classList.add('opacity-70', 'cursor-not-allowed');
+    }
+});
 </script>
 @endsection
