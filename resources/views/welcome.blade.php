@@ -160,18 +160,10 @@
 
   /* Animasi kedip sekali pas muncul */
   @keyframes blinkOnce {
-    0% {
-      opacity: 0;
-    }
-    30% {
-      opacity: 0.2;
-    }
-    60% {
-      opacity: 0.8;
-    }
-    100% {
-      opacity: 1;
-    }
+    0% { opacity: 0; }
+    30% { opacity: 0.2; }
+    60% { opacity: 0.8; }
+    100% { opacity: 1; }
   }
 
   .blink-element {
@@ -195,8 +187,8 @@
 
   /* Animasi Kursor Kedip Efek Ketik */
   @keyframes blinkCursor {
-    0%, 100% { border-color: transparent; }
-    50% { border-color: #2D5A27; } /* Sesuaikan warna hijau forest kamu */
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
   }
 
   .cursor-typing {
@@ -251,45 +243,44 @@
 </style>
 
 <!-- Hero Section -->
-<section class="w-full px-4 sm:px-6 lg:px-8 pt-4 pb-12 overflow-hidden">
-  <div class="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-10 lg:py-16 relative">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+<section class="w-full px-4 sm:px-6 lg:px-8 pt-4 pb-12 overflow-x-clip">
+  <div class="max-w-7xl mx-auto px-4 sm:px-8 md:px-10 py-6 md:py-12 relative">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
       
-      <div class="lg:col-span-6 flex flex-col items-start space-y-6 z-10 text-left" id="hero-text-container">
-        <!-- Judul Utama (H1) -->
-        <h1 class="hero-animate-item delay-100 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-forest leading-[1.2] tracking-tight">
-          Ubah Sampah di Tanganmu Jadi Nilai Berharga
-        </h1>
-
-        <!-- Subjudul (P) -->
-        <p class="hero-animate-item delay-200 text-base sm:text-lg text-ink-soft leading-relaxed max-w-xl">
-          Dari sampah, jadi nilai untuk Makassar.
-        </p>
-
-        <!-- Container Tombol -->
-        <div class="hero-animate-item delay-300 pt-2 flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-          @if(session()->has('user_id'))
-            <a href="/setor-sampah" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-8 py-3 text-sm normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 hover:scale-105 active:scale-95">
-              Mulai Setor Sekarang!
-            </a>
-          @else
-            <a href="{{ route('login') }}" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-8 py-3 text-sm normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 hover:scale-105 active:scale-95">
-              Mulai Setor Sekarang!
-            </a>
-          @endif
-          <a class="btn bg-cream/10 hover:bg-cream/20 text-forest border-forest font-bold rounded-full px-8 py-3 text-sm normal-case border border-cream/20 shadow-md shadow-forest/10 transition-all duration-200 hover:scale-105 active:scale-95" href="#kalkulator">
-            Hitung Nilai Sampahmu
-          </a>
-        </div>
-      </div>
-
-      <div class="lg:col-span-6 flex justify-end items-center relative lg:-mr-12">
+      <!-- GAMBAR BOTOL (Dipindah ke atas di HP via order-1) -->
+      <div class="order-1 md:order-2 md:col-span-6 flex justify-center md:justify-end items-center relative md:-mr-12 lg:-mr-16 mt-4 md:mt-0 overflow-visible">
         <img
           id="hero-bottle-image"
           src="{{ asset('images/tangan-botol.png') }}" 
           alt="Tangan memegang botol plastik" 
-          class="w-full max-w-[500px] lg:max-w-[650px] xl:max-w-[720px] h-auto object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300 pointer-events-none scale-110 translate-x-4 lg:translate-x-8"
+          class="w-full max-w-[500px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[650px] h-auto object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300 pointer-events-none scale-125 sm:scale-100 md:scale-110 -translate-x-6 sm:translate-x-0 md:translate-x-12 lg:translate-x-12"
         >
+      </div>
+
+      <!-- TEKS HERO (Di bawah gambar di HP via order-2) -->
+      <div class="order-2 md:order-1 md:col-span-6 flex flex-col items-center md:items-start space-y-4 md:space-y-6 z-10 text-center md:text-left" id="hero-text-container">
+        <h1 class="hero-animate-item delay-100 text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-extrabold text-forest leading-[1.2] tracking-tight">
+          Ubah Sampah di Tanganmu Jadi Nilai Berharga
+        </h1>
+
+        <p class="hero-animate-item delay-200 text-sm sm:text-base md:text-sm lg:text-xl text-ink-soft leading-relaxed max-w-xl">
+          Dari sampah, jadi nilai untuk Makassar.
+        </p>
+
+        <div class="hero-animate-item delay-300 pt-2 flex flex-col sm:flex-col lg:flex-row gap-3 w-full sm:w-auto">
+          @if(session()->has('user_id'))
+            <a href="/setor-sampah" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-6 md:px-8 py-3 text-base md:text-xs normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 hover:scale-105 active:scale-95 text-center">
+              Mulai Setor Sekarang!
+            </a>
+          @else
+            <a href="{{ route('login') }}" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-6 md:px-8 py-3 text-base md:text-xs normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 hover:scale-105 active:scale-95 text-center">
+              Mulai Setor Sekarang!
+            </a>
+          @endif
+          <a class="btn bg-cream/10 hover:bg-cream/20 text-forest border-forest font-bold rounded-full px-6 md:px-8 py-3 text-base md:text-xs normal-case border border-cream/20 shadow-md shadow-forest/10 transition-all duration-200 hover:scale-105 active:scale-95 text-center" href="#kalkulator">
+            Hitung Nilai Sampahmu
+          </a>
+        </div>
       </div>
 
     </div>
@@ -298,51 +289,48 @@
 
 <div id="tentang-kami">
   <!-- ============ Tentang Kami ============ -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
       
-      <!-- GAMBAR (SEBELAH KIRI) -->
-      <div class="lg:col-span-6 flex justify-start items-center relative order-2 lg:order-1">
-        <img src="{{ asset('images/tempat-sampah.png') }}" alt="Tentang SulapaKarya" class="about-animate-left w-full max-w-[440px] lg:max-w-[480px] h-auto object-contain drop-shadow-lg hover:scale-105 transition-transform duration-300 pointer-events-none">
+      <!-- GAMBAR TEMPAT SAMPAH (Atas di HP via order-1) -->
+      <div class="md:col-span-6 flex justify-center md:justify-start items-center relative order-1 md:order-1">
+        <img src="{{ asset('images/tempat-sampah.png') }}" alt="Tentang SulapaKarya" class="about-animate-left w-full max-w-[260px] md:max-w-[420px] lg:max-w-[480px] h-auto object-contain drop-shadow-lg hover:scale-105 transition-transform duration-300 pointer-events-none mx-auto md:mx-0">
       </div>
 
-      <!-- TEKS (SEBELAH KANAN) -->
-      <div class="lg:col-span-6 flex flex-col items-start space-y-6 order-1 lg:order-2">
-        <h2 class="about-animate-right delay-about-1 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
+      <!-- TEKS TENTANG SULAPAKARYA (Bawah di HP via order-2) -->
+      <div class="md:col-span-6 flex flex-col items-center md:items-start space-y-4 md:space-y-6 order-2 md:order-2 text-center md:text-left">
+        <h2 class="about-animate-right delay-about-1 text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
           Tentang SulapaKarya
         </h2>
-        <p class="about-animate-right delay-about-2 text-sm sm:text-base text-ink-soft leading-relaxed">
+        <p class="about-animate-right delay-about-2 text-sm md:text-base text-ink-soft leading-relaxed">
           Sampah anorganik yang menumpuk setiap hari, padahal masih punya nilai jual. SulapaKarya hadir untuk menjembatani masyarakat yang ingin berkontribusi menjaga lingkungan dalam nilai sambil mendapatkan penghasilan tambahan.
         </p>
-        <p class="about-animate-right delay-about-3 text-sm sm:text-base text-ink-soft leading-relaxed">
+        <p class="about-animate-right delay-about-3 text-sm md:text-base text-ink-soft leading-relaxed">
           SulapaKarya membantu masyarakat dalam gerakan daur ulang yang berkelanjutan di Kota Makassar sehingga mewujudkan Makassar Kota Bebas Sampah.
         </p>
       </div>
+
     </div>
   </section>
 
   <!-- ============ CARA KERJA / PROSES ============ -->
-  <section id="cara-kerja" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-    
-    <!-- Header (Judul Turun dari Atas) -->
-    <div class="text-center mb-16">
-      <h2 class="step-header-animate delay-100 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
+  <section id="cara-kerja" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+    <div class="text-center mb-12 md:mb-16">
+      <h2 class="step-header-animate delay-100 text-4xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
         Bagaimana SulapaKarya Bekerja
       </h2>
-      <p class="step-header-animate delay-200 text-sm sm:text-base text-ink-soft mt-2">
+      <p class="step-header-animate delay-200 text-xs sm:text-sm md:text-base text-ink-soft mt-2">
         Dari sampah di rumahmu, hingga menjadi karya bernilai tinggi.
       </p>
     </div>
 
-    <div class="relative">
-      
-      <!-- Garis Tengah Vertikal -->
-      <div class="absolute left-1/2 top-5 bottom-5 w-0.5 bg-forest/20 -translate-x-1/2 z-0 hidden sm:block"></div>
+    <div class="relative max-w-4xl mx-auto">
+      <div class="absolute left-1/2 top-6 bottom-10 w-0.5 bg-forest/20 -translate-x-1[1px] z-0 hidden sm:block"></div>
 
       <div class="space-y-4 sm:space-y-5 relative z-10">
 
         <!-- STEP 1 (KIRI) -->
-        <div class="step-animate-left flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+        <div class="step-animate-left relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
           <div class="w-full sm:w-[42%] text-center sm:text-right order-2 sm:order-1">
             <h3 class="text-base font-bold text-ink">Pilah Sampah</h3>
             <p class="text-sm text-ink-soft mt-1 leading-relaxed">Pisahkan sampahmu sesuai jenisnya di rumah.</p>
@@ -354,7 +342,7 @@
         </div>
 
         <!-- STEP 2 (KANAN) -->
-        <div class="step-animate-right flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+        <div class="step-animate-right relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
           <div class="w-full sm:w-[42%] hidden sm:block order-3 sm:order-1"></div>
           <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
             2
@@ -366,7 +354,7 @@
         </div>
 
         <!-- STEP 3 (KIRI) -->
-        <div class="step-animate-left flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+        <div class="step-animate-left relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
           <div class="w-full sm:w-[42%] text-center sm:text-right order-2 sm:order-1">
             <h3 class="text-base font-bold text-ink">Verifikasi & Penimbangan</h3>
             <p class="text-sm text-ink-soft mt-1 leading-relaxed">Tim kami akan mengecek serta menimbang sampahmu.</p>
@@ -378,7 +366,7 @@
         </div>
 
         <!-- STEP 4 (KANAN) -->
-        <div class="step-animate-right flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+        <div class="step-animate-right relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
           <div class="w-full sm:w-[42%] hidden sm:block order-3 sm:order-1"></div>
           <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
             4
@@ -390,7 +378,7 @@
         </div>
 
         <!-- STEP 5 (KIRI) -->
-        <div class="step-animate-left flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+        <div class="step-animate-left relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
           <div class="w-full sm:w-[42%] text-center sm:text-right order-2 sm:order-1">
             <h3 class="text-base font-bold text-ink">Tukar & Belanja</h3>
             <p class="text-sm text-ink-soft mt-1 leading-relaxed">Pakai poin untuk diskon belanja produk kriya atau cairkan jadi uang tunai.</p>
@@ -402,7 +390,7 @@
         </div>
 
         <!-- STEP 6 (KANAN) -->
-        <div class="step-animate-right flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+        <div class="step-animate-right relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
           <div class="w-full sm:w-[42%] hidden sm:block order-3 sm:order-1"></div>
           <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
             6
@@ -418,21 +406,20 @@
   </section>
 
   <!-- ============ Live Count Dampak Webapp ============ -->
-  <section id="live-count-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-16 sm:my-20 relative z-20">
+  <section id="live-count-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-12 md:my-16 relative z-20">
     <div class="live-count-card relative rounded-[2rem] bg-gradient-to-br from-forest-light via-sand to-forest-light border border-ink/10 overflow-hidden">
       
       <div class="dot-grid absolute inset-0 text-forest/10"></div>
-      <div class="relative px-6 sm:px-8 py-10 sm:py-16 flex flex-col items-center justify-center gap-10 sm:gap-14">
+      <div class="relative px-6 sm:px-8 py-8 md:py-12 flex flex-col items-center justify-center gap-8 md:gap-12">
         
-        <!-- Judul dengan Animasi Turun dari Atas -->
         <div class="text-center">
-          <h2 class="counter-title-animate text-3xl sm:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
+          <h2 class="counter-title-animate text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
             Lihat kontribusimu untuk lingkungan!
           </h2>
         </div>
 
-        <!-- Grid 3 Kolom yang Sejajar dan Presisi -->
-        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch max-w-5xl mx-auto">
+        <!-- Grid 3 kolom di tablet -->
+        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-stretch max-w-5xl mx-auto">
 
           <div class="counter-box flex flex-col items-center text-center justify-between">
             <div class="counter-number-container flex items-baseline gap-1.5 sm:gap-2 mb-2">
@@ -472,21 +459,17 @@
 </div>
 
 <!-- ============ SECTION: JENIS SAMPAH YANG DITERIMA (CAROUSEL) ============ -->
-<section id="cara-memilah" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative">
-  <!-- Header (Judul & Subjudul Turun dari Atas) -->
-  <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-    <h2 class="waste-header-animate delay-100 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
+<section id="cara-memilah" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative">
+  <div class="text-center max-w-3xl mx-auto mb-8 md:mb-12">
+    <h2 class="waste-header-animate delay-100 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
       Jenis Sampah yang Kami Terima
     </h2>
-    <p class="waste-header-animate delay-200 text-ink-soft text-sm sm:text-base mt-2">
+    <p class="waste-header-animate delay-200 text-ink-soft text-xs sm:text-sm md:text-base mt-2">
       Pilih jenis sampah di bawah ini untuk melihat panduan cara memilahnya secara benar.
     </p>
   </div>
 
-  <!-- Container Wrapper untuk Carousel & Tombol Navigasi -->
   <div class="blink-element relative px-2 sm:px-10">
-    
-    <!-- SWIPER CAROUSEL -->
     <div class="swiper wasteSwiper !py-4 !px-1">
       <div class="swiper-wrapper">
 
@@ -697,7 +680,6 @@
       </div>
     </div>
 
-    <!-- TOMBOL NAVIGASI KIRI & KANAN -->
     <button class="waste-prev-btn absolute left-0 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white text-forest shadow-md hover:bg-forest hover:text-white border border-forest/10 flex items-center justify-center transition-all duration-200 cursor-pointer -translate-x-2 sm:translate-x-0">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
@@ -709,21 +691,19 @@
 </section>
 
 <!-- ============ SECTION: KALKULATOR ESTIMASI NILAI SAMPAH ============ -->
-<section id="kalkulator" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+<section id="kalkulator" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
   <div class="bg-forest rounded-3xl p-6 sm:p-12 text-white relative overflow-hidden shadow-xl">
     
-    <!-- Header (Judul & Subjudul Turun dari Atas) -->
-    <div class="text-center max-w-2xl mx-auto mb-10">
-      <h2 class="calc-header-animate delay-100 text-4xl sm:text-5xl font-extrabold tracking-tight">
+    <div class="text-center max-w-2xl mx-auto mb-8 md:mb-10">
+      <h2 class="calc-header-animate delay-100 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
         Hitung Nilai Sampahmu
       </h2>
-      <p class="calc-header-animate delay-200 text-white/80 text-sm sm:text-base mt-3">
+      <p class="calc-header-animate delay-200 text-white/80 text-xs sm:text-sm md:text-base mt-2 md:mt-3">
         Simulasikan berapa banyak nilai yang bisa kamu dapatkan dengan menukarkan sampah rumah tanggamu.
       </p>
     </div>
 
-    <!-- Card Kalkulator (Menggunakan Efek Kedip Blink-Element) -->
-    <div id="card-kalkulator" class="blink-element max-w-xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-white/15 shadow-inner">
+    <div id="card-kalkulator" class="blink-element max-w-xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-5 sm:p-8 border border-white/15 shadow-inner">
       
       <div id="calculator-rows" class="space-y-4">
         
@@ -771,7 +751,7 @@
 
       <div class="mt-6 pt-6 border-t border-white/20 flex items-center justify-between">
         <span class="text-base sm:text-lg font-bold text-white/90">Estimasi Nilai</span>
-        <span id="total-estimation" class="text-2xl sm:text-3xl font-extrabold text-white">Rp 2.500</span>
+        <span id="total-estimation" class="text-2xl sm:text-3xl font-extrabold text-white">Rp 0</span>
       </div>
     </div>
 
@@ -801,36 +781,29 @@
 </section>
 
 <!-- ============ Katalog Produk Daur Ulang ============ -->
-<section id="katalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative">
-  
-  <!-- Section Header (Judul & Subjudul Turun dari Atas) -->
-  <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-    <h2 class="catalog-header-animate delay-100 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
+<section id="katalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative">
+  <div class="text-center max-w-2xl mx-auto mb-8 md:mb-12">
+    <h2 class="catalog-header-animate delay-100 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
       Katalog Kriya Daur Ulang
     </h2>
-    <p class="catalog-header-animate delay-200 text-ink-soft text-sm sm:text-base mt-2">
+    <p class="catalog-header-animate delay-200 text-ink-soft text-xs sm:text-sm md:text-base mt-2">
       Dukung pengrajin lokal dengan membeli produk hasil olahan sampah berkualitas.
     </p>
   </div>
 
   @if(isset($products))  
     @php
-      // Filter produk unggulan (is_featured == true) & dibatasi maksimal 11 item
       $featuredProducts = $products->where('is_featured', true)->take(11);
     @endphp
 
     <div class="blink-element relative px-2 sm:px-10">
-      
-      <!-- SWIPER CAROUSEL KATALOG -->
       <div class="swiper catalogSwiper !py-4 !px-1">
         <div class="swiper-wrapper">
 
           @forelse($featuredProducts as $product)
-            <!-- CARD PRODUK -->
             <div class="swiper-slide h-auto">
               <div class="bg-white rounded-3xl border border-ink/10 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group h-full">
                 
-                <!-- Foto Produk -->
                 <div class="aspect-square bg-cream/30 overflow-hidden relative">
                   @if($product->photo_path)
                     <img src="{{ \Illuminate\Support\Facades\Storage::url($product->photo_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
@@ -841,14 +814,12 @@
                   @endif
                 </div>
 
-                <!-- Informasi Produk & Tombol Detail -->
                 <div class="p-5 flex flex-col justify-between flex-grow">
                   <div>
                     <h3 class="text-base font-bold text-ink leading-snug line-clamp-1 mb-1">{{ $product->name }}</h3>
                     <p class="text-forest font-bold text-base mb-4">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
                   </div>
 
-                  <!-- Tombol Detail Produk -->
                   @if(session()->has('user_id'))
                     <button type="button" onclick="document.getElementById('detail_modal_{{ $product->id }}').showModal()" class="w-full bg-forest hover:bg-forest/90 text-white text-xs font-bold py-3 rounded-full transition-colors text-center cursor-pointer">
                       Detail Produk
@@ -868,10 +839,9 @@
                 <form method="dialog">
                   <button class="btn btn-sm btn-circle btn-ghost absolute right-5 top-5 text-ink-soft bg-gray-100 hover:bg-gray-200 border-none">✕</button>
                 </form>
-                <h3 class="font-display font-extrabold text-xl text-ink border-b border-ink/5 pb-3">Detail Hasil Karya</h3>
+                <h3 class="font-display font-extrabold text-xl text-ink border-b border-ink/5 pb-3">Detail Produk</h3>
 
                 <div class="mt-4 space-y-4">
-                  <!-- Gambar dengan Rasio Kotak 1:1 -->
                   <div class="w-full aspect-square rounded-2xl overflow-hidden bg-cream/30 border border-ink/5">
                     @if($product->photo_path)
                       <img src="{{ \Illuminate\Support\Facades\Storage::url($product->photo_path) }}" class="w-full h-full object-cover">
@@ -893,7 +863,6 @@
                     <p class="font-mono font-black text-forest text-2xl mt-1">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
                   </div>
 
-                  <!-- Deskripsi Produk dengan Teks Lebih Besar -->
                   @if($product->description)
                     <div class="bg-cream/20 border border-ink/5 rounded-2xl p-4">
                       <span class="text-xs font-bold text-ink-soft block mb-1.5">Deskripsi Produk:</span>
@@ -901,7 +870,6 @@
                     </div>
                   @endif
 
-                  <!-- Tombol Aksi -->
                   @if(($product->stock ?? 1) > 0)
                     <form action="{{ route('cart.add', $product->id) }}" method="POST" class="w-full pt-1">
                       @csrf
@@ -924,7 +892,6 @@
           @empty
           @endforelse
 
-          <!-- CARD KHUSUS: TOMBOL HALAMAN KATALOG KRIYA (CARD KE-12 ATAS MAKS UTK LIHAT SEMUA) -->
           <div class="swiper-slide h-auto">
             @if(session()->has('user_id'))
               <a href="/katalog" class="group bg-white rounded-3xl border border-forest/40 hover:border-forest p-6 flex flex-col justify-center items-center text-center transition-all duration-300 shadow-sm hover:shadow-md h-full min-h-[320px]">
@@ -954,7 +921,6 @@
         </div>
       </div>
 
-      <!-- TOMBOL NAVIGASI KIRI & KANAN KATALOG -->
       <button class="catalog-prev-btn absolute left-0 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white text-forest shadow-md hover:bg-forest hover:text-white border border-forest/10 flex items-center justify-center transition-all duration-200 cursor-pointer -translate-x-2 sm:translate-x-0">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
@@ -966,9 +932,11 @@
   @endif
 </section>
 
+<!-- ============ CLOSING TAGLINE ============ -->
 <section class="py-12 sm:py-16 overflow-hidden">
   <div class="max-w-2xl mx-auto px-6 text-center">
-    <p id="typing-quote" class="font-display italic text-lg sm:text-xl text-ink-soft inline-block border-r-2 border-forest pr-1 whitespace-normal">
+    <p class="font-display italic text-lg sm:text-xl text-ink-soft inline">
+      <span id="typing-text"></span><span id="typing-cursor" class="inline-block w-[2px] h-[1.1em] bg-forest align-sub ml-0.5 opacity-0"></span>
     </p>
   </div>
 </section>
@@ -976,6 +944,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     
+    /* 1. LIVE COUNT SECTION ANIMATION */
     const counterSection = document.getElementById("live-count-section");
     const liveCountCard = document.querySelector(".live-count-card");
     const counterBoxes = document.querySelectorAll(".counter-box");
@@ -983,14 +952,12 @@
     let activeIntervals = [];
 
     const resetAndAnimateCounters = () => {
-      // Clear interval sebelumnya jika animasi masih berjalan
       activeIntervals.forEach(interval => clearInterval(interval));
       activeIntervals = [];
 
-      // Trigger animasi pada card utama (agar judul + angka teranimasi)
       if (liveCountCard) {
         liveCountCard.classList.remove("is-animated");
-        void liveCountCard.offsetWidth; // Trigger reflow
+        void liveCountCard.offsetWidth;
         liveCountCard.classList.add("is-animated");
       }
 
@@ -1003,7 +970,7 @@
       counters.forEach((counter) => {
         counter.innerText = "0";
         const target = +counter.getAttribute("data-target");
-        const duration = 1800; // Durasi animasi (ms)
+        const duration = 1800;
         const frameRate = 1000 / 60;
         const totalFrames = Math.round(duration / frameRate);
         let currentFrame = 0;
@@ -1031,7 +998,6 @@
           if (entry.isIntersecting) {
             resetAndAnimateCounters();
           } else {
-            // Hentikan interval saat keluar dari layar
             activeIntervals.forEach(interval => clearInterval(interval));
             activeIntervals = [];
             if (liveCountCard) liveCountCard.classList.remove("is-animated");
@@ -1046,239 +1012,147 @@
     if (counterSection) {
       counterObserver.observe(counterSection);
     }
-  });
 
-  // Swiper Jenis Sampah
-  const wasteSwiper = new Swiper('.wasteSwiper', {
-    slidesPerView: 1,
-    slidesPerGroup: 1, // Di mobile (layar kecil) geser 1 per 1
-    spaceBetween: 20,
-    loop: true,
-    navigation: {
-      nextEl: '.waste-next-btn',
-      prevEl: '.waste-prev-btn',
-    },
-    breakpoints: {
-      640: {
-        slidesPerView: 2,
-        slidesPerGroup: 2, // Di tablet geser 2 per 2
-        spaceBetween: 24,
-      },
-      1024: {
-        slidesPerView: 3,
-        slidesPerGroup: 3, // Di desktop geser 3 per 3
-        spaceBetween: 24,
-      },
-    },
-  });
+    /* 2. SWIPER CAROUSELS INITIALIZATION */
+    if (typeof Swiper !== 'undefined') {
+      new Swiper('.wasteSwiper', {
+        slidesPerView: 1,
+        slidesPerGroup: 1,
+        spaceBetween: 20,
+        loop: true,
+        navigation: {
+          nextEl: '.waste-next-btn',
+          prevEl: '.waste-prev-btn',
+        },
+        breakpoints: {
+          640: { slidesPerView: 2, slidesGroup: 2, spaceBetween: 20 },
+          768: { slidesPerView: 2, slidesGroup: 2, spaceBetween: 24 },
+          1024: { slidesPerView: 3, slidesGroup: 3, spaceBetween: 24 },
+        },
+      });
 
-  // Swiper Katalog Produk (Geser per halaman 4 4 4 di desktop)
-  const catalogSwiper = new Swiper('.catalogSwiper', {
-    slidesPerView: 1,
-    slidesPerGroup: 1, 
-    spaceBetween: 20,
-    loop: false,
-    watchOverflow: true,
-    navigation: {
-      nextEl: '.catalog-next-btn',
-      prevEl: '.catalog-prev-btn',
-    },
-    breakpoints: {
-      640: {
-        slidesPerView: 2,
-        slidesPerGroup: 2, 
-        spaceBetween: 24,
-      },
-      1024: {
-        slidesPerView: 4,
-        slidesPerGroup: 4, // Di desktop geser per halaman 4 4 4
-        spaceBetween: 24,
-      },
-    },
-    on: {
-      init: function (swiper) {
-        // Sembunyikan tombol jika total slide cukup muat dalam 1 tampilan (layar)
-        const isLocked = swiper.isLocked;
-        document.querySelector('.catalog-prev-btn').style.display = isLocked ? 'none' : 'flex';
-        document.querySelector('.catalog-next-btn').style.display = isLocked ? 'none' : 'flex';
-      },
-      resize: function (swiper) {
-        const isLocked = swiper.isLocked;
-        document.querySelector('.catalog-prev-btn').style.display = isLocked ? 'none' : 'flex';
-        document.querySelector('.catalog-next-btn').style.display = isLocked ? 'none' : 'flex';
-      }
-    }
-  });
+      const catalogPrevBtn = document.querySelector('.catalog-prev-btn');
+      const catalogNextBtn = document.querySelector('.catalog-next-btn');
 
-  // Animasi Typing Effect pada Quote Closing
-  const quoteElement = document.getElementById("typing-quote");
-  const textToType = "“Satu langkah kecilmu hari ini, adalah harapan besar untuk bumi esok hari.”";
-  let hasTyped = false;
-
-  if (quoteElement) {
-    const quoteObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && !hasTyped) {
-          hasTyped = true; // Biar ketiknya cuma sekali pas di-scroll ke quote
-          quoteElement.classList.add("cursor-typing");
-          
-          let index = 0;
-          const typingSpeed = 50; // Kecepatan ngetik per karakter (ms)
-
-          function typeWriter() {
-            if (index < textToType.length) {
-              quoteElement.textContent += textToType.charAt(index);
-              index++;
-              setTimeout(typeWriter, typingSpeed);
-            } else {
-              // Hilangkan kursor kedip setelah selesai mengetik (opsional)
-              setTimeout(() => {
-                quoteElement.classList.remove("border-r-2", "cursor-typing");
-              }, 1500);
+      new Swiper('.catalogSwiper', {
+        slidesPerView: 1,
+        slidesPerGroup: 1, 
+        spaceBetween: 20,
+        loop: false,
+        watchOverflow: true,
+        navigation: {
+          nextEl: '.catalog-next-btn',
+          prevEl: '.catalog-prev-btn',
+        },
+        breakpoints: {
+          640: { slidesPerView: 2, slidesGroup: 2, spaceBetween: 20 },
+          768: { slidesPerView: 3, slidesGroup: 3, spaceBetween: 20 },
+          1024: { slidesPerView: 4, slidesGroup: 4, spaceBetween: 24 },
+        },
+        on: {
+          init: function (swiper) {
+            if (catalogPrevBtn && catalogNextBtn) {
+              catalogPrevBtn.style.display = swiper.isLocked ? 'none' : 'flex';
+              catalogNextBtn.style.display = swiper.isLocked ? 'none' : 'flex';
+            }
+          },
+          resize: function (swiper) {
+            if (catalogPrevBtn && catalogNextBtn) {
+              catalogPrevBtn.style.display = swiper.isLocked ? 'none' : 'flex';
+              catalogNextBtn.style.display = swiper.isLocked ? 'none' : 'flex';
             }
           }
-
-          typeWriter();
         }
       });
-    }, { threshold: 0.5 });
+    }
 
-    quoteObserver.observe(quoteElement);
-  }
+    /* 3. TYPING EFFECT FOR CLOSING QUOTE */
+    const textElement = document.getElementById("typing-text");
+    const cursorElement = document.getElementById("typing-cursor");
+    const quoteSection = textElement ? textElement.closest("section") : null;
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("show");
-      } else {
-        entry.target.classList.remove("show");
-      }
+    const textToType = "“Satu langkah kecilmu hari ini, adalah harapan besar untuk bumi esok hari.”";
+    let typingTimeout = null;
+
+    if (textElement && cursorElement && quoteSection) {
+      const quoteObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            clearTimeout(typingTimeout);
+            textElement.textContent = "";
+            cursorElement.classList.add("cursor-typing");
+
+            let index = 0;
+            const typingSpeed = 50;
+
+            function typeWriter() {
+              if (index < textToType.length) {
+                textElement.textContent += textToType.charAt(index);
+                index++;
+                typingTimeout = setTimeout(typeWriter, typingSpeed);
+              }
+            }
+
+            typeWriter();
+          } else {
+            clearTimeout(typingTimeout);
+            textElement.textContent = "";
+            cursorElement.classList.remove("cursor-typing");
+          }
+        });
+      }, { threshold: 0.5 });
+
+      quoteObserver.observe(quoteSection);
+    }
+
+    /* 4. BLINK ELEMENT OBSERVER */
+    const blinkObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+        } else {
+          entry.target.classList.remove("show");
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll(".blink-element").forEach((el) => {
+      blinkObserver.observe(el);
     });
-  }, { threshold: 0.2 });
 
-  document.querySelectorAll(".blink-element").forEach((el) => {
-    observer.observe(el);
-  });
+    /* 5. GENERAL SCROLL ANIMATION OBSERVERS */
+    const createScrollObserver = (selector, className = "is-visible") => {
+      const elements = document.querySelectorAll(selector);
+      if (elements.length > 0) {
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add(className);
+            } else {
+              entry.target.classList.remove(className);
+            }
+          });
+        }, { threshold: 0.2 });
+        elements.forEach((el) => obs.observe(el));
+      }
+    };
 
-  document.addEventListener('DOMContentLoaded', function () {
+    createScrollObserver(".hero-animate-item");
+    createScrollObserver("#hero-bottle-image", "animate-slide-in");
+    createScrollObserver(".about-animate-left, .about-animate-right");
+    createScrollObserver(".step-header-animate, .step-animate-left, .step-animate-right");
+    createScrollObserver(".waste-header-animate");
+    createScrollObserver(".calc-header-animate, .calc-footer-animate");
+    createScrollObserver(".catalog-header-animate");
+
+    /* 6. KALKULATOR ESTIMASI LOGIC */
     const container = document.getElementById('calculator-rows');
     const addBtn = document.getElementById('add-row-btn');
     const totalDisplay = document.getElementById('total-estimation');
 
-    // Observer untuk Hero Text & Buttons
-    const heroItems = document.querySelectorAll(".hero-animate-item");
-    if (heroItems.length > 0) {
-      const heroObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-          } else {
-            entry.target.classList.remove("is-visible");
-          }
-        });
-      }, { threshold: 0.2 });
-
-      heroItems.forEach((item) => heroObserver.observe(item));
-    }
-
-    // Observer untuk Gambar Botol
-    const bottleImg = document.getElementById("hero-bottle-image");
-    if (bottleImg) {
-      const bottleObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            bottleImg.classList.add("animate-slide-in");
-          } else {
-            bottleImg.classList.remove("animate-slide-in");
-          }
-        });
-      }, { threshold: 0.2 });
-
-      bottleObserver.observe(bottleImg);
-    }
-
-    // Observer untuk Tentang SulapaKarya
-    const aboutElements = document.querySelectorAll(".about-animate-left, .about-animate-right");
-    if (aboutElements.length > 0) {
-      const aboutObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-          } else {
-            entry.target.classList.remove("is-visible");
-          }
-        });
-      }, { threshold: 0.2 });
-
-      aboutElements.forEach((el) => aboutObserver.observe(el));
-    }
-
-    // Observer untuk Bagian Bagaimana SulapaKarya Bekerja
-    const stepElements = document.querySelectorAll(".step-header-animate, .step-animate-left, .step-animate-right");
-    if (stepElements.length > 0) {
-      const stepObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-          } else {
-            entry.target.classList.remove("is-visible");
-          }
-        });
-      }, { threshold: 0.2 });
-
-      stepElements.forEach((el) => stepObserver.observe(el));
-    }
-
-    // Observer untuk Bagian Jenis Sampah yang Kami Terima (Judul & Deskripsi)
-    const wasteElements = document.querySelectorAll(".waste-header-animate");
-    if (wasteElements.length > 0) {
-      const wasteObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-          } else {
-            entry.target.classList.remove("is-visible");
-          }
-        });
-      }, { threshold: 0.2 });
-
-      wasteElements.forEach((el) => wasteObserver.observe(el));
-    }
-
-    // Observer untuk Section Kalkulator (Judul & Subjudul)
-    const calcElements = document.querySelectorAll(".calc-header-animate, .calc-footer-animate");
-    if (calcElements.length > 0) {
-      const calcObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-          } else {
-            entry.target.classList.remove("is-visible");
-          }
-        });
-      }, { threshold: 0.2 });
-
-      calcElements.forEach((el) => calcObserver.observe(el));
-    }
-
-    // Observer untuk Section Katalog (Judul & Subjudul Turun dari Atas)
-    const catalogElements = document.querySelectorAll(".catalog-header-animate");
-    if (catalogElements.length > 0) {
-      const catalogObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-          } else {
-            entry.target.classList.remove("is-visible");
-          }
-        });
-      }, { threshold: 0.2 });
-
-      catalogElements.forEach((el) => catalogObserver.observe(el));
-    }
-
-    // Hitung total nilai sampah
     function calculateTotal() {
+      if (!container || !totalDisplay) return;
+
       let total = 0;
       const rows = container.querySelectorAll('.calc-row');
 
@@ -1297,62 +1171,69 @@
 
       rows.forEach(row => {
         const deleteBtn = row.querySelector('.btn-delete');
-        if (rows.length > 1) {
-          deleteBtn.classList.remove('hidden');
-        } else {
-          deleteBtn.classList.add('hidden');
+        if (deleteBtn) {
+          if (rows.length > 1) {
+            deleteBtn.classList.remove('hidden');
+          } else {
+            deleteBtn.classList.add('hidden');
+          }
         }
       });
     }
 
-    addBtn.addEventListener('click', function () {
-      const firstRow = container.querySelector('.calc-row');
-      const newRow = firstRow.cloneNode(true);
+    if (addBtn && container) {
+      addBtn.addEventListener('click', function () {
+        const firstRow = container.querySelector('.calc-row');
+        if (!firstRow) return;
 
-      // Reset dropdown dan nilai input di baris baru
-      newRow.querySelector('.waste-select').selectedIndex = 0;
-      newRow.querySelector('.weight-input').value = 0;
+        const newRow = firstRow.cloneNode(true);
 
-      container.appendChild(newRow);
-      calculateTotal();
-    });
+        const select = newRow.querySelector('.waste-select');
+        const input = newRow.querySelector('.weight-input');
+        
+        if (select) select.selectedIndex = 0;
+        if (input) input.value = 0;
 
-    // Delegasi Event untuk Plus, Minus, Hapus, dan Input Change
-    container.addEventListener('click', function (e) {
-      const row = e.target.closest('.calc-row');
-      if (!row) return;
-
-      const input = row.querySelector('.weight-input');
-
-      if (e.target.closest('.btn-plus')) {
-        let currentVal = parseFloat(input.value) || 0;
-        input.value = (currentVal + 1).toFixed(1).replace(/\.0$/, '');
+        container.appendChild(newRow);
         calculateTotal();
-      }
+      });
 
-      if (e.target.closest('.btn-minus')) {
-        let currentVal = parseFloat(input.value) || 0;
-        if (currentVal > 0.5) {
-          input.value = (currentVal - 1).toFixed(1).replace(/\.0$/, '');
-        } else if (currentVal > 0) {
-          input.value = 0;
-        }
-        calculateTotal();
-      }
+      container.addEventListener('click', function (e) {
+        const row = e.target.closest('.calc-row');
+        if (!row) return;
 
-      if (e.target.closest('.btn-delete')) {
-        const rows = container.querySelectorAll('.calc-row');
-        if (rows.length > 1) {
-          row.remove();
+        const input = row.querySelector('.weight-input');
+
+        if (e.target.closest('.btn-plus')) {
+          let currentVal = parseFloat(input.value) || 0;
+          input.value = (currentVal + 1).toFixed(1).replace(/\.0$/, '');
           calculateTotal();
         }
-      }
-    });
 
-    container.addEventListener('input', calculateTotal);
-    container.addEventListener('change', calculateTotal);
+        if (e.target.closest('.btn-minus')) {
+          let currentVal = parseFloat(input.value) || 0;
+          if (currentVal > 0.5) {
+            input.value = (currentVal - 1).toFixed(1).replace(/\.0$/, '');
+          } else if (currentVal > 0) {
+            input.value = 0;
+          }
+          calculateTotal();
+        }
 
-    calculateTotal();
+        if (e.target.closest('.btn-delete')) {
+          const rows = container.querySelectorAll('.calc-row');
+          if (rows.length > 1) {
+            row.remove();
+            calculateTotal();
+          }
+        }
+      });
+
+      container.addEventListener('input', calculateTotal);
+      container.addEventListener('change', calculateTotal);
+
+      calculateTotal();
+    }
   });
 </script>
 @endsection
