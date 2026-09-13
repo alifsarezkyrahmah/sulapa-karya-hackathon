@@ -15,207 +15,265 @@
   }
 
   .animate-slide-in {
-    animation: slideInRight 1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    animation: slideInRight 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   }
+
+  /* Animasi Teks & Tombol Hero */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hero-animate-item {
+    opacity: 0;
+    transform: translateY(30px);
+    will-change: opacity, transform;
+  }
+
+  .hero-animate-item.is-visible {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Animasi Kiri & Kanan */
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRightText {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Animasi Judul Turun dari Atas */
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .step-header-animate,
+  .catalog-header-animate,
+  .pro-header-animate {
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  .step-header-animate.is-visible,
+  .catalog-header-animate.is-visible,
+  .pro-header-animate.is-visible {
+    animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Animasi Step & Content dari Kiri & Kanan */
+  .step-animate-left,
+  .step-animate-right,
+  .about-animate-left,
+  .about-animate-right,
+  .pro-animate-left,
+  .pro-animate-right {
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  .step-animate-left.is-visible,
+  .about-animate-left.is-visible,
+  .pro-animate-left.is-visible {
+    animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .step-animate-right.is-visible,
+  .about-animate-right.is-visible,
+  .pro-animate-right.is-visible {
+    animation: slideInRightText 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Animasi Judul Turun Khusus Live Count Section */
+  @keyframes slideDownTitle {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .counter-title-animate {
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  .live-count-card.is-animated .counter-title-animate {
+    animation: slideDownTitle 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Animasi Turun dari Atas Khusus Section Jenis Sampah */
+  .waste-header-animate {
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  .waste-header-animate.is-visible {
+    animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Animasi Khusus Live Count Section */
+  @keyframes countFromTop {
+    from {
+      opacity: 0;
+      transform: translateY(-40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes blinkOnce {
+    0% { opacity: 0; }
+    30% { opacity: 0.2; }
+    60% { opacity: 0.8; }
+    100% { opacity: 1; }
+  }
+
+  .blink-element {
+    opacity: 0;
+  }
+
+  .blink-element.show {
+    animation: blinkOnce 0.8s ease-in-out forwards;
+  }
+
+  @keyframes countFromBottom {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Animasi Kursor Kedip Efek Ketik */
+  @keyframes blinkCursor {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+
+  .cursor-typing {
+    animation: blinkCursor 0.75s step-end infinite;
+  }
+
+  .counter-box .counter-number-container {
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  .counter-box .counter-label {
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  .counter-box.is-animated .counter-number-container {
+    animation: countFromTop 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .counter-box.is-animated .counter-label {
+    animation: countFromBottom 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s;
+  }
+
+  /* Animasi Section Kalkulator */
+  .calc-header-animate {
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  .calc-header-animate.is-visible {
+    animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .calc-footer-animate {
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  .calc-footer-animate.is-visible {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Delay Bertahap */
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.25s; }
+  .delay-300 { animation-delay: 0.4s; }
+  .delay-about-1 { animation-delay: 0.1s; }
+  .delay-about-2 { animation-delay: 0.25s; }
+  .delay-about-3 { animation-delay: 0.4s; }
 </style>
 
 <!-- Hero Section -->
-<section class="w-full px-4 sm:px-6 lg:px-8 pt-4 pb-12 overflow-hidden">
-  <div class="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-10 lg:py-16 relative">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+<section class="w-full px-4 sm:px-6 lg:px-8 pt-4 pb-12 overflow-x-clip">
+  <div class="max-w-7xl mx-auto px-4 sm:px-8 md:px-10 py-6 md:py-12 relative">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
       
-      <div class="lg:col-span-6 flex flex-col items-start space-y-6 z-10">
-        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-forest leading-[1.15] tracking-tight">
-          Satu Sampah di Tanganmu Dapat Menjadi Nilai yang Berharga
-        </h1>
-
-        <div class="pt-8">
-          @if(session()->has('user_id'))
-            <a href="/setor-sampah" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-8 py-3 text-sm normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 hover:scale-105 active:scale-95">
-              Mulai Setor Sekarang!
-            </a>
-          @else
-            <a href="{{ route('login') }}" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-8 py-3 text-sm normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 hover:scale-105 active:scale-95">
-              Mulai Setor Sekarang!
-            </a>
-          @endif
-        </div>
-      </div>
-
-      <div class="lg:col-span-6 flex justify-end items-center relative lg:-mr-12">
+      <!-- GAMBAR BOTOL (Atas di HP via order-1) -->
+      <div class="order-1 md:order-2 md:col-span-6 flex justify-center md:justify-end items-center relative md:-mr-12 lg:-mr-16 mt-4 md:mt-0 overflow-visible">
         <img
           id="hero-bottle-image"
           src="{{ asset('images/tangan-botol.png') }}" 
           alt="Tangan memegang botol plastik" 
-          class="animate-slide-in w-full max-w-[500px] lg:max-w-[650px] xl:max-w-[720px] h-auto object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300 pointer-events-none scale-110 translate-x-4 lg:translate-x-8"
+          class="w-full max-w-[500px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[650px] h-auto object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300 pointer-events-none scale-125 sm:scale-100 md:scale-110 -translate-x-6 sm:translate-x-0 md:translate-x-12 lg:translate-x-12"
         >
       </div>
 
-    </div>
-  </div>
-</section>
+      <!-- TEKS HERO (Bawah di HP via order-2) -->
+      <div class="order-2 md:order-1 md:col-span-6 flex flex-col items-center md:items-start space-y-4 md:space-y-6 z-10 text-center md:text-left" id="hero-text-container">
+        <h1 class="hero-animate-item delay-100 text-4xl sm:text-4xl md:text-4xl lg:text-5xl font-extrabold text-forest leading-[1.2] tracking-tight">
+          Ubah Sampah di Tanganmu Jadi Nilai Berharga
+        </h1>
 
-<!-- ============ Live Count Dampak Webapp ============ -->
-<section id="live-count-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 mb-16 relative z-20">
-  <div class="relative rounded-[2rem] bg-gradient-to-br from-forest-light via-sand to-forest-light border border-ink/10 overflow-hidden">
-    
-    <div class="dot-grid absolute inset-0 text-forest/10"></div>
-    <div class="relative px-6 sm:px-12 py-10 sm:py-16 flex flex-col items-center justify-center gap-10 sm:gap-14">
-      
-      <div class="text-center">
-        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-forest tracking-tight">
-          Lihat kontribusimu untuk lingkungan, secara langsung!
-        </h2>
-      </div>
-
-      <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 lg:gap-24 items-start max-w-5xl mx-auto">
-
-        <div class="flex flex-col items-center text-center">
-          <div class="flex items-baseline gap-2 mb-3">
-            <span class="counter-number text-4xl sm:text-5xl font-extrabold text-ink tracking-tight" data-target="1450">0</span>
-            <span class="text-base sm:text-lg font-bold text-forest">Kg</span>
-          </div>
-          <span class="text-xs sm:text-sm font-semibold text-ink-soft max-w-[180px] leading-snug">
-            Total Sampah Diselamatkan
-          </span>
-        </div>
-
-        <div class="flex flex-col items-center text-center">
-          <div class="flex items-baseline gap-2 mb-3">
-            <span class="counter-number text-4xl sm:text-5xl font-extrabold text-ink tracking-tight" data-target="420">0</span>
-            <span class="text-base sm:text-lg font-bold text-forest">Pcs</span>
-          </div>
-          <span class="text-xs sm:text-sm font-semibold text-ink-soft max-w-[180px] leading-snug">
-            Produk Kriya Terjual
-          </span>
-        </div>
-
-        <div class="flex flex-col items-center text-center">
-          <div class="flex items-baseline gap-2 mb-3">
-            <span class="counter-number text-4xl sm:text-5xl font-extrabold text-ink tracking-tight" data-target="15">0</span>
-            <span class="text-base sm:text-lg font-bold text-forest">Orang</span>
-          </div>
-          <span class="text-xs sm:text-sm font-semibold text-ink-soft max-w-[180px] leading-snug">
-            Pengrajin Lokal Diberdayakan
-          </span>
-        </div>
-
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ============ SECTION: SULAPAKARYA PRO (KEMITRAAN BISNIS) ============ -->
-<section id="mitra-bisnis" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
-  <div class="relative rounded-3xl bg-white border border-ink/10 p-6 sm:p-10 lg:p-14 overflow-hidden shadow-sm">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
-      
-      <div class="lg:col-span-7 space-y-5 sm:space-y-6 text-left">
-        <div class="inline-flex items-center gap-2 border border-forest/20 bg-forest/5 px-3 py-1 rounded-full">
-          <span class="w-1.5 h-1.5 rounded-full bg-forest"></span>
-          <span class="text-[10px] font-mono font-semibold tracking-widest uppercase text-forest">SulapaKarya PRO &bull; Solusi B2B</span>
-        </div>
-
-        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-forest tracking-tight leading-tight">
-          Pengelolaan sampah terpadu untuk efisiensi operasional usaha Anda.
-        </h2>
-
-        <p class="text-xs sm:text-sm text-ink-soft leading-relaxed max-w-xl">
-          Dirancang khusus untuk warkop, kafe, restoran, dan gerai usaha di Makassar. Bebaskan area kerja dari tumpukan material sisa dengan armada logistik penjemputan terjadwal rutin.
+        <p class="hero-animate-item delay-200 text-sm sm:text-base md:text-sm lg:text-xl text-ink-soft leading-relaxed max-w-xl">
+          Dari sampah, jadi nilai untuk Makassar.
         </p>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
-          <div class="p-4 rounded-2xl bg-cream/40 border border-ink/5 space-y-1.5">
-            <div class="flex items-center gap-2 text-ink">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-forest"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              <h4 class="text-xs font-bold">Penjemputan Terjadwal</h4>
-            </div>
-            <p class="text-[11px] text-ink-soft leading-relaxed">Pengaturan jadwal hari dan jam jemput berkala tanpa perlu order manual setiap waktu.</p>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-cream/40 border border-ink/5 space-y-1.5">
-            <div class="flex items-center gap-2 text-ink">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-forest"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-              <h4 class="text-xs font-bold">Prioritas Armada</h4>
-            </div>
-            <p class="text-[11px] text-ink-soft leading-relaxed">Kepastian waktu kedatangan kurir lapangan sebelum jam sibuk operasional usaha dimulai.</p>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-cream/40 border border-ink/5 space-y-1.5">
-            <div class="flex items-center gap-2 text-ink">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-forest"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-              <h4 class="text-xs font-bold">Diskon Produk Kriya</h4>
-            </div>
-            <p class="text-[11px] text-ink-soft leading-relaxed">Potongan harga eksklusif untuk pengadaan cinderamata dan dekorasi daur ulang.</p>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-cream/40 border border-ink/5 space-y-1.5">
-            <div class="flex items-center gap-2 text-ink">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-forest"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-              <h4 class="text-xs font-bold">Rekapitulasi Lingkungan</h4>
-            </div>
-            <p class="text-[11px] text-ink-soft leading-relaxed">Pantau data akumulasi tonase sampah terkelola beserta poin yang siap dicairkan ke kas usaha.</p>
-          </div>
-        </div>
-
-        <div class="pt-2 flex flex-col sm:flex-row items-start sm:items-center gap-3.5">
+        <div class="hero-animate-item delay-300 pt-2 flex flex-col sm:flex-col lg:flex-row gap-3 w-full sm:w-auto">
           @if(session()->has('user_id'))
-            <a href="/mitra-bisnis" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-8 py-3 text-xs normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 w-full sm:w-auto text-center">
-              Daftar sebagai Mitra Bisnis &rarr;
+            <a href="/setor-sampah" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-6 md:px-8 py-3 text-base md:text-xs normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 hover:scale-105 active:scale-95 text-center">
+              Mulai Setor Sekarang!
             </a>
           @else
-            <a href="{{ route('login') }}" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-8 py-3 text-xs normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 w-full sm:w-auto text-center">
-              Daftar sebagai Mitra Bisnis &rarr;
+            <a href="{{ route('login') }}" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-6 md:px-8 py-3 text-base md:text-xs normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 hover:scale-105 active:scale-95 text-center">
+              Mulai Setor Sekarang!
             </a>
           @endif
-          <span class="text-[11px] text-ink-soft font-mono">Verifikasi akun kemitraan bebas biaya</span>
-        </div>
-      </div>
-
-      <!-- Kartu Harga & Paket Kemitraan PRO (Sisi Kanan) -->
-      <div class="lg:col-span-5 flex justify-center w-full">
-        <div class="w-full max-w-sm rounded-3xl bg-[#1C1A16] text-[#E5DFD5] border border-white/10 p-6 sm:p-7 space-y-4 text-left shadow-lg relative overflow-hidden">
-          
-          <div class="flex items-center justify-between pb-3 border-b border-white/10">
-            <div>
-              <span class="text-[10px] uppercase font-mono tracking-widest text-[#8C8478] block">Paket Kemitraan</span>
-              <h4 class="text-sm font-bold text-white mt-0.5">SulapaKarya PRO</h4>
-            </div>
-            <span class="text-[9px] font-mono font-bold text-amber-400 bg-amber-400/15 px-2 py-0.5 rounded border border-amber-400/30 uppercase tracking-wider">
-              B2B Partner
-            </span>
-          </div>
-
-          <!-- Blok Penampilan Harga 67rb -->
-          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10 text-center space-y-1">
-            <span class="text-[10px] text-[#A8A095] uppercase font-mono tracking-wider block">Biaya Layanan Operasional</span>
-            <div class="flex items-baseline justify-center gap-1">
-              <span class="text-xs font-bold text-[#A8A095]">Rp</span>
-              <span class="text-3xl sm:text-4xl font-black font-mono text-white tracking-tight">67.000</span>
-              <span class="text-xs text-[#A8A095] font-sans">/ bulan</span>
-            </div>
-            <p class="text-[10px] text-forest font-mono font-semibold pt-1">Termasuk seluruh rute penjemputan berkala</p>
-          </div>
-
-          <div class="space-y-2 text-xs">
-            <div class="p-2.5 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
-              <span class="text-[#A8A095]">Rute Armada</span>
-              <span class="font-mono text-white font-bold">Terjadwal Rutin</span>
-            </div>
-            <div class="p-2.5 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
-              <span class="text-[#A8A095]">Prioritas Penanganan</span>
-              <span class="font-semibold text-white">Jalur Utama</span>
-            </div>
-            <div class="p-2.5 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
-              <span class="text-[#A8A095]">Konversi Insentif</span>
-              <span class="font-mono text-forest font-bold">Poin Reward Usaha</span>
-            </div>
-          </div>
-
-          <div class="pt-2 border-t border-white/10 text-[11px] text-[#8C8478] leading-relaxed text-center">
-            Mendukung pelaporan tanggung jawab lingkungan dan integrasi ekonomi sirkular lokal di Makassar.
-          </div>
+          <a class="btn bg-cream/10 hover:bg-cream/20 text-forest border-forest font-bold rounded-full px-6 md:px-8 py-3 text-base md:text-xs normal-case border border-cream/20 shadow-md shadow-forest/10 transition-all duration-200 hover:scale-105 active:scale-95 text-center" href="#kalkulator">
+            Hitung Nilai Sampahmu
+          </a>
         </div>
       </div>
 
@@ -223,88 +281,367 @@
   </div>
 </section>
 
-<!-- ============ SECTION: JENIS SAMPAH YANG DITERIMA (DINAMIS DARI DATABASE) ============ -->
-<section id="katalog-sampah" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-  <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-    <h2 class="text-3xl sm:text-4xl font-extrabold text-forest tracking-tight mt-4">
-      Jenis Sampah yang Kami Terima
-    </h2>
-    <p class="text-ink-soft text-sm sm:text-base mt-2">
-      Setorkan sampah terpilah untuk mendapatkan poin tukar kriya bernilai manfaat.
-    </p>
+<div id="tentang-kami">
+  <!-- ============ Tentang Kami ============ -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+      
+      <!-- GAMBAR TEMPAT SAMPAH (Atas di HP via order-1) -->
+      <div class="md:col-span-6 flex justify-center md:justify-start items-center relative order-1 md:order-1">
+        <img src="{{ asset('images/tempat-sampah.png') }}" alt="Tentang SulapaKarya" class="about-animate-left w-full max-w-[260px] md:max-w-[420px] lg:max-w-[480px] h-auto object-contain drop-shadow-lg hover:scale-105 transition-transform duration-300 pointer-events-none mx-auto md:mx-0">
+      </div>
 
-    <!-- Ringkasan Standar QC Terpadu -->
-    <div class="mt-6 p-4 sm:p-5 bg-white rounded-2xl border border-ink/10 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 text-left">
-      <div class="space-y-1">
-        <div class="flex items-center gap-2">
-          <span class="badge badge-xs bg-forest/15 text-forest border-none font-bold text-[10px] px-2 py-0.5">STANDAR QC</span>
-          <span class="text-xs font-bold text-ink">Verifikasi Kelayakan Sampah</span>
-        </div>
-        <p class="text-xs text-ink-soft leading-relaxed">
-          QC (Quality Control) adalah syarat kelayakan fisik sampah sebelum ditimbang oleh kurir—wajib terpilah bersih dari residu minyak atau sisa makanan, dalam kondisi kering, dan terkemas rapi.
+      <!-- TEKS TENTANG SULAPAKARYA (Bawah di HP via order-2) -->
+      <div class="md:col-span-6 flex flex-col items-center md:items-start space-y-4 md:space-y-6 order-2 md:order-2 text-center md:text-left">
+        <h2 class="about-animate-right delay-about-1 text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
+          Tentang SulapaKarya
+        </h2>
+        <p class="about-animate-right delay-about-2 text-sm md:text-base text-ink-soft leading-relaxed">
+          Sampah anorganik yang menumpuk setiap hari, padahal masih punya nilai jual. SulapaKarya hadir untuk menjembatani masyarakat yang ingin berkontribusi menjaga lingkungan dalam nilai sambil mendapatkan penghasilan tambahan.
+        </p>
+        <p class="about-animate-right delay-about-3 text-sm md:text-base text-ink-soft leading-relaxed">
+          SulapaKarya membantu masyarakat dalam gerakan daur ulang yang berkelanjutan di Kota Makassar sehingga mewujudkan Makassar Kota Bebas Sampah.
         </p>
       </div>
-      <a href="https://drive.google.com/file/d/1wmkeqhpKQgUlFeEltqR7b7xnTHrDIE32/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn btn-sm bg-forest hover:bg-forest/90 text-white rounded-xl text-xs font-bold normal-case px-4 py-2 shrink-0 border-none shadow-sm flex items-center gap-1.5 w-full sm:w-auto justify-center">
-        <span>Buka Panduan QC</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      </a>
+
     </div>
-  </div>
+  </section>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-    @forelse($wastePrices as $wp)
-      @php
-        $nameLower = strtolower($wp->name);
-        $imageName = 'gelas-plastik.png';
-        if (str_contains($nameLower, 'botol plastik')) $imageName = 'botol-plastik.png';
-        elseif (str_contains($nameLower, 'hvs') || str_contains($nameLower, 'buku')) $imageName = 'kertas-hvs.png';
-        elseif (str_contains($nameLower, 'koran')) $imageName = 'kertas-koran.png';
-        elseif (str_contains($nameLower, 'kain') || str_contains($nameLower, 'tekstil')) $imageName = 'kain-perca.png';
-        elseif (str_contains($nameLower, 'kresek')) $imageName = 'plastik-kresek.png';
-        elseif (str_contains($nameLower, 'kaleng') || str_contains($nameLower, 'seng')) $imageName = 'kaleng-besi.png';
-        elseif (str_contains($nameLower, 'kaca')) $imageName = 'botol-kaca.png';
-        elseif (str_contains($nameLower, 'tembaga')) $imageName = 'logam-tembaga.png';
-        elseif (str_contains($nameLower, 'besi')) $imageName = 'besi-tua.png';
-        elseif (str_contains($nameLower, 'elektronik') || str_contains($nameLower, 'e-waste')) $imageName = 'elektronik-bekas.png';
-        elseif (str_contains($nameLower, 'karton') || str_contains($nameLower, 'dupleks') || str_contains($nameLower, 'kardus')) $imageName = 'karton-makanan.png';
-      @endphp
+  <!-- ============ CARA KERJA / PROSES ============ -->
+  <section id="cara-kerja" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+    <div class="text-center mb-12 md:mb-16">
+      <h2 class="step-header-animate delay-100 text-4xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
+        Bagaimana SulapaKarya Bekerja
+      </h2>
+      <p class="step-header-animate delay-200 text-xs sm:text-sm md:text-base text-ink-soft mt-2">
+        Dari sampah di rumahmu, hingga menjadi karya bernilai tinggi.
+      </p>
+    </div>
 
-      <div class="w-full max-w-sm bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
-        <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden">
-          <img src="{{ asset('images/sampah/' . $imageName) }}" alt="{{ $wp->name }}" class="w-full h-full object-contain" onerror="this.src='{{ asset('images/tangan-botol.png') }}'">
+    <div class="relative max-w-4xl mx-auto">
+      <div class="absolute left-1/2 top-6 bottom-10 w-0.5 bg-forest/20 -translate-x-1[1px] z-0 hidden sm:block"></div>
+
+      <div class="space-y-4 sm:space-y-5 relative z-10">
+
+        <!-- STEP 1 (KIRI) -->
+        <div class="step-animate-left relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <div class="w-full sm:w-[42%] text-center sm:text-right order-2 sm:order-1">
+            <h3 class="text-base font-bold text-ink">Pilah Sampah</h3>
+            <p class="text-sm text-ink-soft mt-1 leading-relaxed">Pisahkan sampahmu sesuai jenisnya di rumah.</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
+            1
+          </div>
+          <div class="w-full sm:w-[42%] hidden sm:block order-3"></div>
         </div>
-        <div>
-          <div class="flex items-center justify-between gap-2">
-            <h3 class="text-base sm:text-lg font-bold text-ink">{{ $wp->name }}</h3>
-            <span class="badge bg-maritime/10 text-maritime border-none font-mono font-bold text-xs shrink-0 py-2.5 px-2">
-              {{ number_format($wp->point_per_kg, 0, ',', '.') }} Poin/kg
+
+        <!-- STEP 2 (KANAN) -->
+        <div class="step-animate-right relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <div class="w-full sm:w-[42%] hidden sm:block order-3 sm:order-1"></div>
+          <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
+            2
+          </div>
+          <div class="w-full sm:w-[42%] text-center sm:text-left order-2 sm:order-3">
+            <h3 class="text-base font-bold text-ink">Setor ke Kami</h3>
+            <p class="text-sm text-ink-soft mt-1 leading-relaxed">Antar langsung ke titik kumpul terdekat atau jadwalkan penjemputan oleh kurir kami.</p>
+          </div>
+        </div>
+
+        <!-- STEP 3 (KIRI) -->
+        <div class="step-animate-left relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <div class="w-full sm:w-[42%] text-center sm:text-right order-2 sm:order-1">
+            <h3 class="text-base font-bold text-ink">Verifikasi & Penimbangan</h3>
+            <p class="text-sm text-ink-soft mt-1 leading-relaxed">Tim kami akan mengecek serta menimbang sampahmu.</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
+            3
+          </div>
+          <div class="w-full sm:w-[42%] hidden sm:block order-3"></div>
+        </div>
+
+        <!-- STEP 4 (KANAN) -->
+        <div class="step-animate-right relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <div class="w-full sm:w-[42%] hidden sm:block order-3 sm:order-1"></div>
+          <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
+            4
+          </div>
+          <div class="w-full sm:w-[42%] text-center sm:text-left order-2 sm:order-3">
+            <h3 class="text-base font-bold text-ink">Dapatkan Poin</h3>
+            <p class="text-sm text-ink-soft mt-1 leading-relaxed">Poin langsung masuk ke akunmu setelah verifikasi selesai.</p>
+          </div>
+        </div>
+
+        <!-- STEP 5 (KIRI) -->
+        <div class="step-animate-left relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <div class="w-full sm:w-[42%] text-center sm:text-right order-2 sm:order-1">
+            <h3 class="text-base font-bold text-ink">Tukar & Belanja</h3>
+            <p class="text-sm text-ink-soft mt-1 leading-relaxed">Pakai poin untuk diskon belanja produk kriya atau cairkan jadi uang tunai.</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
+            5
+          </div>
+          <div class="w-full sm:w-[42%] hidden sm:block order-3"></div>
+        </div>
+
+        <!-- STEP 6 (KANAN) -->
+        <div class="step-animate-right relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <div class="w-full sm:w-[42%] hidden sm:block order-3 sm:order-1"></div>
+          <div class="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 order-1 sm:order-2">
+            6
+          </div>
+          <div class="w-full sm:w-[42%] text-center sm:text-left order-2 sm:order-3">
+            <h3 class="text-base font-bold text-ink">Langganan Layanan</h3>
+            <p class="text-sm text-ink-soft mt-1 leading-relaxed">Akses fitur khusus seperti jadwal rutin dan promo eksklusif untuk warga maupun perusahaan.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Live Count Dampak Webapp ============ -->
+  <section id="live-count-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-12 md:my-16 relative z-20">
+    <div class="live-count-card relative rounded-[2rem] bg-gradient-to-br from-forest-light via-sand to-forest-light border border-ink/10 overflow-hidden">
+      
+      <div class="dot-grid absolute inset-0 text-forest/10"></div>
+      <div class="relative px-6 sm:px-8 py-8 md:py-12 flex flex-col items-center justify-center gap-8 md:gap-12">
+        
+        <div class="text-center">
+          <h2 class="counter-title-animate text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
+            Lihat kontribusimu untuk lingkungan!
+          </h2>
+        </div>
+
+        <!-- Grid 3 kolom -->
+        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-stretch max-w-5xl mx-auto">
+
+          <div class="counter-box flex flex-col items-center text-center justify-between">
+            <div class="counter-number-container flex items-baseline gap-1.5 sm:gap-2 mb-2">
+              <span class="counter-number text-3xl sm:text-4xl lg:text-5xl font-extrabold text-ink tracking-tight" data-target="1450">0</span>
+              <span class="text-sm sm:text-lg font-bold text-forest">Kg</span>
+            </div>
+            <span class="counter-label text-xs sm:text-sm font-semibold text-ink-soft max-w-[180px] leading-snug">
+              Total Sampah Diselamatkan
             </span>
           </div>
-          <p class="text-xs text-ink-soft mt-2 line-clamp-2">{{ $wp->description ?? 'Pastikan sampah dalam kondisi bersih dan kering sebelum disetor.' }}</p>
+
+          <div class="counter-box flex flex-col items-center text-center justify-between">
+            <div class="counter-number-container flex items-baseline gap-1.5 sm:gap-2 mb-2">
+              <span class="counter-number text-3xl sm:text-4xl lg:text-5xl font-extrabold text-ink tracking-tight" data-target="420">0</span>
+              <span class="text-sm sm:text-lg font-bold text-forest">Pcs</span>
+            </div>
+            <span class="counter-label text-xs sm:text-sm font-semibold text-ink-soft max-w-[180px] leading-snug">
+              Produk Kriya Terjual
+            </span>
+          </div>
+
+          <div class="counter-box flex flex-col items-center text-center justify-between">
+            <div class="counter-number-container flex items-baseline gap-1.5 sm:gap-2 mb-2">
+              <span class="counter-number text-3xl sm:text-4xl lg:text-5xl font-extrabold text-ink tracking-tight" data-target="15">0</span>
+              <span class="text-sm sm:text-lg font-bold text-forest">Orang</span>
+            </div>
+            <span class="counter-label text-xs sm:text-sm font-semibold text-ink-soft max-w-[180px] leading-snug">
+              Pengrajin Lokal Diberdayakan
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ SECTION: SULAPAKARYA PRO (SOLUSI B2B - TANPA KOTAK PUTIH) ============ -->
+<section id="mitra-bisnis" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+    
+    <!-- SISI KIRI: PENJELASAN & FITUR -->
+    <div class="lg:col-span-7 space-y-5 sm:space-y-6 text-left pro-animate-left">
+      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-forest tracking-tight leading-tight">
+        Pengelolaan sampah terpadu untuk efisiensi operasional usaha Anda.
+      </h2>
+
+      <p class="text-xs sm:text-sm text-ink-soft leading-relaxed max-w-xl">
+        Dirancang khusus untuk warkop, kafe, restoran, dan gerai usaha di Makassar. Bebaskan area kerja dari tumpukan material sisa dengan armada logistik penjemputan terjadwal rutin.
+      </p>
+
+      <!-- GRID 4 FITUR -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+        <div class="p-4 rounded-2xl bg-white border border-forest/10 space-y-1.5 shadow-xs hover:border-forest/30 transition-colors">
+          <div class="flex items-center gap-2 text-ink">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-forest"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <h4 class="text-xs font-bold text-forest">Penjemputan Terjadwal</h4>
+          </div>
+          <p class="text-[11px] text-ink-soft leading-relaxed">Pengaturan jadwal hari dan jam jemput berkala tanpa perlu order manual setiap waktu.</p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white border border-forest/10 space-y-1.5 shadow-xs hover:border-forest/30 transition-colors">
+          <div class="flex items-center gap-2 text-ink">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-forest"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <h4 class="text-xs font-bold text-forest">Prioritas Armada</h4>
+          </div>
+          <p class="text-[11px] text-ink-soft leading-relaxed">Kepastian waktu kedatangan kurir lapangan sebelum jam sibuk operasional usaha dimulai.</p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white border border-forest/10 space-y-1.5 shadow-xs hover:border-forest/30 transition-colors">
+          <div class="flex items-center gap-2 text-ink">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-forest"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            <h4 class="text-xs font-bold text-forest">Diskon Produk Kriya</h4>
+          </div>
+          <p class="text-[11px] text-ink-soft leading-relaxed">Potongan harga eksklusif untuk pengadaan cinderamata dan dekorasi daur ulang.</p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white border border-forest/10 space-y-1.5 shadow-xs hover:border-forest/30 transition-colors">
+          <div class="flex items-center gap-2 text-ink">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-forest"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <h4 class="text-xs font-bold text-forest">Rekapitulasi Lingkungan</h4>
+          </div>
+          <p class="text-[11px] text-ink-soft leading-relaxed">Pantau data akumulasi tonase sampah terkelola beserta poin yang siap dicairkan ke kas usaha.</p>
         </div>
       </div>
-    @empty
-      <div class="col-span-3 py-12 text-center text-ink-soft/60">
-        Belum ada data jenis sampah yang dimuat.
+
+      <div class="pt-2 flex flex-col sm:flex-row items-start sm:items-center gap-3.5">
+        @if(session()->has('user_id'))
+          <a href="/mitra-bisnis" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-8 py-3 text-xs normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 hover:scale-105 active:scale-95 w-full sm:w-auto text-center">
+            Daftar sebagai Mitra Bisnis &rarr;
+          </a>
+        @else
+          <a href="{{ route('login') }}" class="btn bg-forest hover:bg-forest/90 text-white font-bold rounded-full px-8 py-3 text-xs normal-case border-none shadow-md shadow-forest/20 transition-all duration-200 hover:scale-105 active:scale-95 w-full sm:w-auto text-center">
+            Daftar sebagai Mitra Bisnis &rarr;
+          </a>
+        @endif
       </div>
-    @endforelse
+    </div>
+
+    <!-- SISI KANAN: KARTU HARGA -->
+    <div class="lg:col-span-5 flex justify-center w-full pro-animate-right">
+      <div class="w-full max-w-sm rounded-3xl bg-forest text-white border border-forest/20 p-6 sm:p-7 space-y-4 text-left shadow-xl relative overflow-hidden">
+        
+        <div class="flex items-center justify-between pb-3 border-b border-white/15">
+          <div>
+            <h1 class="text-base font-bold text-white text-lg mt-0.5">SulapaKarya PRO</h1>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 text-center space-y-1">
+          <span class="text-[10px] text-cream/80 uppercase font-mono tracking-wider block">Biaya Layanan Operasional</span>
+          <div class="flex items-baseline justify-center gap-1">
+            <span class="text-xs font-bold text-cream/80">Rp</span>
+            <span class="text-3xl sm:text-4xl font-black font-mono text-cream tracking-tight">67.000</span>
+            <span class="text-xs text-cream/80 font-sans">/ bulan</span>
+          </div>
+          <p class="text-[10px] text-cream font-mono font-medium pt-1">Termasuk seluruh rute penjemputan berkala</p>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+            <span class="text-white/80">Rute Armada</span>
+            <span class="font-mono text-cream font-bold">Terjadwal Rutin</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+            <span class="text-white/80">Prioritas Penanganan</span>
+            <span class="font-semibold text-white">Jalur Utama</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+            <span class="text-white/80">Konversi Insentif</span>
+            <span class="font-mono text-cream font-bold">Poin Reward Usaha</span>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-white/15 text-[11px] text-white/70 leading-relaxed text-center">
+          Mendukung pelaporan tanggung jawab lingkungan dan integrasi ekonomi sirkular lokal di Makassar.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ SECTION: JENIS SAMPAH YANG DITERIMA (CAROUSEL + DINAMIS BACKEND) ============ -->
+<section id="cara-memilah" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative">
+  <div class="text-center max-w-3xl mx-auto mb-8 md:mb-12">
+    <h2 class="waste-header-animate delay-100 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
+      Jenis Sampah yang Kami Terima
+    </h2>
+    <p class="waste-header-animate delay-200 text-ink-soft text-xs sm:text-sm md:text-base mt-2">
+      Pilih jenis sampah di bawah ini untuk melihat panduan cara memilahnya secara benar.
+    </p>
+
+  <div class="blink-element relative px-2 sm:px-10">
+    <div class="swiper wasteSwiper !py-4 !px-1">
+      <div class="swiper-wrapper">
+
+        @if(isset($wastePrices) && count($wastePrices) > 0)
+          @foreach($wastePrices as $wp)
+            @php
+              $nameLower = strtolower($wp->name);
+              $imageName = 'gelas-plastik.png';
+              $slug = 'gelas-plastik';
+
+              if (str_contains($nameLower, 'botol plastik')) { $imageName = 'botol-plastik.png'; $slug = 'botol-plastik'; }
+              elseif (str_contains($nameLower, 'hvs') || str_contains($nameLower, 'buku')) { $imageName = 'kertas-hvs.png'; $slug = 'kertas-hvs'; }
+              elseif (str_contains($nameLower, 'koran')) { $imageName = 'kertas-koran.png'; $slug = 'kertas-koran'; }
+              elseif (str_contains($nameLower, 'kain') || str_contains($nameLower, 'tekstil')) { $imageName = 'kain-perca.png'; $slug = 'kain-perca'; }
+              elseif (str_contains($nameLower, 'kresek')) { $imageName = 'plastik-kresek.png'; $slug = 'plastik-kresek'; }
+              elseif (str_contains($nameLower, 'kaleng') || str_contains($nameLower, 'seng')) { $imageName = 'kaleng-besi.png'; $slug = 'kaleng-besi'; }
+              elseif (str_contains($nameLower, 'kaca')) { $imageName = 'botol-kaca.png'; $slug = 'botol-kaca'; }
+              elseif (str_contains($nameLower, 'tembaga')) { $imageName = 'logam-tembaga.png'; $slug = 'logam-tembaga'; }
+              elseif (str_contains($nameLower, 'besi')) { $imageName = 'besi-tua.png'; $slug = 'besi-tua'; }
+              elseif (str_contains($nameLower, 'elektronik') || str_contains($nameLower, 'e-waste')) { $imageName = 'elektronik-bekas.png'; $slug = 'elektronik-bekas'; }
+              elseif (str_contains($nameLower, 'karton') || str_contains($nameLower, 'dupleks') || str_contains($nameLower, 'kardus')) { $imageName = 'karton-makanan.png'; $slug = 'karton-makanan'; }
+            @endphp
+
+            <div class="swiper-slide h-auto">
+              <a href="/cara-memilah#{{ $slug }}" class="group w-full h-full bg-white rounded-3xl p-6 border border-ink/5 shadow-sm hover:shadow-md hover:border-forest/20 transition-all duration-300 flex flex-col justify-between relative overflow-hidden">
+                <div class="w-full aspect-square rounded-2xl bg-sand/30 flex items-center justify-center p-6 mb-5 overflow-hidden group-hover:bg-forest-light/30 transition-colors">
+                  <img src="{{ asset('images/sampah/' . $imageName) }}" alt="{{ $wp->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
+                </div>
+                <div>
+                  <div class="flex items-center justify-between gap-2 mb-1">
+                    <h3 class="text-lg font-bold text-ink group-hover:text-forest transition-colors">{{ $wp->name }}</h3>
+                    <span class="badge bg-maritime/10 text-maritime border-none font-mono font-bold text-xs shrink-0 py-2 px-2">
+                      {{ number_format($wp->point_per_kg, 0, ',', '.') }} Poin/kg
+                    </span>
+                  </div>
+                  <p class="text-sm text-ink-soft mt-1 line-clamp-2">{{ $wp->description ?? 'Pastikan sampah dalam kondisi bersih dan kering sebelum disetor.' }}</p>
+                </div>
+                <div class="mt-5 flex items-center gap-1.5 text-xs font-bold text-forest opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span>Cara Memilah</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </div>
+              </a>
+            </div>
+          @endforeach
+        @endif
+
+      </div>
+    </div>
+
+    <button class="waste-prev-btn absolute left-0 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white text-forest shadow-md hover:bg-forest hover:text-white border border-forest/10 flex items-center justify-center transition-all duration-200 cursor-pointer -translate-x-2 sm:translate-x-0">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="waste-next-btn absolute right-0 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white text-forest shadow-md hover:bg-forest hover:text-white border border-forest/10 flex items-center justify-center transition-all duration-200 cursor-pointer translate-x-2 sm:translate-x-0">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+
   </div>
 </section>
 
 <!-- ============ SECTION: KALKULATOR ESTIMASI NILAI POIN SAMPAH ============ -->
-<section id="kalkulator" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+<section id="kalkulator" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
   <div class="bg-forest rounded-3xl p-6 sm:p-12 text-white relative overflow-hidden shadow-xl">
     
-    <div class="text-center max-w-2xl mx-auto mb-10">
-      <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+    <div class="text-center max-w-2xl mx-auto mb-8 md:mb-10">
+      <h2 class="calc-header-animate delay-100 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
         Hitung Estimasi Poin Sampahmu
       </h2>
-      <p class="text-white/80 text-sm sm:text-base mt-3">
+      <p class="calc-header-animate delay-200 text-white/80 text-xs sm:text-sm md:text-base mt-2 md:mt-3">
         Simulasikan perolehan <strong>Poin Kriya</strong> dari sampah terpilah yang siap kamu setorkan.
       </p>
     </div>
 
-    <div class="max-w-xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-white/15 shadow-inner">
+    <div id="card-kalkulator" class="blink-element max-w-xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-5 sm:p-8 border border-white/15 shadow-inner">
       
       <div id="calculator-rows" class="space-y-4">
         
@@ -312,11 +649,13 @@
           <div class="flex-1">
             <select class="waste-select w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/40 cursor-pointer">
               <option value="" disabled class="text-ink">-- Pilih Jenis Sampah --</option>
-              @foreach($wastePrices as $index => $wp)
-                <option value="{{ $wp->id }}" data-points="{{ $wp->point_per_kg }}" {{ $index === 0 ? 'selected' : '' }} class="text-ink">
-                  {{ $wp->name }} ({{ number_format($wp->point_per_kg, 0, ',', '.') }} Poin/kg)
-                </option>
-              @endforeach
+              @if(isset($wastePrices))
+                @foreach($wastePrices as $index => $wp)
+                  <option value="{{ $wp->id }}" data-points="{{ $wp->point_per_kg }}" {{ $index === 0 ? 'selected' : '' }} class="text-ink">
+                    {{ $wp->name }} ({{ number_format($wp->point_per_kg, 0, ',', '.') }} Poin/kg)
+                  </option>
+                @endforeach
+              @endif
             </select>
           </div>
 
@@ -349,13 +688,13 @@
           <span class="text-[11px] text-white/60">Dapat ditukarkan produk kriya</span>
         </div>
         <div class="text-right">
-          <span id="total-estimation" class="text-2xl sm:text-4xl font-extrabold text-cream tracking-tight">0</span>
+          <span id="total-estimation" class="text-2xl sm:text-3xl sm:text-4xl font-extrabold text-cream tracking-tight">0</span>
           <span class="text-sm font-bold text-cream/80 ml-1">Poin</span>
         </div>
       </div>
     </div>
 
-    <div class="mt-8 text-center">
+    <div class="calc-footer-animate delay-100 mt-8 text-center">
       @if(session()->has('user_id'))
         <a href="/setor-sampah" class="inline-flex items-center justify-center bg-cream hover:bg-white text-forest font-extrabold text-sm sm:text-base px-8 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
           Mulai Setor Sampah Sekarang!
@@ -367,7 +706,7 @@
       @endif
     </div>
 
-    <div class="mt-6 text-center text-xs text-white/70 space-y-1">
+    <div class="calc-footer-animate delay-200 mt-6 text-center text-xs text-white/70 space-y-1">
       <p class="flex items-center justify-center gap-1.5">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         <span>Tarif resmi berlaku per: <strong class="text-white font-semibold">{{ $lastUpdatedDate ?? 'Terbaru' }}</strong></span>
@@ -378,151 +717,194 @@
 </section>
 
 <!-- ============ Katalog Produk Daur Ulang ============ -->
-<section id="produk" class="py-12 sm:py-16 lg:py-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    
-    <div class="text-center max-w-2xl mx-auto mb-12">
-      <h2 class="text-3xl sm:text-4xl font-extrabold text-forest tracking-tight">
-        Katalog Produk Daur Ulang
-      </h2>
-      <p class="text-ink-soft text-sm sm:text-base mt-2">
-        Dukung pengrajin lokal dengan membeli produk hasil olahan sampah berkualitas.
-      </p>
-    </div>
+<section id="katalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative">
+  <div class="text-center max-w-2xl mx-auto mb-8 md:mb-12">
+    <h2 class="catalog-header-animate delay-100 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
+      Katalog Kriya Daur Ulang
+    </h2>
+    <p class="catalog-header-animate delay-200 text-ink-soft text-xs sm:text-sm md:text-base mt-2">
+      Dukung pengrajin lokal dengan membeli produk hasil olahan sampah berkualitas.
+    </p>
+  </div>
 
   @if(isset($products))  
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      
-      @forelse($products->take(3) as $product)
-        <div class="bg-white rounded-3xl border border-ink/10 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
-          
-          <div class="aspect-square bg-cream/30 overflow-hidden relative">
-            @if($product->photo_path)
-              <img src="{{ asset('storage/' . $product->photo_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-            @else
-              <div class="w-full h-full grid place-items-center text-forest/50 bg-sand/30">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-              </div>
-            @endif
-          </div>
+    @php
+      $featuredProducts = $products->take(11);
+    @endphp
 
-          <div class="p-5 flex flex-col justify-between flex-grow">
-            <div>
-              <h3 class="text-base font-bold text-ink leading-snug line-clamp-1 mb-1">{{ $product->name }}</h3>
-              <p class="text-forest font-bold text-base mb-4">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+    <div class="blink-element relative px-2 sm:px-10">
+      <div class="swiper catalogSwiper !py-4 !px-1">
+        <div class="swiper-wrapper">
+
+          @forelse($featuredProducts as $product)
+            <div class="swiper-slide h-auto">
+              <div class="bg-white rounded-3xl border border-ink/10 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group h-full">
+                
+                <div class="aspect-square bg-cream/30 overflow-hidden relative">
+                  @if($product->photo_path)
+                    <img src="{{ \Illuminate\Support\Facades\Storage::url($product->photo_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                  @else
+                    <div class="w-full h-full grid place-items-center text-forest/50 bg-sand/30">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                    </div>
+                  @endif
+                </div>
+
+                <div class="p-5 flex flex-col justify-between flex-grow">
+                  <div>
+                    <h3 class="text-base font-bold text-ink leading-snug line-clamp-1 mb-1">{{ $product->name }}</h3>
+                    <p class="text-forest font-bold text-base mb-4">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                  </div>
+
+                  @if(session()->has('user_id'))
+                    <button type="button" onclick="document.getElementById('detail_modal_{{ $product->id }}').showModal()" class="w-full bg-forest hover:bg-forest/90 text-white text-xs font-bold py-3 rounded-full transition-colors text-center cursor-pointer">
+                      Detail Produk
+                    </button>
+                  @else
+                    <a href="{{ route('login') }}" class="w-full bg-forest hover:bg-forest/90 text-white text-xs font-bold py-3 rounded-full transition-colors text-center block">
+                      Detail Produk
+                    </a>
+                  @endif
+                </div>
+              </div>
             </div>
 
+            <!-- MODAL DETAIL PRODUK -->
+            <dialog id="detail_modal_{{ $product->id }}" class="modal modal-bottom sm:modal-middle">
+              <div class="modal-box bg-white max-w-md rounded-[2.5rem] border border-ink/5 p-6 text-left relative">
+                <form method="dialog">
+                  <button class="btn btn-sm btn-circle btn-ghost absolute right-5 top-5 text-ink-soft bg-gray-100 hover:bg-gray-200 border-none">✕</button>
+                </form>
+                <h3 class="font-display font-extrabold text-xl text-ink border-b border-ink/5 pb-3">Detail Produk</h3>
+
+                <div class="mt-4 space-y-4">
+                  <div class="w-full aspect-square rounded-2xl overflow-hidden bg-cream/30 border border-ink/5">
+                    @if($product->photo_path)
+                      <img src="{{ \Illuminate\Support\Facades\Storage::url($product->photo_path) }}" class="w-full h-full object-cover">
+                    @else
+                      <div class="w-full h-full grid place-items-center text-forest/50 bg-cream/50">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                      </div>
+                    @endif
+                  </div>
+
+                  <div>
+                    <span class="text-xs font-black bg-forest/10 text-forest px-3 py-1.5 rounded-lg uppercase tracking-wider inline-block">
+                      {{ $product->material_source ?? 'Limbah Daur Ulang' }}
+                    </span>
+                    <span class="text-xs font-black bg-cream/20 text-ink px-3 py-1.5 rounded-lg uppercase tracking-wider inline-block ml-2">
+                      {{ $product->product_category ?? 'Produk' }}
+                    </span>
+                    <h4 class="font-display font-extrabold text-xl text-ink mt-2 leading-snug">{{ $product->name }}</h4>
+                    <p class="font-mono font-black text-forest text-2xl mt-1">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                  </div>
+
+                  @if($product->description)
+                    <div class="bg-cream/20 border border-ink/5 rounded-2xl p-4">
+                      <span class="text-xs font-bold text-ink-soft block mb-1.5">Deskripsi Produk:</span>
+                      <p class="text-sm text-ink/90 leading-relaxed font-normal">{{ $product->description }}</p>
+                    </div>
+                  @endif
+
+                  @if(($product->stock ?? 1) > 0)
+                    <form action="{{ route('cart.add', $product->id) }}" method="POST" class="w-full pt-1">
+                      @csrf
+                      <button type="submit" class="btn w-full bg-forest hover:bg-forest/90 border-none text-white rounded-xl font-bold normal-case shadow-md shadow-forest/20 h-12 text-base">
+                        Tambahkan ke Keranjang
+                      </button>
+                    </form>
+                  @else
+                    <button disabled class="btn w-full bg-gray-300 border-none text-gray-500 rounded-xl font-bold normal-case h-12 cursor-not-allowed">
+                      Produk Habis
+                    </button>
+                  @endif
+                </div>
+              </div>
+              <form method="dialog" class="modal-backdrop bg-ink/30 backdrop-blur-sm">
+                <button>close</button>
+              </form>
+            </dialog>
+
+          @empty
+          @endforelse
+
+          <div class="swiper-slide h-auto">
             @if(session()->has('user_id'))
-              <button type="button" onclick="document.getElementById('detail_modal_{{ $product->id }}').showModal()" class="w-full bg-forest hover:bg-forest/90 text-white text-xs font-bold py-3 rounded-full transition-colors text-center cursor-pointer">
-                Detail Produk
-              </button>
+              <a href="/katalog" class="group bg-white rounded-3xl border border-forest/40 hover:border-forest p-6 flex flex-col justify-center items-center text-center transition-all duration-300 shadow-sm hover:shadow-md h-full min-h-[320px]">
+                <div class="w-14 h-14 rounded-full bg-forest/10 text-forest flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-forest group-hover:text-white transition-all duration-300">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </div>
+                <h3 class="text-lg font-bold text-forest mb-1">Lihat Semua Produk</h3>
+                <p class="text-xs text-ink-soft max-w-[180px]">Jelajahi seluruh karya daur ulang di halaman Katalog Kriya</p>
+              </a>
             @else
-              <a href="{{ route('login') }}" class="w-full bg-forest hover:bg-forest/90 text-white text-xs font-bold py-3 rounded-full transition-colors text-center block">
-                Detail Produk
+              <a href="{{ route('login') }}" class="group bg-white rounded-3xl border border-forest/40 hover:border-forest p-6 flex flex-col justify-center items-center text-center transition-all duration-300 shadow-sm hover:shadow-md h-full min-h-[320px]">
+                <div class="w-14 h-14 rounded-full bg-forest/10 text-forest flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-forest group-hover:text-white transition-all duration-300">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </div>
+                <h3 class="text-lg font-bold text-forest mb-1">Lihat Semua Produk</h3>
+                <p class="text-xs text-ink-soft max-w-[180px]">Jelajahi seluruh karya daur ulang di halaman Katalog Kriya</p>
               </a>
             @endif
           </div>
+
         </div>
+      </div>
 
-        <!-- MODAL DETAIL PRODUK -->
-        <dialog id="detail_modal_{{ $product->id }}" class="modal modal-bottom sm:modal-middle">
-          <div class="modal-box bg-white max-w-md rounded-[2.5rem] border border-ink/5 p-6 text-left relative">
-            <form method="dialog">
-              <button class="btn btn-sm btn-circle btn-ghost absolute right-5 top-5 text-ink-soft bg-gray-100 hover:bg-gray-200 border-none">✕</button>
-            </form>
-            <h3 class="font-display font-extrabold text-xl text-ink border-b border-ink/5 pb-3">Detail Hasil Karya</h3>
-
-            <div class="mt-4 space-y-4">
-              <div class="w-full h-52 rounded-2xl overflow-hidden bg-cream/30 border border-ink/5">
-                @if($product->photo_path)
-                  <img src="{{ asset('storage/' . $product->photo_path) }}" class="w-full h-full object-cover">
-                @else
-                  <div class="w-full h-full grid place-items-center text-forest/50 bg-cream/50">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-                  </div>
-                @endif
-              </div>
-
-              <div>
-                <span class="text-[10px] font-extrabold bg-maritime/10 text-maritime px-2.5 py-1 rounded-md uppercase tracking-wider">{{ $product->product_category ?? 'Kriya Daur Ulang' }}</span>
-                <h4 class="font-display font-extrabold text-lg text-ink mt-2 leading-snug">{{ $product->name }}</h4>
-                <p class="font-mono font-black text-forest text-xl mt-1">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-              </div>
-
-              @if($product->description)
-                <div class="bg-cream/20 border border-ink/5 rounded-xl p-3">
-                  <span class="text-[10px] font-bold text-ink-soft block mb-1">Deskripsi Produk:</span>
-                  <p class="text-xs text-ink-soft/90 leading-relaxed">{{ $product->description }}</p>
-                </div>
-              @endif
-
-              @if(($product->stock ?? 1) > 0)
-                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="w-full">
-                  @csrf
-                  <button type="submit" class="btn w-full bg-forest hover:bg-forest/90 border-none text-white rounded-xl font-bold normal-case shadow-md shadow-forest/20 h-12">
-                    🛒 + Keranjang
-                  </button>
-                </form>
-              @else
-                <button disabled class="btn w-full bg-gray-300 border-none text-gray-500 rounded-xl font-bold normal-case h-12 cursor-not-allowed">
-                  Produk Habis
-                </button>
-              @endif
-            </div>
-          </div>
-          <form method="dialog" class="modal-backdrop bg-ink/30 backdrop-blur-sm">
-            <button>close</button>
-          </form>
-        </dialog>
-      @empty
-      @endforelse
-
-      <!-- CARD KHUSUS: TOMBOL HALAMAN KATALOG KRIYA -->
-      @if(session()->has('user_id'))
-        <a href="/katalog" class="group bg-white rounded-3xl border border-forest/40 hover:border-forest p-6 flex flex-col justify-center items-center text-center transition-all duration-300 shadow-sm hover:shadow-md min-h-[320px]">
-          <div class="w-14 h-14 rounded-full bg-forest/10 text-forest flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-forest group-hover:text-white transition-all duration-300">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </div>
-          <h3 class="text-lg font-bold text-forest mb-1">Lihat Semua Produk</h3>
-          <p class="text-xs text-ink-soft max-w-[180px]">Jelajahi seluruh karya daur ulang di halaman Katalog Kriya</p>
-        </a>
-      @else
-        <a href="{{ route('login') }}" class="group bg-white rounded-3xl border border-forest/40 hover:border-forest p-6 flex flex-col justify-center items-center text-center transition-all duration-300 shadow-sm hover:shadow-md min-h-[320px]">
-          <div class="w-14 h-14 rounded-full bg-forest/10 text-forest flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-forest group-hover:text-white transition-all duration-300">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </div>
-          <h3 class="text-lg font-bold text-forest mb-1">Lihat Semua Produk</h3>
-          <p class="text-xs text-ink-soft max-w-[180px]">Jelajahi seluruh karya daur ulang di halaman Katalog Kriya</p>
-        </a>
-      @endif
+      <button class="catalog-prev-btn absolute left-0 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white text-forest shadow-md hover:bg-forest hover:text-white border border-forest/10 flex items-center justify-center transition-all duration-200 cursor-pointer -translate-x-2 sm:translate-x-0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="catalog-next-btn absolute right-0 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white text-forest shadow-md hover:bg-forest hover:text-white border border-forest/10 flex items-center justify-center transition-all duration-200 cursor-pointer translate-x-2 sm:translate-x-0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
 
     </div>
   @endif
-  </div>
 </section>
 
 <!-- ============ CLOSING TAGLINE ============ -->
-<section class="py-12 sm:py-16">
-  <p class="text-center font-display italic text-lg sm:text-xl text-ink-soft max-w-2xl mx-auto px-6">
-    “Satu langkah kecilmu hari ini, adalah harapan besar untuk bumi esok hari.”
-  </p>
+<section class="py-12 sm:py-16 overflow-hidden">
+  <div class="max-w-2xl mx-auto px-6 text-center">
+    <p class="font-display italic text-lg sm:text-xl text-ink-soft inline">
+      <span id="typing-text"></span><span id="typing-cursor" class="inline-block w-[2px] h-[1.1em] bg-forest align-sub ml-0.5 opacity-0"></span>
+    </p>
+  </div>
 </section>
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // Animasi Counter Angka Dampak
+    
+    /* 1. LIVE COUNT SECTION ANIMATION */
     const counterSection = document.getElementById("live-count-section");
+    const liveCountCard = document.querySelector(".live-count-card");
+    const counterBoxes = document.querySelectorAll(".counter-box");
     const counters = document.querySelectorAll(".counter-number");
-    let hasAnimated = false;
+    let activeIntervals = [];
 
-    const animateCounters = () => {
+    const resetAndAnimateCounters = () => {
+      activeIntervals.forEach(interval => clearInterval(interval));
+      activeIntervals = [];
+
+      if (liveCountCard) {
+        liveCountCard.classList.remove("is-animated");
+        void liveCountCard.offsetWidth;
+        liveCountCard.classList.add("is-animated");
+      }
+
+      counterBoxes.forEach((box) => {
+        box.classList.remove("is-animated");
+        void box.offsetWidth; 
+        box.classList.add("is-animated");
+      });
+
       counters.forEach((counter) => {
+        counter.innerText = "0";
         const target = +counter.getAttribute("data-target");
         const duration = 1800;
         const frameRate = 1000 / 60;
@@ -533,6 +915,7 @@
           currentFrame++;
           const progress = currentFrame / totalFrames;
           const currentCount = Math.floor(target * (1 - Math.pow(1 - progress, 2)));
+
           counter.innerText = currentCount.toLocaleString("id-ID");
 
           if (currentFrame === totalFrames) {
@@ -540,103 +923,256 @@
             clearInterval(countUp);
           }
         }, frameRate);
+
+        activeIntervals.push(countUp);
       });
     };
 
-    const observer = new IntersectionObserver(
+    const counterObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasAnimated) {
-            hasAnimated = true;
-            animateCounters();
+          if (entry.isIntersecting) {
+            resetAndAnimateCounters();
+          } else {
+            activeIntervals.forEach(interval => clearInterval(interval));
+            activeIntervals = [];
+            if (liveCountCard) liveCountCard.classList.remove("is-animated");
+            counterBoxes.forEach((box) => box.classList.remove("is-animated"));
+            counters.forEach((counter) => counter.innerText = "0");
           }
         });
       },
       { threshold: 0.3 }
     );
 
-    if (counterSection) observer.observe(counterSection);
+    if (counterSection) {
+      counterObserver.observe(counterSection);
+    }
 
-    // ==========================================
-    // LOGIKA KALKULATOR ESTIMASI POIN
-    // ==========================================
+    /* 2. SWIPER CAROUSELS INITIALIZATION */
+    if (typeof Swiper !== 'undefined') {
+      new Swiper('.wasteSwiper', {
+        slidesPerView: 1,
+        slidesPerGroup: 1,
+        spaceBetween: 20,
+        loop: true,
+        navigation: {
+          nextEl: '.waste-next-btn',
+          prevEl: '.waste-prev-btn',
+        },
+        breakpoints: {
+          640: { slidesPerView: 2, slidesGroup: 2, spaceBetween: 20 },
+          768: { slidesPerView: 2, slidesGroup: 2, spaceBetween: 24 },
+          1024: { slidesPerView: 3, slidesGroup: 3, spaceBetween: 24 },
+        },
+      });
+
+      const catalogPrevBtn = document.querySelector('.catalog-prev-btn');
+      const catalogNextBtn = document.querySelector('.catalog-next-btn');
+
+      new Swiper('.catalogSwiper', {
+        slidesPerView: 1,
+        slidesPerGroup: 1, 
+        spaceBetween: 20,
+        loop: false,
+        watchOverflow: true,
+        navigation: {
+          nextEl: '.catalog-next-btn',
+          prevEl: '.catalog-prev-btn',
+        },
+        breakpoints: {
+          640: { slidesPerView: 2, slidesGroup: 2, spaceBetween: 20 },
+          768: { slidesPerView: 3, slidesGroup: 3, spaceBetween: 20 },
+          1024: { slidesPerView: 4, slidesGroup: 4, spaceBetween: 24 },
+        },
+        on: {
+          init: function (swiper) {
+            if (catalogPrevBtn && catalogNextBtn) {
+              catalogPrevBtn.style.display = swiper.isLocked ? 'none' : 'flex';
+              catalogNextBtn.style.display = swiper.isLocked ? 'none' : 'flex';
+            }
+          },
+          resize: function (swiper) {
+            if (catalogPrevBtn && catalogNextBtn) {
+              catalogPrevBtn.style.display = swiper.isLocked ? 'none' : 'flex';
+              catalogNextBtn.style.display = swiper.isLocked ? 'none' : 'flex';
+            }
+          }
+        }
+      });
+    }
+
+    /* 3. TYPING EFFECT FOR CLOSING QUOTE */
+    const textElement = document.getElementById("typing-text");
+    const cursorElement = document.getElementById("typing-cursor");
+    const quoteSection = textElement ? textElement.closest("section") : null;
+
+    const textToType = "“Satu langkah kecilmu hari ini, adalah harapan besar untuk bumi esok hari.”";
+    let typingTimeout = null;
+
+    if (textElement && cursorElement && quoteSection) {
+      const quoteObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            clearTimeout(typingTimeout);
+            textElement.textContent = "";
+            cursorElement.classList.add("cursor-typing");
+
+            let index = 0;
+            const typingSpeed = 50;
+
+            function typeWriter() {
+              if (index < textToType.length) {
+                textElement.textContent += textToType.charAt(index);
+                index++;
+                typingTimeout = setTimeout(typeWriter, typingSpeed);
+              }
+            }
+
+            typeWriter();
+          } else {
+            clearTimeout(typingTimeout);
+            textElement.textContent = "";
+            cursorElement.classList.remove("cursor-typing");
+          }
+        });
+      }, { threshold: 0.5 });
+
+      quoteObserver.observe(quoteSection);
+    }
+
+    /* 4. BLINK ELEMENT OBSERVER */
+    const blinkObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+        } else {
+          entry.target.classList.remove("show");
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll(".blink-element").forEach((el) => {
+      blinkObserver.observe(el);
+    });
+
+    /* 5. GENERAL SCROLL ANIMATION OBSERVERS */
+    const createScrollObserver = (selector, className = "is-visible") => {
+      const elements = document.querySelectorAll(selector);
+      if (elements.length > 0) {
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add(className);
+            } else {
+              entry.target.classList.remove(className);
+            }
+          });
+        }, { threshold: 0.2 });
+        elements.forEach((el) => obs.observe(el));
+      }
+    };
+
+    createScrollObserver(".hero-animate-item");
+    createScrollObserver("#hero-bottle-image", "animate-slide-in");
+    createScrollObserver(".about-animate-left, .about-animate-right");
+    createScrollObserver(".step-header-animate, .step-animate-left, .step-animate-right");
+    createScrollObserver(".pro-animate-left, .pro-animate-right");
+    createScrollObserver(".waste-header-animate");
+    createScrollObserver(".calc-header-animate, .calc-footer-animate");
+    createScrollObserver(".catalog-header-animate");
+
+    /* 6. KALKULATOR ESTIMASI LOGIC (BERBASIS POIN BACKEND) */
     const container = document.getElementById('calculator-rows');
     const addBtn = document.getElementById('add-row-btn');
     const totalDisplay = document.getElementById('total-estimation');
 
-    function calculateTotalPoints() {
+    function calculateTotal() {
+      if (!container || !totalDisplay) return;
+
       let totalPoints = 0;
       const rows = container.querySelectorAll('.calc-row');
 
       rows.forEach(row => {
         const select = row.querySelector('.waste-select');
         const input = row.querySelector('.weight-input');
+        if (!select || !input) return;
+
         const selectedOption = select.options[select.selectedIndex];
         
-        const pointPerKg = parseFloat(selectedOption?.getAttribute('data-points')) || 0;
+        const points = parseFloat(selectedOption ? selectedOption.getAttribute('data-points') : 0) || 0;
         const weight = parseFloat(input.value) || 0;
 
-        totalPoints += Math.round(pointPerKg * weight);
+        totalPoints += points * weight;
       });
 
-      totalDisplay.textContent = totalPoints.toLocaleString('id-ID');
+      totalDisplay.textContent = Math.round(totalPoints).toLocaleString('id-ID');
 
       rows.forEach(row => {
         const deleteBtn = row.querySelector('.btn-delete');
-        if (rows.length > 1) {
-          deleteBtn.classList.remove('hidden');
-        } else {
-          deleteBtn.classList.add('hidden');
+        if (deleteBtn) {
+          if (rows.length > 1) {
+            deleteBtn.classList.remove('hidden');
+          } else {
+            deleteBtn.classList.add('hidden');
+          }
         }
       });
     }
 
-    addBtn.addEventListener('click', function () {
-      const firstRow = container.querySelector('.calc-row');
-      const newRow = firstRow.cloneNode(true);
+    if (addBtn && container) {
+      addBtn.addEventListener('click', function () {
+        const firstRow = container.querySelector('.calc-row');
+        if (!firstRow) return;
 
-      newRow.querySelector('.waste-select').selectedIndex = 0;
-      newRow.querySelector('.weight-input').value = 1;
+        const newRow = firstRow.cloneNode(true);
 
-      container.appendChild(newRow);
-      calculateTotalPoints();
-    });
+        const select = newRow.querySelector('.waste-select');
+        const input = newRow.querySelector('.weight-input');
+        
+        if (select && select.options.length > 0) select.selectedIndex = 0;
+        if (input) input.value = 1;
 
-    container.addEventListener('click', function (e) {
-      const row = e.target.closest('.calc-row');
-      if (!row) return;
+        container.appendChild(newRow);
+        calculateTotal();
+      });
 
-      const input = row.querySelector('.weight-input');
+      container.addEventListener('click', function (e) {
+        const row = e.target.closest('.calc-row');
+        if (!row) return;
 
-      if (e.target.closest('.btn-plus')) {
-        let currentVal = parseFloat(input.value) || 0;
-        input.value = (currentVal + 0.5).toFixed(1).replace(/\.0$/, '');
-        calculateTotalPoints();
-      }
+        const input = row.querySelector('.weight-input');
 
-      if (e.target.closest('.btn-minus')) {
-        let currentVal = parseFloat(input.value) || 0;
-        if (currentVal > 0.5) {
-          input.value = (currentVal - 0.5).toFixed(1).replace(/\.0$/, '');
-        } else if (currentVal > 0) {
-          input.value = 0;
+        if (e.target.closest('.btn-plus')) {
+          let currentVal = parseFloat(input.value) || 0;
+          input.value = (currentVal + 0.5).toFixed(1).replace(/\.0$/, '');
+          calculateTotal();
         }
-        calculateTotalPoints();
-      }
 
-      if (e.target.closest('.btn-delete')) {
-        const rows = container.querySelectorAll('.calc-row');
-        if (rows.length > 1) {
-          row.remove();
-          calculateTotalPoints();
+        if (e.target.closest('.btn-minus')) {
+          let currentVal = parseFloat(input.value) || 0;
+          if (currentVal > 0.5) {
+            input.value = (currentVal - 0.5).toFixed(1).replace(/\.0$/, '');
+          } else if (currentVal > 0) {
+            input.value = 0;
+          }
+          calculateTotal();
         }
-      }
-    });
 
-    container.addEventListener('input', calculateTotalPoints);
-    container.addEventListener('change', calculateTotalPoints);
+        if (e.target.closest('.btn-delete')) {
+          const rows = container.querySelectorAll('.calc-row');
+          if (rows.length > 1) {
+            row.remove();
+            calculateTotal();
+          }
+        }
+      });
 
-    calculateTotalPoints();
+      container.addEventListener('input', calculateTotal);
+      container.addEventListener('change', calculateTotal);
+
+      calculateTotal();
+    }
   });
 </script>
 @endsection
