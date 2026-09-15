@@ -15,36 +15,46 @@ class ProductController extends Controller
     {
         $query = Product::query();
 
-        // 1. Filter Pencarian
-        if ($request->filled('search')) {
-            $search = trim($request->search);
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'ilike', "%{$search}%")
-                  ->orWhere('material_source', 'ilike', "%{$search}%");
+        // 1. Filter Pencarian Nama / Deskripsi / Bahan
+        if ($request->filled('q')) {
+            $keyword = trim($request->q);
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                  ->orWhere('description', 'like', "%{$keyword}%")
+                  ->orWhere('material_source', 'like', "%{$keyword}%");
             });
         }
 
         // 2. Filter Kategori
-        if ($request->filled('category')) {
-            $query->where('product_category', trim($request->category));
+        if ($request->filled('kategori') && $request->kategori !== 'semua') {
+            $query->where('product_category', $request->kategori);
         }
 
-        // 3. Filter Status
-        if ($request->filled('status')) {
-            $status = strtolower(trim($request->status));
-            if ($status === 'available') {
-                $query->whereRaw("LOWER(status) = 'available'");
-            } elseif ($status === 'sold_out') {
-                $query->where(function ($q) {
-                    $q->whereRaw("LOWER(status) = 'sold_out'")
-                      ->orWhere('stock', '<=', 0);
-                });
-            }
+        // 3. Sorting / Pengurutan
+        switch ($request->get('sort', 'terbaru')) {
+            case 'termurah':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'termahal':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'terpopuler':
+                $query->orderBy('stock', 'asc');
+                break;
+            default:
+                $query->latest();
+                break;
         }
 
-        $products = $query->orderBy('created_at', 'desc')->get();
+        $allProducts = $query->paginate(12)->withQueryString();
 
-        return view('dashboard.admin.kelola-produk', compact('products'));
+        $categories = Product::select('product_category')
+            ->whereNotNull('product_category')
+            ->distinct()
+            ->pluck('product_category');
+
+        // Sesuaikan nama view admin jika berbeda, misal 'admin.products.index'
+        return view('katalog', compact('allProducts', 'categories'));
     }
 
     /**
@@ -69,7 +79,6 @@ class ProductController extends Controller
                 $photoPath = $request->file('photo')->store('products', 'public');
             }
 
-            // Hapus 'id' => Str::uuid(), biarkan PostgreSQL mengisi auto-increment
             Product::create([
                 'artisan_id'       => null, 
                 'name'             => $request->name,
@@ -155,12 +164,52 @@ class ProductController extends Controller
     }
 
     /**
-     * Tampilan katalog untuk Warga
+     * Tampilan katalog untuk Warga (Mendukung Pencarian, Kategori, Sorting, & Pagination)
      */
-    public function catalog()
+    public function catalog(Request $request)
     {
+        $query = Product::where('status', 'available');
+
+        // 1. Filter Pencarian Nama / Deskripsi / Bahan
+        if ($request->filled('q')) {
+            $keyword = trim($request->q);
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                  ->orWhere('description', 'like', "%{$keyword}%")
+                  ->orWhere('material_source', 'like', "%{$keyword}%");
+            });
+        }
+
+        // 2. Filter Kategori
+        if ($request->filled('kategori') && $request->kategori !== 'semua') {
+            $query->where('product_category', $request->kategori);
+        }
+
+        // 3. Sorting / Pengurutan
+        switch ($request->get('sort', 'terbaru')) {
+            case 'termurah':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'termahal':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'terpopuler':
+                $query->orderBy('stock', 'asc');
+                break;
+            default:
+                $query->latest();
+                break;
+        }
+
+        $allProducts = $query->paginate(12)->withQueryString();
+        
         $featuredProducts = Product::where('status', 'available')->where('is_featured', 1)->get();
-        $allProducts = Product::where('status', 'available')->orderBy('created_at', 'desc')->get();
-        return view('katalog', compact('featuredProducts', 'allProducts'));
+        
+        $categories = Product::select('product_category')
+            ->whereNotNull('product_category')
+            ->distinct()
+            ->pluck('product_category');
+
+        return view('katalog', compact('featuredProducts', 'allProducts', 'categories'));
     }
 }

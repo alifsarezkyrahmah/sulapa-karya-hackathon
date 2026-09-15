@@ -4,7 +4,6 @@
     <nav class="navbar bg-transparent px-4 sm:px-6 py-2 min-h-[4rem] flex justify-between items-center">
 
       <style>
-        /* Style link aktif rapi di dalam kotak */
         .nav-link.active-nav {
           background-color: rgba(46, 125, 50, 0.12) !important;
           color: #2E7D32 !important;
@@ -32,11 +31,10 @@
           default => '/dashboard',
         };
 
-        $isPro = $navUser ? ($navUser->is_pro ?? false) : false;
+        $isPro = $navUser ? ($navUser->is_pro ?? (($navUser->business_status ?? '') === 'approved')) : false;
         $cartItems = session('cart', []);
         $cartCount = count($cartItems);
 
-        // Ambil notifikasi riil dari database jika login
         $navNotifications = ($currentUserId && \Illuminate\Support\Facades\Schema::hasTable('notifications'))
             ? \App\Models\Notification::where('user_id', $currentUserId)->orderBy('created_at', 'desc')->take(5)->get()
             : collect([]);
@@ -44,58 +42,26 @@
         $unreadCount = ($currentUserId && \Illuminate\Support\Facades\Schema::hasTable('notifications'))
             ? \App\Models\Notification::where('user_id', $currentUserId)->where('is_read', false)->count()
             : 0;
-
-        // Ambil data dari WastePrice jika tabel ada
-        $wasteList = \Illuminate\Support\Facades\Schema::hasTable('waste_prices') 
-            ? \App\Models\WastePrice::all() 
-            : collect([]);
       @endphp
 
-      <!-- Desktop Menu -->
+      <!-- Desktop Menu (Laptop / PC) -->
       <div class="hidden lg:flex items-center justify-end gap-2 flex-1 min-w-0">
         <div class="flex-1 flex justify-center min-w-0">
-          <ul id="desktop-nav-menu" class="menu menu-horizontal flex flex-nowrap gap-0.5 px-0 text-[11px] font-bold uppercase tracking-wider text-ink/70 items-center">
-            <li><a href="/" data-nav="beranda" class="nav-link rounded-full px-2 py-1.5 hover:bg-forest/10 hover:text-forest">Beranda</a></li>
-            <li><a href="/#tentang-kami" data-nav="tentang-kami" class="nav-link rounded-full px-2 py-1.5 hover:bg-forest/10 hover:text-forest">Tentang Kami</a></li>
-            <li class="dropdown dropdown-hover">
-              <a href="/cara-memilah" data-nav="katalog-sampah" class="nav-link rounded-full px-2 py-1.5 hover:bg-forest/10 hover:text-forest {{ request()->is('cara-memilah*') ? 'active-nav' : '' }}">
-                Cara Memilah
-              </a>
-
-              <ul tabindex="0" class="dropdown-content menu p-2 shadow-xl bg-white/95 backdrop-blur-xl rounded-2xl w-56 border border-white/60 z-50 normal-case">
-                @forelse($wasteList as $wp)
-                  <li>
-                    <a href="/cara-memilah#{{ \Illuminate\Support\Str::slug($wp->name) }}" class="rounded-full py-2 px-1.5 font-medium text-ink hover:bg-forest/10 hover:text-forest">
-                      {{ $wp->name }}
-                    </a>
-                  </li>
-                @empty
-                  <li><a href="/cara-memilah#gelas-plastik" class="rounded-full py-2 px-1.5 font-medium text-ink hover:bg-forest/10">Gelas Plastik</a></li>
-                  <li><a href="/cara-memilah#botol-plastik" class="rounded-full py-2 px-1.5 font-medium text-ink hover:bg-forest/10">Botol Plastik</a></li>
-                  <li><a href="/cara-memilah#kertas-hvs" class="rounded-full py-2 px-1.5 font-medium text-ink hover:bg-forest/10">Kertas HVS/Buku Bekas</a></li>
-                  <li><a href="/cara-memilah#kertas-koran" class="rounded-full py-2 px-1.5 font-medium text-ink hover:bg-forest/10">Kertas Koran</a></li>
-                  <li><a href="/cara-memilah#kain-perca" class="rounded-full py-2 px-1.5 font-medium text-ink hover:bg-forest/10">Kain Perca</a></li>
-                  <li><a href="/cara-memilah#plastik-kresek" class="rounded-full py-2 px-1.5 font-medium text-ink hover:bg-forest/10">Plastik Kresek</a></li>
-                  <li><a href="/cara-memilah#kaleng-besi" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Kaleng Besi/Seng</a></li>
-                  <li><a href="/cara-memilah#botol-kaca" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Botol Kaca</a></li>
-                  <li><a href="/cara-memilah#logam-tembaga" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Logam Tembaga</a></li>
-                  <li><a href="/cara-memilah#besi-tua" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Besi Tua/Padat</a></li>
-                  <li><a href="/cara-memilah#elektronik-bekas" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Elektronik Bekas</a></li>
-                  <li><a href="/cara-memilah#karton-makanan" class="rounded-xl py-2 font-medium text-ink hover:bg-forest/10">Karton Makanan</a></li>
-                @endforelse
-              </ul>
-            </li>
-            <li><a href="/#kalkulator" data-nav="kalkulator" class="nav-link rounded-full px-2 py-1.5 hover:bg-forest/10 hover:text-forest">Kalkulator Poin</a></li>
-            <li><a href="/katalog" data-nav="katalog" class="nav-link rounded-full px-2 py-1.5 hover:bg-forest/10 hover:text-forest transition-all {{ request()->is('katalog*') ? 'active-nav' : '' }}">Katalog Kriya</a></li>
+          <ul id="desktop-nav-menu" class="menu menu-horizontal flex flex-nowrap gap-1 px-0 text-[11px] font-bold uppercase tracking-wider text-ink/70 items-center">
+            <li><a href="/" data-nav="beranda" class="nav-link rounded-full px-3 py-1.5 hover:bg-forest/10 hover:text-forest transition-colors">Beranda</a></li>
+            <li><a href="/#tentang-kami" data-nav="tentang-kami" class="nav-link rounded-full px-3 py-1.5 hover:bg-forest/10 hover:text-forest transition-colors">Tentang Kami</a></li>
+            <li><a href="/#kalkulator" data-nav="kalkulator" class="nav-link rounded-full px-3 py-1.5 hover:bg-forest/10 hover:text-forest transition-colors">Kalkulator Poin</a></li>
+            <li><a href="/katalog" data-nav="katalog" class="nav-link rounded-full px-3 py-1.5 hover:bg-forest/10 hover:text-forest transition-all {{ request()->is('katalog*') ? 'active-nav' : '' }}">Katalog Kriya</a></li>
+            <li><a href="/#mitra-bisnis" data-nav="mitra-bisnis" class="nav-link rounded-full px-3 py-1.5 hover:bg-forest/10 hover:text-forest transition-colors">SulapaKarya PRO</a></li>
           </ul>
         </div>
       </div>
 
-<!-- Action Group Kanan (Desktop Only) -->
+      <!-- Action Group Kanan (Desktop Only) -->
       <div class="navbar-end w-auto hidden lg:flex items-center gap-2 shrink-0">
         @if($currentUserId)
           <!-- Notifikasi Dropdown Desktop -->
-          <div class="dropdown dropdown-end dropdown-hover">
+          <div class="dropdown dropdown-end dropdown-hover relative">
             <button id="notif-btn" aria-label="Notifikasi" tabindex="0" class="btn btn-ghost btn-circle relative text-ink hover:bg-white/40 focus:outline-none">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0">
                 <path d="M18 8a6 6 0 10-12 0v5l-2 2h16l-2-2z"/>
@@ -106,7 +72,7 @@
               @endif
             </button>
             
-            <div tabindex="0" class="dropdown-content z-[60] mt-3 p-4 shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl w-80 sm:w-88 border border-white/60 text-left overflow-hidden">
+            <div tabindex="0" class="dropdown-content z-[70] mt-3 p-4 shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl w-80 sm:w-88 border border-white/60 text-left overflow-hidden right-0">
               <div class="flex items-center justify-between pb-2 border-b border-ink/5 mb-2">
                 <div class="flex items-center gap-2">
                   <span class="text-ink font-bold text-sm">Notifikasi</span>
@@ -159,7 +125,7 @@
 
           <!-- Keranjang Dropdown Desktop -->
           @if($currentRole == 'user')
-            <div class="dropdown dropdown-end dropdown-hover">
+            <div class="dropdown dropdown-end dropdown-hover relative">
               <a href="/keranjang" id="cart-btn" aria-label="Keranjang" tabindex="0" class="btn btn-ghost btn-circle relative text-ink hover:bg-white/40 focus:outline-none">
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
@@ -171,7 +137,7 @@
                 @endif
               </a>
 
-              <div tabindex="0" class="dropdown-content z-[60] mt-3 p-4 shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl w-80 border border-white/60 text-left overflow-hidden">
+              <div tabindex="0" class="dropdown-content z-[70] mt-3 p-4 shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl w-80 border border-white/60 text-left overflow-hidden right-0">
                 <div class="flex items-center justify-between pb-2 border-b border-ink/5 mb-2">
                   <span class="text-ink font-bold text-sm">Keranjang Kriya</span>
                   <span class="text-xs text-ink-soft font-medium">{{ $cartCount }} Item</span>
@@ -223,8 +189,8 @@
             <div class="flex items-center"><a href="/register" class="rounded-full px-4 py-2 bg-forest text-white justify-between hover:bg-forest/90 border-none rounded-full px-2 font-bold shadow-sm shadow-forest/20">Daftar</a></div>
           </div>
         @else
-          <div class="dropdown dropdown-end dropdown-hover">
-            <a href="/dashboard" tabindex="0" class="btn btn-ghost btn-circle avatar placeholder {{ request()->is('dashboard*') ? 'focus:outline-none hover:bg-white/40' : 'hover:bg-white/40' }}">
+          <div class="dropdown dropdown-end dropdown-hover relative">
+            <a href="/dashboard" tabindex="0" class="btn btn-ghost btn-circle avatar placeholder focus:outline-none hover:bg-white/40">
               <div class="bg-forest text-white rounded-full w-9 h-9 overflow-hidden flex items-center justify-center ring-2 ring-forest/20 {{ request()->is('dashboard*') || request()->is('profile*') ? 'ring-forest' : '' }}">
                 @if($navUser && $navUser->foto_profil)
                   <img src="{{ \Illuminate\Support\Facades\Storage::url($navUser->foto_profil) }}?v={{ $navUser->updated_at ? $navUser->updated_at->timestamp : time() }}" alt="{{ $navUser->name ?? session('name') }}" class="w-full h-full object-cover">
@@ -233,12 +199,15 @@
                 @endif
               </div>
             </a>
-            <ul tabindex="0" class="dropdown-content menu menu-sm mt-3 z-[60] p-2 shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl w-56 border border-white/60 gap-1 normal-case text-left">
-              <div class="px-4 py-2.5 border-b border-ink/5 mb-1 text-left">
-                <p class="text-xl font-extrabold text-ink truncate">{{ $navUser->name ?? session('name') }}</p>
+            
+            <ul tabindex="0" class="dropdown-content menu menu-sm mt-3 z-[70] p-2.5 shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl w-64 border border-white/60 gap-1 normal-case text-left right-0">
+              <div class="px-3 py-2 border-b border-ink/5 mb-1 text-left">
+                <p class="text-sm font-extrabold text-ink truncate max-w-[210px]" title="{{ $navUser->name ?? session('name') }}">
+                  {{ $navUser->name ?? session('name') }}
+                </p>
                 @if($currentRole == 'user')
-                  <p class="text-xs text-forest font-semibold mt-0.5 flex items-center gap-1">
-                    <img src="{{ asset('images/sulapa-koin.png') }}" alt="Poin" class="w-3.5 object-contain shrink-0">
+                  <p class="text-xs text-forest font-semibold mt-0.5 flex items-center gap-1 font-mono">
+                    <img src="{{ asset('images/sulapa-koin.png') }}" alt="Poin" class="w-3.5 h-3.5 object-contain shrink-0" onerror="this.style.display='none'">
                     <span>{{ number_format($navUser->points_balance ?? 0, 0, ',', '.') }} Poin</span>
                   </p>
                   @if($isPro)
@@ -247,14 +216,19 @@
                     </span>
                   @endif
                 @else
-                  <span class="text-[9px] bg-forest/10 text-forest font-black px-2 py-0.5 rounded mt-1 inline-block uppercase tracking-wider">{{ $currentRole === 'penjemput' ? 'Kurir Lapangan' : $currentRole }}</span>
+                  <span class="text-[9px] bg-forest/10 text-forest font-black px-2 py-0.5 rounded mt-1 inline-block uppercase tracking-wider font-mono">
+                    {{ $currentRole === 'penjemput' ? 'Kurir Lapangan' : $currentRole }}
+                  </span>
                 @endif
               </div>
+              
               <li><a href="/dashboard" class="rounded-xl py-2 font-medium {{ request()->is('dashboard*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Dashboard</a></li>
               <li><a href="/profile" class="rounded-xl py-2 font-medium {{ request()->is('profile*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Profil Saya</a></li>
+              
               <div class="my-1 border-t border-ink/5"></div>
+              
               <li>
-                <form action="/logout" method="POST" class="p-0">
+                <form action="/logout" method="POST" class="p-0 m-0">
                   @csrf
                   <button type="submit" class="w-full text-left rounded-xl py-2 px-3 font-bold text-terracotta hover:bg-terracotta/10">
                     Keluar Akun
@@ -267,12 +241,12 @@
       </div>
 
       <!-- ================================================================= -->
-      <!-- MOBILE ACTION BAR (TAMPIL DI LAYAR HP / SCREEN < 1024PX)          -->
+      <!-- MOBILE ACTION BAR (LAYAR HP / SCREEN < 1024PX)                    -->
       <!-- ================================================================= -->
-      <div class="navbar-end w-auto lg:hidden flex items-center gap-1">
+      <div class="navbar-end w-auto lg:hidden flex items-center gap-1 shrink-0">
         
-        <!-- Tombol Lonceng Notifikasi Mobile -->
-        <div class="dropdown dropdown-end">
+        <!-- Notifikasi Mobile -->
+        <div class="dropdown dropdown-end relative">
           <button tabindex="0" aria-label="Notifikasi" class="btn btn-ghost btn-sm btn-circle relative text-ink hover:bg-white/40 focus:outline-none">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M18 8a6 6 0 10-12 0v5l-2 2h16l-2-2z"/>
@@ -283,7 +257,7 @@
             @endif
           </button>
           
-          <div tabindex="0" class="dropdown-content z-[70] p-0 shadow-2xl bg-white rounded-2xl w-72 sm:w-80 border border-ink/10 absolute right-0 mt-2 text-left overflow-hidden">
+          <div tabindex="0" class="dropdown-content z-[70] p-0 shadow-2xl bg-white rounded-2xl w-72 sm:w-80 border border-ink/10 right-0 mt-2 text-left overflow-hidden">
             <div class="px-3.5 py-2.5 bg-cream/40 border-b border-ink/5 flex items-center justify-between">
               <span class="font-bold text-xs text-ink">Notifikasi ({{ $unreadCount }})</span>
               @if($unreadCount > 0)
@@ -309,7 +283,7 @@
           </div>
         </div>
 
-        <!-- Tombol Keranjang Mobile (Jika Login sebagai user) -->
+        <!-- Keranjang Mobile -->
         @if($currentUserId && $currentRole === 'user')
           <a href="/keranjang" class="btn btn-ghost btn-sm btn-circle relative text-ink hover:bg-white/40">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -319,18 +293,18 @@
           </a>
         @endif
 
-        <!-- Menu Burger Dropdown Mobile -->
-        <div class="dropdown dropdown-end">
+        <!-- Menu Burger Mobile -->
+        <div class="dropdown dropdown-end relative">
           <button tabindex="0" role="button" aria-label="Buka Menu" class="btn btn-ghost btn-sm btn-circle text-ink hover:bg-white/40 focus:outline-none">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
           </button>
 
-          <div tabindex="0" class="dropdown-content z-[60] p-3 shadow-2xl bg-white/95 backdrop-blur-2xl rounded-3xl w-72 sm:w-80 border border-white/80 mt-3 text-left overflow-hidden max-h-[80vh] flex flex-col">
+          <div tabindex="0" class="dropdown-content z-[70] p-3 shadow-2xl bg-white/95 backdrop-blur-2xl rounded-3xl w-72 sm:w-80 border border-white/80 mt-3 right-0 text-left overflow-hidden max-h-[80vh] flex flex-col">
             
             <div class="overflow-y-auto flex-1 custom-scrollbar">
-              <!-- Header Profile Mobile (Jika Sudah Login) -->
+              <!-- Profil Mobile -->
               @if($currentUserId)
                 <div class="flex items-center gap-3 p-2.5 bg-forest/5 rounded-2xl mb-2.5 border border-forest/10">
                   <div class="w-10 h-10 rounded-full bg-forest text-white flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden ring-2 ring-forest/20">
@@ -343,8 +317,7 @@
                   <div class="min-w-0 flex-1">
                     <p class="text-xs font-bold text-ink truncate leading-tight">{{ $navUser->name ?? session('name', 'User') }}</p>
                     @if($currentRole === 'user')
-                      <p class="text-[11px] text-forest font-semibold flex items-center gap-1 mt-0.5">
-                        <img src="{{ asset('images/sulapa-koin.png') }}" alt="Poin" class="w-3.5 h-3.5 object-contain shrink-0">
+                      <p class="text-[11px] text-forest font-semibold flex items-center gap-1 mt-0.5 font-mono">
                         <span>{{ number_format($navUser->points_balance ?? 0, 0, ',', '.') }} Poin</span>
                       </p>
                     @else
@@ -360,9 +333,9 @@
               <nav class="space-y-1">
                 <a href="/" data-nav="beranda" class="nav-link block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors {{ request()->is('/') ? 'bg-forest/10 text-forest font-bold' : '' }}">Beranda</a>
                 <a href="/#tentang-kami" data-nav="tentang-kami" class="nav-link block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors">Tentang Kami</a>
-                <a href="/cara-memilah" data-nav="cara-memilah" class="nav-link block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors {{ request()->is('cara-memilah*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Cara Memilah</a>
                 <a href="/#kalkulator" data-nav="kalkulator" class="nav-link block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors">Kalkulator Poin</a>
                 <a href="/katalog" data-nav="katalog" class="nav-link block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors {{ request()->is('katalog*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Katalog Kriya</a>
+                <a href="/#mitra-bisnis" data-nav="mitra-bisnis" class="nav-link block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors">SulapaKarya PRO</a>
 
                 <div class="my-2 border-t border-ink/5"></div>
 
@@ -371,7 +344,7 @@
                   
                   @if($currentRole === 'user')
                     <a href="/riwayat-pembelian" class="block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors {{ request()->is('riwayat-pembelian*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Riwayat Pembelian</a>
-                    <a href="/riwayat-setoran" class="block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors {{ request()->is('riwayat-setoran*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Riwayat Setoran</a>
+                    <a href="/setor-sampah/riwayat" class="block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors {{ request()->is('*setor*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Riwayat Setoran</a>
                   @endif
 
                   <a href="/profile" class="block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors {{ request()->is('profile*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Pengaturan Profil</a>
@@ -385,7 +358,6 @@
                     </button>
                   </form>
                 @else
-                  <!-- Tampilan Tombol Masuk/Daftar jika Pengunjung Belum Login -->
                   <div class="pt-1 grid grid-cols-2 gap-2">
                     <a href="/login" class="btn btn-sm btn-ghost border border-forest/20 text-forest font-bold rounded-xl text-center text-xs">Masuk</a>
                     <a href="/register" class="btn btn-sm bg-forest text-white font-bold rounded-xl text-center text-xs border-none shadow-md shadow-forest/20">Daftar</a>
@@ -411,7 +383,7 @@
     const isHomePage = window.location.pathname === "/";
 
     if (isHomePage) {
-      const sections = ["beranda", "tentang-kami", "cara-memilah", "kalkulator", "katalog"];
+      const sections = ["beranda", "tentang-kami", "cara-memilah", "kalkulator", "katalog", "mitra-bisnis"];
       const elements = sections.map(id => document.getElementById(id)).filter(el => el !== null);
 
       const options = {

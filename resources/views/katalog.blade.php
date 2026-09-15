@@ -2,236 +2,304 @@
 
 @section('content')
 @php
-    // Mengambil data user secara utuh untuk poin dan detail pengiriman
-    $currentUser = \App\Models\User::find(session('user_id'));
+    $currentUser = auth()->user() ?? \App\Models\User::find(session('user_id'));
     $userPoints = $currentUser->points_balance ?? 0;
-    
-    // LOGIKA PENGECEKAN ALAMAT
-    $hasAddress = !empty($currentUser->address); 
+    $isProPartner = (($currentUser->business_status ?? '') === 'approved');
+    $proDiscountPercent = 10;
 @endphp
 
-<div class="max-w-6xl mx-auto space-y-10 animate-fadeIn py-8 px-4 sm:px-6">
+<div class="max-w-7xl mx-auto space-y-6 sm:space-y-8 py-6 sm:py-10 px-4 sm:px-6 lg:px-8 text-left">
     
-    <!-- ============ HEADER KATALOG ============ -->
-    <div class="text-left bg-gradient-to-r from-maritime to-maritime-dark p-8 rounded-[2rem] text-white shadow-lg shadow-maritime/20 flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
-        <div class="absolute inset-0 dot-grid text-white/[0.05] pointer-events-none"></div>
-        <div class="relative z-10 max-w-2xl">
-            <h1 class="font-display font-extrabold text-3xl tracking-tight">Katalog Produk Kriya</h1>
-            <p class="text-sm text-maritime-light font-medium mt-2 leading-relaxed">Beli produk ramah lingkungan. Anda bisa menggunakan <b>Poin Kriya</b> Anda sebagai potongan harga langsung!</p>
+    <!-- ============ BANNER HEADER KATALOG ============ -->
+    <div class="rounded-3xl bg-[#1C1A16] text-[#E5DFD5] border border-white/10 p-6 sm:p-10 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+        <div class="space-y-2 max-w-2xl">
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] font-mono font-semibold tracking-widest uppercase text-[#A8A095] border border-white/15 px-3 py-1 rounded-full">
+                    Karya Daur Ulang Makassar
+                </span>
+                @if($isProPartner)
+                    <span class="text-[10px] font-mono font-bold bg-amber-400 text-amber-950 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                        Diskon PRO {{ $proDiscountPercent }}% Aktif
+                    </span>
+                @endif
+            </div>
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">Katalog Produk Kriya</h1>
+            <p class="text-xs sm:text-sm text-[#A8A095] leading-relaxed">
+                Karya kerajinan berkualitas hasil olahan sampah terpilah oleh pengrajin lokal. Tukarkan simpanan poin sebagai potongan harga langsung.
+            </p>
         </div>
-        <div class="relative z-10 shrink-0 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 text-center min-w-[160px]">
-            <span class="text-[10px] font-bold uppercase tracking-widest text-maritime-light block mb-1">Saldo Poin Kriya</span>
-            <span class="text-2xl font-mono font-extrabold text-white">🌟 {{ number_format($userPoints, 0, ',', '.') }}</span>
+
+        <!-- Box Saldo Poin -->
+        <div class="bg-white/5 border border-white/10 backdrop-blur-sm p-4 sm:p-5 rounded-2xl text-left md:text-right w-full md:w-auto shrink-0 min-w-[180px]">
+            <span class="text-[10px] font-bold font-mono uppercase tracking-wider text-[#A8A095] block">Simpanan Poin Kriya</span>
+            <div class="flex items-baseline md:justify-end gap-1.5 mt-1">
+                <span class="text-2xl sm:text-3xl font-black font-mono text-white">{{ number_format($userPoints, 0, ',', '.') }}</span>
+                <span class="text-xs font-semibold text-[#A8A095]">Poin</span>
+            </div>
+            <span class="text-[10px] text-forest font-mono block mt-1">1 Poin = Rp 1 Potongan</span>
         </div>
     </div>
 
-    <!-- NOTIFIKASI SUKSES / ERROR -->
+    <!-- Alert Notifikasi -->
     @if(session('success'))
-        <div class="alert alert-success bg-forest/10 border-forest/20 text-forest rounded-2xl text-sm font-bold p-4">{{ session('success') }}</div>
+        <div class="p-4 rounded-2xl bg-forest/10 border border-forest/20 text-forest text-xs font-semibold">
+            {{ session('success') }}
+        </div>
     @endif
     @if($errors->any())
-        <div class="alert alert-error bg-terracotta/10 border-terracotta/20 text-terracotta rounded-2xl text-sm font-bold p-4">{{ $errors->first() }}</div>
+        <div class="p-4 rounded-2xl bg-terracotta/10 border border-terracotta/20 text-terracotta text-xs font-semibold">
+            {{ $errors->first() }}
+        </div>
     @endif
 
+    <!-- ============ SEARCH, FILTER & SORT BAR ============ -->
+    <div class="bg-white border border-ink/10 rounded-3xl p-4 sm:p-5 space-y-4 shadow-xs">
+        <form action="{{ url('/katalog') }}" method="GET" class="space-y-4 m-0">
+            
+            <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                <!-- Input Pencarian -->
+                <div class="relative flex-1">
+                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari karya kriya, wadah rotan, cinderamata..." 
+                           class="input input-sm input-bordered w-full rounded-2xl bg-cream/20 pl-10 pr-4 text-xs font-medium text-ink focus:outline-none focus:border-forest h-11">
+                    <svg class="w-4 h-4 text-ink-soft/60 absolute left-3.5 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    @if(request('q'))
+                        <a href="{{ url('/katalog') }}" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-soft hover:text-ink text-xs font-bold">✕</a>
+                    @endif
+                </div>
+
+                <!-- Dropdown Urutan / Sorting -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="text-xs text-ink-soft font-semibold hidden sm:inline">Urutkan:</span>
+                    <select name="sort" onchange="this.form.submit()" 
+                            class="select select-sm select-bordered rounded-2xl bg-cream/20 text-xs font-bold text-ink focus:outline-none focus:border-forest h-11 w-full sm:w-auto">
+                        <option value="terbaru" {{ request('sort') == 'terbaru' ? 'selected' : '' }}>Terbaru</option>
+                        <option value="termurah" {{ request('sort') == 'termurah' ? 'selected' : '' }}>Harga Terendah</option>
+                        <option value="termahal" {{ request('sort') == 'termahal' ? 'selected' : '' }}>Harga Tertinggi</option>
+                        <option value="terpopuler" {{ request('sort') == 'terpopuler' ? 'selected' : '' }}>Stok Menipis</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tab Kategori Produk (Horizontal Scroll di HP) -->
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 no-scrollbar text-xs">
+                <a href="{{ request()->fullUrlWithQuery(['kategori' => 'semua']) }}" 
+                   class="px-4 py-2 rounded-xl font-bold transition-colors whitespace-nowrap {{ (!request('kategori') || request('kategori') == 'semua') ? 'bg-forest text-white shadow-2xs' : 'bg-cream/40 text-ink-soft hover:bg-cream hover:text-ink' }}">
+                    Semua Koleksi
+                </a>
+                
+                @if(isset($categories))
+                    @foreach($categories as $cat)
+                        <a href="{{ request()->fullUrlWithQuery(['kategori' => $cat]) }}" 
+                           class="px-4 py-2 rounded-xl font-bold transition-colors whitespace-nowrap {{ request('kategori') == $cat ? 'bg-forest text-white shadow-2xs' : 'bg-cream/40 text-ink-soft hover:bg-cream hover:text-ink' }}">
+                            {{ $cat }}
+                        </a>
+                    @endforeach
+                @endif
+            </div>
+
+        </form>
+    </div>
+
     <!-- ============ DAFTAR PRODUK KRIYA ============ -->
-    <div>
-        <h2 class="font-display font-extrabold text-xl text-ink mb-4">Daftar Produk Kriya</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-ink/5">
+            <div>
+                <h2 class="text-base sm:text-lg font-bold text-ink tracking-tight">Hasil Pencarian Produk</h2>
+                <p class="text-xs text-ink-soft mt-0.5">
+                    @if(request('q') || request('kategori'))
+                        Menampilkan hasil untuk: 
+                        @if(request('q')) <span class="font-bold text-ink">"{{ request('q') }}"</span> @endif
+                        @if(request('kategori') && request('kategori') != 'semua') <span class="badge badge-xs bg-forest/10 text-forest font-bold font-mono">{{ request('kategori') }}</span> @endif
+                    @else
+                        Menampilkan semua produk kriya siap kirim Makassar.
+                    @endif
+                </p>
+            </div>
+            <span class="text-xs font-mono font-semibold text-ink-soft bg-cream px-3 py-1.5 rounded-xl border border-ink/5">
+                {{ $allProducts->total() ?? count($allProducts) }} Item
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
             @forelse($allProducts as $product)
-                <!-- Card Product -->
-                <div onclick="document.getElementById('detail_modal_{{ $product->id }}').showModal()" class="bg-white border border-ink/5 rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col cursor-pointer group">
-                    <div class="relative h-40 overflow-hidden bg-cream/50">
-                        @if($product->stock <= 5)
-                            <span class="absolute top-3 left-3 bg-terracotta/90 text-white text-[9px] font-extrabold px-2 py-1 rounded-md z-10">Sisa {{ $product->stock }}!</span>
-                        @endif
-                        <img src="{{ \Illuminate\Support\Facades\Storage::url($product->photo_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300" />
-                    </div>
-                    <div class="p-4 flex flex-col flex-1">
-                        <span class="text-[9px] font-bold text-ink-soft/60 uppercase">{{ $product->product_category }}</span>
-                        <h3 class="font-bold text-ink text-sm mt-1 mb-2 line-clamp-2 flex-1">{{ $product->name }}</h3>
-                        
-                        <div class="flex items-end justify-between border-t border-ink/5 pt-3 mt-auto">
-                            <div class="font-mono font-extrabold text-forest text-base">
-                                Rp {{ number_format($product->price, 0, ',', '.') }}
-                            </div>
-                            <span class="btn btn-xs bg-maritime border-none text-white hover:bg-maritime-dark rounded-lg px-3 shadow-sm font-bold normal-case">
-                                Detail
-                            </span>
+                @php
+                    $isLowStock = ($product->stock <= 5 && $product->stock > 0);
+                    $finalPrice = $isProPartner ? round($product->price * 0.9) : $product->price;
+                @endphp
+                
+                <!-- Card Produk Minimalis -->
+                <div class="bg-white border border-ink/10 rounded-3xl overflow-hidden shadow-xs hover:shadow-md hover:border-forest/20 transition-all flex flex-col justify-between group">
+                    <div>
+                        <!-- Foto Produk -->
+                        <div class="aspect-square bg-cream/30 overflow-hidden relative cursor-pointer" onclick="document.getElementById('detail_modal_{{ $product->id }}').showModal()">
+                            @if($product->stock <= 0)
+                                <div class="absolute inset-0 bg-ink/60 backdrop-blur-2xs flex items-center justify-center z-10">
+                                    <span class="text-white text-[10px] font-bold font-mono uppercase tracking-wider bg-terracotta px-2.5 py-1 rounded-lg">Habis</span>
+                                </div>
+                            @elseif($isLowStock)
+                                <span class="absolute top-3 left-3 bg-terracotta text-white text-[9px] font-mono font-bold px-2 py-0.5 rounded-md z-10 shadow-2xs">
+                                    Sisa {{ $product->stock }}
+                                </span>
+                            @endif
+
+                            @if($isProPartner)
+                                <span class="absolute top-3 right-3 bg-amber-400 text-amber-950 text-[9px] font-mono font-black px-2 py-0.5 rounded-md z-10 shadow-2xs">
+                                    -{{ $proDiscountPercent }}% PRO
+                                </span>
+                            @endif
+
+                            @if($product->photo_path)
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url($product->photo_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            @else
+                                <div class="w-full h-full grid place-items-center text-forest/40 bg-sand/30 font-mono text-xl font-bold uppercase">
+                                    {{ substr($product->name, 0, 2) }}
+                                </div>
+                            @endif
                         </div>
+
+                        <!-- Keterangan Item -->
+                        <div class="p-4 space-y-1">
+                            <span class="text-[9px] font-mono font-bold uppercase tracking-wider text-ink-soft/70 block">
+                                {{ $product->product_category ?? 'Kriya Daur Ulang' }}
+                            </span>
+                            <h3 class="font-bold text-ink text-sm leading-snug line-clamp-2 hover:text-forest transition-colors cursor-pointer" onclick="document.getElementById('detail_modal_{{ $product->id }}').showModal()">
+                                {{ $product->name }}
+                            </h3>
+                            @if($product->material_source)
+                                <span class="text-[10px] text-forest font-semibold block truncate">
+                                    Bahan: {{ $product->material_source }}
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Baris Harga & Tombol -->
+                    <div class="p-4 pt-2 border-t border-ink/5 mt-auto">
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <div>
+                                @if($isProPartner)
+                                    <span class="text-[10px] text-ink-soft/60 line-through font-mono block">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                    <span class="font-mono font-black text-forest text-base block">Rp {{ number_format($finalPrice, 0, ',', '.') }}</span>
+                                @else
+                                    <span class="font-mono font-black text-forest text-base block">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                @endif
+                            </div>
+                            <span class="text-[10px] font-mono text-ink-soft">Stok: {{ $product->stock }}</span>
+                        </div>
+
+                        <button type="button" onclick="document.getElementById('detail_modal_{{ $product->id }}').showModal()" 
+                            class="btn btn-xs w-full bg-cream hover:bg-forest hover:text-white text-ink border border-ink/10 rounded-xl font-bold h-8 transition-colors shadow-none">
+                            Lihat Detail
+                        </button>
                     </div>
                 </div>
 
-                <!-- ========================================== -->
-                <!-- MODAL 1: DETAIL PRODUK -->
-                <!-- ========================================== -->
-ss="moda                <dialog id="detail_modal_{{ $product->id }}" class="modal modal-bottom sm:modal-middle">
-                    <div clal-box bg-white max-w-md rounded-[2rem] border border-ink/5 p-6 text-left relative">
-                        <form method="dialog"><button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft">✕</button></form>
+                <!-- MODAL DETAIL PRODUK -->
+                <dialog id="detail_modal_{{ $product->id }}" class="modal modal-bottom sm:modal-middle">
+                    <div class="modal-box bg-white max-w-md rounded-3xl border border-ink/10 p-6 text-left relative shadow-xl">
+                        <form method="dialog">
+                            <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft hover:bg-cream">✕</button>
+                        </form>
                         
-                        <h3 class="font-display font-extrabold text-xl text-ink border-b border-ink/5 pb-3">Detail Hasil Karya</h3>
+                        <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-forest bg-forest/10 px-2 py-0.5 rounded">
+                            Detail Karya Daur Ulang
+                        </span>
                         
-                        <div class="mt-4 space-y-4">
-                            <!-- Foto Produk -->
-                            <div class="w-full h-48 rounded-2xl overflow-hidden bg-cream/30 border border-ink/5">
-                                <img src="{{ \Illuminate\Support\Facades\Storage::url($product->photo_path) }}" class="w-full h-full object-cover">
-                            </div>
-
-                            <!-- Judul & Kategori -->
-                            <div>
-                                <span class="text-[10px] font-extrabold bg-maritime/10 text-maritime px-2 py-1 rounded-md uppercase tracking-wider">{{ $product->product_category }}</span>
-                                <h4 class="font-display font-extrabold text-lg text-ink mt-2 leading-snug">{{ $product->name }}</h4>
-                                <p class="font-mono font-black text-forest text-xl mt-1">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                            </div>
-
-                            <!-- Deskripsi Produk -->
-                            @if($product->description)
-                                <div class="bg-cream/10 border border-ink/5 rounded-xl p-3">
-                                    <span class="text-[10px] font-bold text-ink-soft block mb-1">Deskripsi Produk:</span>
-                                    <p class="text-xs text-ink-soft/90 leading-relaxed">{{ $product->description }}</p>
-                                </div>
-                            @endif
-
-                            <!-- Sumber Material -->
-                            @if($product->material_source)
-                                <div class="bg-forest/5 border border-forest/10 p-3 rounded-xl flex items-center gap-2">
-                                    <span class="text-base">🌱</span>
-                                    <div>
-                                        <span class="text-[9px] font-bold text-forest block">Asal Bahan Baku Daur Ulang:</span>
-                                        <p class="text-xs font-semibold text-ink-soft">{{ $product->material_source }}</p>
+                        <div class="mt-3.5 space-y-4">
+                            <!-- Foto di Modal -->
+                            <div class="w-full aspect-square rounded-2xl overflow-hidden bg-cream/30 border border-ink/5">
+                                @if($product->photo_path)
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($product->photo_path) }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full grid place-items-center text-forest/40 font-mono text-2xl font-bold uppercase">
+                                        {{ substr($product->name, 0, 2) }}
                                     </div>
+                                @endif
+                            </div>
+
+                            <!-- Judul & Harga -->
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] font-mono font-bold bg-cream border border-ink/10 text-ink px-2 py-0.5 rounded uppercase">
+                                        {{ $product->product_category ?? 'Kriya' }}
+                                    </span>
+                                    @if($isProPartner)
+                                        <span class="text-[10px] font-mono font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded uppercase">
+                                            Diskon 10% Khusus PRO
+                                        </span>
+                                    @endif
+                                </div>
+                                <h4 class="font-bold text-lg text-ink mt-1.5 leading-snug">{{ $product->name }}</h4>
+                                
+                                <div class="flex items-baseline gap-2 mt-1">
+                                    <span class="font-mono font-black text-forest text-2xl">Rp {{ number_format($finalPrice, 0, ',', '.') }}</span>
+                                    @if($isProPartner)
+                                        <span class="text-xs text-ink-soft/60 line-through font-mono">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Deskripsi & Bahan -->
+                            @if($product->description)
+                                <div class="bg-cream/20 border border-ink/5 rounded-2xl p-3.5 space-y-1">
+                                    <span class="text-[10px] font-bold text-ink-soft uppercase font-mono block">Deskripsi:</span>
+                                    <p class="text-xs text-ink/80 leading-relaxed">{{ $product->description }}</p>
                                 </div>
                             @endif
 
-                            <!-- Info Stok -->
-                            <div class="text-xs font-semibold text-ink-soft flex justify-between items-center bg-gray-50 p-3 rounded-xl">
-                                <span>Status Ketersediaan:</span>
-                                <span class="text-forest font-bold">✓ Tersedia (Stok: {{ $product->stock }} item)</span>
+                            @if($product->material_source)
+                                <div class="p-3 bg-forest/[0.04] border border-forest/15 rounded-2xl text-xs space-y-0.5">
+                                    <span class="text-[10px] font-bold text-forest font-mono uppercase block">Asal Material Daur Ulang:</span>
+                                    <span class="text-ink font-medium">{{ $product->material_source }}</span>
+                                </div>
+                            @endif
+
+                            <!-- Ketersediaan Stok -->
+                            <div class="text-xs text-ink-soft flex justify-between items-center bg-cream/30 p-3 rounded-xl border border-ink/5 font-medium">
+                                <span>Status Stok:</span>
+                                @if($product->stock > 0)
+                                    <span class="text-forest font-bold font-mono">Tersedia ({{ $product->stock }} item)</span>
+                                @else
+                                    <span class="text-terracotta font-bold font-mono">Stok Habis</span>
+                                @endif
                             </div>
 
-                            <!-- Ganti tombol beli langsung lama menjadi form add-to-cart session ini -->
-                            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="w-full">
-                                @csrf
-                                <button type="submit" class="btn btn-sm w-full bg-forest text-white border-none rounded-xl font-bold">
-                                    🛒 + Keranjang
+                            <!-- Tombol Tambah ke Keranjang -->
+                            @if($product->stock > 0)
+                                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="w-full pt-1">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm w-full bg-forest hover:bg-forest-dark border-none text-white rounded-xl font-bold h-11 shadow-sm text-xs">
+                                        + Tambahkan ke Keranjang
+                                    </button>
+                                </form>
+                            @else
+                                <button disabled class="btn btn-sm w-full bg-gray-200 border-none text-gray-400 rounded-xl font-bold h-11 cursor-not-allowed text-xs">
+                                    Produk Tidak Tersedia
                                 </button>
-                            </form>
+                            @endif
                         </div>
                     </div>
-                    <form method="dialog" class="modal-backdrop bg-ink/30 backdrop-blur-sm"><button>close</button></form>
-                </dialog>
-
-
-                <!-- ========================================== -->
-                <!-- MODAL 2: RINCIAN PEMBAYARAN (CEK ALAMAT) -->
-                <!-- ========================================== -->
-                <dialog id="buy_modal_{{ $product->id }}" class="modal modal-bottom sm:modal-middle">
-                    <div class="modal-box bg-white max-w-md rounded-[2rem] border border-ink/5 p-6 text-left relative">
-                        <button type="button" onclick="document.getElementById('buy_modal_{{ $product->id }}').close(); document.getElementById('detail_modal_{{ $product->id }}').showModal();" class="btn btn-sm btn-circle btn-ghost absolute left-4 top-4 text-ink-soft">←</button>
-                        <form method="dialog"><button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft">✕</button></form>
-                        
-                        <h3 class="font-display font-extrabold text-xl text-ink border-b border-ink/5 pb-3 text-center">Konfirmasi Pesanan</h3>
-                        
-                        <form action="{{ route('checkout.process') }}" method="POST" class="mt-4 space-y-5">
-                            @csrf
-                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-
-                            <!-- 1. INFORMASI PENGIRIMAN -->
-                            <div class="space-y-2">
-                                <h4 class="font-bold text-xs text-ink-soft uppercase tracking-wider">Alamat Tujuan (Profil)</h4>
-                                <div class="bg-cream/20 border border-ink/5 rounded-xl p-4 text-sm space-y-2.5">
-                                    <div class="flex justify-between items-start gap-4">
-                                        <span class="text-ink-soft font-medium w-1/3">Penerima</span>
-                                        <span class="font-bold text-ink text-right">{{ $currentUser->name ?? 'Belum Diatur' }}</span>
-                                    </div>
-                                    <div class="flex justify-between items-start gap-4">
-                                        <span class="text-ink-soft font-medium w-1/3">No. Telepon</span>
-                                        <span class="font-bold text-ink text-right">{{ $currentUser->phone ?? 'Belum Diatur' }}</span>
-                                    </div>
-                                    
-                                    <div class="flex flex-col border-t border-ink/5 pt-2.5 mt-2.5">
-                                        <span class="text-ink-soft font-medium mb-1">Alamat Lengkap</span>
-                                        <!-- TAMPILAN BERUBAH JIKA ALAMAT KOSONG -->
-                                        @if($hasAddress)
-                                            <span class="font-bold text-ink text-xs leading-snug">{{ $currentUser->address }}</span>
-                                        @else
-                                            <div class="bg-terracotta/10 border border-terracotta/20 rounded-lg p-2.5 mt-1">
-                                                <span class="font-bold text-terracotta text-xs leading-snug flex items-center gap-2">
-                                                    ⚠️ Alamat kosong! Anda wajib melengkapinya.
-                                                </span>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- 2. RINGKASAN PRODUK -->
-                            <div class="space-y-2">
-                                <h4 class="font-bold text-xs text-ink-soft uppercase tracking-wider">Item Yang Dipilih</h4>
-                                <div class="flex gap-4 items-center bg-cream/30 p-3 rounded-xl border border-ink/5">
-                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($product->photo_path) }}" class="w-14 h-14 rounded-lg object-cover shadow-sm border border-ink/10">
-                                    <div>
-                                        <h4 class="font-bold text-xs text-ink line-clamp-1">{{ $product->name }}</h4>
-                                        <span class="font-mono font-bold text-forest text-xs">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            @php
-                                $maxDiscount = min($product->price, $userPoints);
-                            @endphp
-                            
-                            <!-- 3. AKTIVASI DISKON POIN -->
-                            <div class="form-control bg-maritime/5 p-4 rounded-xl border border-maritime/10">
-                                <label class="cursor-pointer label p-0 justify-start gap-3">
-                                    <input type="checkbox" name="use_points" value="1" 
-                                        onchange="kalkulasiTotal(this, {{ $product->price }}, {{ $maxDiscount }}, 'display_total_{{ $product->id }}')" 
-                                        class="checkbox checkbox-sm border-maritime checked:border-maritime [--chkbg:theme(colors.maritime.DEFAULT)]" 
-                                        {{ ($maxDiscount == 0 || !$hasAddress) ? 'disabled' : '' }} />
-                                    <div>
-                                        <span class="label-text font-bold text-xs text-ink block">Gunakan Poin Kriya</span>
-                                        @if($maxDiscount > 0)
-                                            <span class="text-[10px] text-maritime font-medium font-mono">Diskon Poin: -Rp {{ number_format($maxDiscount, 0, ',', '.') }}</span>
-                                        @else
-                                            <span class="text-[10px] text-terracotta font-medium">Saldo Poin tidak mencukupi</span>
-                                        @endif
-                                    </div>
-                                </label>
-                            </div>
-
-                            <div class="flex justify-between items-center border-t border-ink/5 pt-4">
-                                <span class="font-bold text-xs text-ink-soft">Total Pembayaran:</span>
-                                <span class="font-display font-extrabold text-2xl text-ink">Rp <span id="display_total_{{ $product->id }}">{{ number_format($product->price, 0, ',', '.') }}</span></span>
-                            </div>
-
-                            <!-- LOGIKA TOMBOL CHECKOUT (DIBLOKIR JIKA ALAMAT KOSONG) -->
-                            @if($hasAddress)
-                                <button type="submit" class="btn w-full bg-forest hover:bg-forest-dark border-none text-white rounded-xl font-bold normal-case shadow-md shadow-forest/20 mt-4 h-12">
-                                    Lanjut Ke Kasir Midtrans
-                                </button>
-                            @else
-                                <a href="{{ route('profile.index') }}" class="btn w-full bg-terracotta hover:bg-red-600 border-none text-white rounded-xl font-bold normal-case shadow-md shadow-terracotta/20 mt-4 h-12 flex items-center justify-center gap-2">
-                                    Isi Alamat di Profil Terlebih Dahulu
-                                </a>
-                            @endif
-                        </form>
-                    </div>
-                    <form method="dialog" class="modal-backdrop bg-ink/30 backdrop-blur-sm"><button>close</button></form>
+                    <form method="dialog" class="modal-backdrop bg-ink/40 backdrop-blur-xs"><button>close</button></form>
                 </dialog>
 
             @empty
-                <div class="col-span-full py-16 text-center text-ink-soft text-sm">Belum ada produk kriya yang tersedia.</div>
+                <div class="col-span-full py-16 text-center text-ink-soft/60 text-xs border border-ink/5 rounded-3xl bg-white space-y-2">
+                    <p class="font-semibold text-sm text-ink">Tidak ada produk kriya yang cocok dengan pencarian.</p>
+                    <a href="{{ url('/katalog') }}" class="btn btn-xs bg-forest text-white rounded-xl font-bold px-4 h-8 border-none inline-flex">
+                        Reset Filter
+                    </a>
+                </div>
             @endforelse
         </div>
+
+        <!-- Paginasi (Jika Menggunakan Pagination) -->
+        @if(method_exists($allProducts, 'links'))
+            <div class="pt-6">
+                {{ $allProducts->links() }}
+            </div>
+        @endif
     </div>
 </div>
-
-<script>
-    function kalkulasiTotal(checkbox, hargaAsli, maxDiskon, idDisplay) {
-        let total = hargaAsli;
-        if (checkbox.checked) {
-            total = hargaAsli - maxDiskon;
-        }
-        document.getElementById(idDisplay).innerText = new Intl.NumberFormat('id-ID').format(total);
-    }
-</script>
 @endsection
