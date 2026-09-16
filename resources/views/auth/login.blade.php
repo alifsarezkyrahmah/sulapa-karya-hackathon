@@ -25,9 +25,7 @@
 
             <!-- Bagian Tengah/Bawah: Teks Pengantar Foto -->
             <div class="relative z-10 space-y-3 mt-auto">
-                <span class="tag-stitch inline-block border-white/30 px-3 py-1 text-[10px] uppercase tracking-widest font-bold bg-white/5 backdrop-blur-sm text-sand">
-                    Komunitas Makassar
-                </span>
+
                 <p class="font-display font-bold text-2xl lg:text-3xl leading-snug text-cream">
                     “Ubah sampah jadi karya, berdayakan pengrajin lokal.”
                 </p>

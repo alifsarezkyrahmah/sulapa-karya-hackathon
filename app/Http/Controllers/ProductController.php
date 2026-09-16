@@ -11,13 +11,62 @@ class ProductController extends Controller
     /**
      * READ: Tampilan Utama Tabel Produk Admin
      */
+    // public function index(Request $request)
+    // {
+    //     $query = Product::query();
+
+    //     // 1. Filter Pencarian Nama / Deskripsi / Bahan
+    //     if ($request->filled('q')) {
+    //         $keyword = trim($request->q);
+    //         $query->where(function ($q) use ($keyword) {
+    //             $q->where('name', 'like', "%{$keyword}%")
+    //               ->orWhere('description', 'like', "%{$keyword}%")
+    //               ->orWhere('material_source', 'like', "%{$keyword}%");
+    //         });
+    //     }
+
+    //     // 2. Filter Kategori
+    //     if ($request->filled('kategori') && $request->kategori !== 'semua') {
+    //         $query->where('product_category', $request->kategori);
+    //     }
+
+    //     // 3. Sorting / Pengurutan
+    //     switch ($request->get('sort', 'terbaru')) {
+    //         case 'termurah':
+    //             $query->orderBy('price', 'asc');
+    //             break;
+    //         case 'termahal':
+    //             $query->orderBy('price', 'desc');
+    //             break;
+    //         case 'terpopuler':
+    //             $query->orderBy('stock', 'asc');
+    //             break;
+    //         default:
+    //             $query->latest();
+    //             break;
+    //     }
+
+    //     $allProducts = $query->paginate(12)->withQueryString();
+
+    //     $categories = Product::select('product_category')
+    //         ->whereNotNull('product_category')
+    //         ->distinct()
+    //         ->pluck('product_category');
+
+    //     // Sesuaikan nama view admin jika berbeda, misal 'admin.products.index'
+    //     return view('katalog', compact('allProducts', 'categories'));
+    // }
+
+    /**
+     * READ: Tampilan Utama Tabel Produk Admin
+     */
     public function index(Request $request)
     {
         $query = Product::query();
 
         // 1. Filter Pencarian Nama / Deskripsi / Bahan
-        if ($request->filled('q')) {
-            $keyword = trim($request->q);
+        if ($request->filled('search')) {
+            $keyword = trim($request->search);
             $query->where(function ($q) use ($keyword) {
                 $q->where('name', 'like', "%{$keyword}%")
                   ->orWhere('description', 'like', "%{$keyword}%")
@@ -26,35 +75,20 @@ class ProductController extends Controller
         }
 
         // 2. Filter Kategori
-        if ($request->filled('kategori') && $request->kategori !== 'semua') {
-            $query->where('product_category', $request->kategori);
+        if ($request->filled('category')) {
+            $query->where('product_category', $request->category);
         }
 
-        // 3. Sorting / Pengurutan
-        switch ($request->get('sort', 'terbaru')) {
-            case 'termurah':
-                $query->orderBy('price', 'asc');
-                break;
-            case 'termahal':
-                $query->orderBy('price', 'desc');
-                break;
-            case 'terpopuler':
-                $query->orderBy('stock', 'asc');
-                break;
-            default:
-                $query->latest();
-                break;
+        // 3. Filter Status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
-        $allProducts = $query->paginate(12)->withQueryString();
+        // Ambil data produk (dikirim sebagai $products agar pas dengan Blade)
+        $products = $query->latest()->get();
 
-        $categories = Product::select('product_category')
-            ->whereNotNull('product_category')
-            ->distinct()
-            ->pluck('product_category');
-
-        // Sesuaikan nama view admin jika berbeda, misal 'admin.products.index'
-        return view('katalog', compact('allProducts', 'categories'));
+        // Sesuaikan path view admin kamu (misal: 'dashboard.admin.products' atau nama blade kamu)
+        return view('dashboard.admin.kelola-produk', compact('products'));
     }
 
     /**
