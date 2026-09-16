@@ -341,84 +341,101 @@ class AdminController extends Controller
             });
         }
     }
+    
+public function statistics()
+{
+    // 1. User Stats
+    $usersByRole = User::select('role', DB::raw('COUNT(*) as total'))
+        ->groupBy('role')
+        ->pluck('total', 'role')
+        ->toArray();
+    $totalUsers = User::count();
 
-    // ========================================================================
-    // BLOK 4: STATISTIK AKUMULASI PLATFORM
-    // ========================================================================
+    // 2. Deposit Stats
+    $totalDeposits = Deposit::count();
+    $depositsByStatus = Deposit::select('status', DB::raw('COUNT(*) as total'))
+        ->groupBy('status')
+        ->pluck('total', 'status')
+        ->toArray();
 
-    public function statistics()
-    {
-        $usersByRole = User::select('role', DB::raw('COUNT(*) as total'))
-            ->groupBy('role')
-            ->pluck('total', 'role');
+    // Status valid untuk setoran selesai
+    $validStatuses = ['berhasil_dikirim', 'completed', 'selesai', 'Selesai'];
 
-        $totalUsers = User::count();
-        $totalDeposits = Deposit::count();
-        $depositsByStatus = Deposit::select('status', DB::raw('COUNT(*) as total'))
-            ->groupBy('status')
-            ->pluck('total', 'status');
+    $totalWeightCollected = Deposit::whereIn('status', $validStatuses)
+        ->sum('actual_weight') ?? 0;
 
-        $totalWeightCollected = Deposit::whereIn('status', ['berhasil_dikirim', 'completed', 'selesai'])->sum('actual_weight');
-        $totalEstimatedWeight = Deposit::sum('estimated_weight');
+    $totalEstimatedWeight = Deposit::sum('estimated_weight') ?? 0;
 
-        $depositsByCategory = Deposit::select(
-                'sub_category',
-                'category',
-                'kecamatan',
-                'kelurahan',
-                DB::raw('COUNT(*) as total'),
-                DB::raw('COALESCE(SUM(actual_weight), 0) as total_weight')
-            )
-            ->groupBy('sub_category', 'category', 'kecamatan', 'kelurahan')
-            ->orderBy('kecamatan')
-            ->orderBy('kelurahan')
-            ->orderBy('category')
-            ->get();
+    // 3. Category Grouping
+    $depositsByCategory = Deposit::select(
+            'sub_category',
+            'category',
+            'kecamatan',
+            'kelurahan',
+            DB::raw('COUNT(*) as total'),
+            DB::raw("COALESCE(SUM(CASE WHEN status IN ('berhasil_dikirim', 'completed', 'selesai', 'Selesai') THEN actual_weight ELSE 0 END), 0) as total_weight")
+        )
+        ->groupBy('sub_category', 'category', 'kecamatan', 'kelurahan')
+        ->orderBy('kecamatan')
+        ->orderBy('kelurahan')
+        ->orderBy('category')
+        ->get();
 
-        $totalPointsDistributed = Deposit::whereIn('status', ['berhasil_dikirim', 'completed', 'selesai'])->sum('points_earned');
-        $totalPointTransfers = Deposit::whereIn('status', ['berhasil_dikirim', 'completed', 'selesai'])->count();
+    // 4. Points & Transactions
+    $totalPointsDistributed = Deposit::whereIn('status', $validStatuses)
+        ->sum('points_earned') ?? 0;
+        
+    $totalPointTransfers = Deposit::whereIn('status', $validStatuses)->count();
 
-        $totalPointsCirculating = User::where('role', 'user')->sum('points_balance');
+    $totalPointsCirculating = User::where('role', 'user')->sum('points_balance') ?? 0;
 
-        $totalTransactions = Transaction::count();
-        $successTransactions = Transaction::where('status', 'success')->count();
-        $totalRevenue = Transaction::where('status', 'success')->sum('final_price');
-        $totalPointsRedeemed = Transaction::where('status', 'success')->sum('points_used');
+    $totalTransactions = Transaction::count();
+    $successTransactions = Transaction::whereIn('status', ['success', 'Selesai', 'completed'])->count();
+    $totalRevenue = Transaction::whereIn('status', ['success', 'Selesai', 'completed'])->sum('final_price') ?? 0;
+    $totalPointsRedeemed = Transaction::whereIn('status', ['success', 'Selesai', 'completed'])->sum('points_used') ?? 0;
 
-        $totalProducts = Product::count();
+    $totalProducts = Product::count();
 
-        $monthlyDeposits = Deposit::select(
-                DB::raw("TO_CHAR(created_at, 'YYYY-MM') as bulan"),
-                DB::raw('COUNT(*) as total'),
-                DB::raw("COALESCE(SUM(CASE WHEN status IN ('berhasil_dikirim', 'completed', 'selesai') THEN actual_weight ELSE 0 END), 0) as berat")
-            )
-            ->where('created_at', '>=', Carbon::now()->subMonths(6)->startOfMonth())
-            ->groupBy('bulan')
-            ->orderBy('bulan')
-            ->get();
+    // 5. Monthly Trend
+    $driver = DB::connection()->getDriverName();
+    $monthQuery = match ($driver) {
+        'pgsql' => "TO_CHAR(created_at, 'YYYY-MM')",
+        'sqlite' => "strftime('%Y-%m', created_at)",
+        default => "DATE_FORMAT(created_at, '%Y-%m')",
+    };
 
-        $topWarga = User::where('role', 'user')
-            ->withCount(['deposits as selesai_count' => function ($q) {
-                $q->whereIn('status', ['berhasil_dikirim', 'completed', 'selesai']);
-            }])
-            ->withSum(['deposits as total_berat' => function ($q) {
-                $q->whereIn('status', ['berhasil_dikirim', 'completed', 'selesai']);
-            }], 'actual_weight')
-            ->orderByDesc('total_berat')
-            ->take(5)
-            ->get();
+    $monthlyDeposits = Deposit::select(
+            DB::raw("{$monthQuery} as bulan"),
+            DB::raw('COUNT(*) as total'),
+            DB::raw("COALESCE(SUM(CASE WHEN status IN ('berhasil_dikirim', 'completed', 'selesai', 'Selesai') THEN actual_weight ELSE 0 END), 0) as berat")
+        )
+        ->where('created_at', '>=', Carbon::now()->subMonths(6)->startOfMonth())
+        ->groupBy('bulan')
+        ->orderBy('bulan')
+        ->get();
 
-        return view('dashboard.admin.statistik', compact(
-            'usersByRole', 'totalUsers',
-            'totalDeposits', 'depositsByStatus', 'totalWeightCollected', 'totalEstimatedWeight',
-            'depositsByCategory',
-            'totalPointsDistributed', 'totalPointTransfers', 'totalPointsCirculating',
-            'totalTransactions', 'successTransactions', 'totalRevenue', 'totalPointsRedeemed',
-            'totalProducts',
-            'monthlyDeposits', 'topWarga'
-        ));
-    }
+    // 6. Top Warga
+    $topWarga = User::where('role', 'user')
+        ->withCount(['deposits as selesai_count' => function ($q) use ($validStatuses) {
+            $q->whereIn('status', $validStatuses);
+        }])
+        ->withSum(['deposits as total_berat' => function ($q) use ($validStatuses) {
+            $q->whereIn('status', $validStatuses);
+        }], 'actual_weight')
+        ->orderByDesc('total_berat')
+        ->take(5)
+        ->get();
 
+    return view('dashboard.admin.statistik', compact(
+        'usersByRole', 'totalUsers',
+        'totalDeposits', 'depositsByStatus', 'totalWeightCollected', 'totalEstimatedWeight',
+        'depositsByCategory',
+        'totalPointsDistributed', 'totalPointTransfers', 'totalPointsCirculating',
+        'totalTransactions', 'successTransactions', 'totalRevenue', 'totalPointsRedeemed',
+        'totalProducts',
+        'monthlyDeposits', 'topWarga'
+    ));
+}
     public function exportCategoryData()
     {
         $rows = Deposit::select(

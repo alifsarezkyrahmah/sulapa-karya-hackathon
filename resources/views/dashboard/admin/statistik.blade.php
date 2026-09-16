@@ -3,6 +3,7 @@
 @section('dashboard-content')
 <div class="space-y-8 animate-fadeIn">
 
+    {{-- Banner Header --}}
     <div class="bg-gradient-to-r from-ink to-ink/90 p-8 rounded-[2rem] text-white shadow-lg relative overflow-hidden">
         <div class="absolute inset-0 dot-grid text-white/[0.03] pointer-events-none"></div>
         <div class="relative z-10 text-left">
@@ -19,7 +20,7 @@
         </h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             <div class="bg-white border border-ink/5 rounded-2xl p-5 text-center shadow-sm">
-                <span class="text-3xl font-extrabold text-ink font-mono block">{{ number_format($totalUsers) }}</span>
+                <span class="text-3xl font-extrabold text-ink font-mono block">{{ number_format($totalUsers ?? 0) }}</span>
                 <span class="text-[11px] text-ink-soft font-bold mt-1 block uppercase tracking-wider">Total Akun</span>
             </div>
             <div class="bg-white border border-ink/5 rounded-2xl p-5 text-center shadow-sm">
@@ -51,23 +52,23 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
             <div class="bg-gradient-to-br from-white to-forest-light/40 border border-ink/5 border-l-4 border-l-forest rounded-2xl p-5 shadow-sm text-left">
                 <span class="text-[11px] text-ink-soft font-bold uppercase tracking-wider block">Total Setoran</span>
-                <span class="text-3xl font-extrabold text-forest-dark font-mono mt-1 block">{{ number_format($totalDeposits) }}</span>
+                <span class="text-3xl font-extrabold text-forest-dark font-mono mt-1 block">{{ number_format($totalDeposits ?? 0) }}</span>
                 <span class="text-[10px] text-ink-soft font-medium">pengajuan masuk</span>
             </div>
             <div class="bg-gradient-to-br from-white to-forest-light/40 border border-ink/5 border-l-4 border-l-forest rounded-2xl p-5 shadow-sm text-left">
                 <span class="text-[11px] text-ink-soft font-bold uppercase tracking-wider block">Berat Terkumpul</span>
-                <span class="text-3xl font-extrabold text-forest-dark font-mono mt-1 block">{{ number_format($totalWeightCollected, 1, ',', '.') }}</span>
+                <span class="text-3xl font-extrabold text-forest-dark font-mono mt-1 block">{{ number_format($totalWeightCollected ?? 0, 1, ',', '.') }}</span>
                 <span class="text-[10px] text-ink-soft font-medium">kg (aktual terverifikasi)</span>
             </div>
             <div class="bg-gradient-to-br from-white to-maritime-light/40 border border-ink/5 border-l-4 border-l-maritime rounded-2xl p-5 shadow-sm text-left">
                 <span class="text-[11px] text-ink-soft font-bold uppercase tracking-wider block">Estimasi Berat</span>
-                <span class="text-3xl font-extrabold text-maritime-dark font-mono mt-1 block">{{ number_format($totalEstimatedWeight, 1, ',', '.') }}</span>
+                <span class="text-3xl font-extrabold text-maritime-dark font-mono mt-1 block">{{ number_format($totalEstimatedWeight ?? 0, 1, ',', '.') }}</span>
                 <span class="text-[10px] text-ink-soft font-medium">kg (semua pengajuan)</span>
             </div>
             <div class="bg-gradient-to-br from-white to-terracotta-light/40 border border-ink/5 border-l-4 border-l-terracotta rounded-2xl p-5 shadow-sm text-left">
                 <span class="text-[11px] text-ink-soft font-bold uppercase tracking-wider block">Selesai</span>
                 <span class="text-3xl font-extrabold text-forest font-mono mt-1 block">{{ number_format($depositsByStatus['selesai'] ?? 0) }}</span>
-                <span class="text-[10px] text-ink-soft font-medium">dari {{ $totalDeposits }} setoran</span>
+                <span class="text-[10px] text-ink-soft font-medium">dari {{ number_format($totalDeposits ?? 0) }} setoran</span>
             </div>
         </div>
 
@@ -86,11 +87,11 @@
                         'ditolak' => ['label' => 'Ditolak', 'color' => 'bg-terracotta/10 text-terracotta'],
                     ];
                 @endphp
-                @foreach($depositsByStatus as $status => $count)
-                    @php $info = $statusLabels[$status] ?? ['label' => ucfirst($status), 'color' => 'bg-ink/10 text-ink-soft']; @endphp
+                @foreach($depositsByStatus ?? [] as $status => $count)
+                    @php $info = $statusLabels[$status] ?? ['label' => ucfirst(str_replace('_', ' ', $status)), 'color' => 'bg-ink/10 text-ink-soft']; @endphp
                     <div class="flex items-center gap-2 {{ $info['color'] }} px-4 py-2.5 rounded-xl text-xs font-bold">
                         <span>{{ $info['label'] }}</span>
-                        <span class="font-mono font-extrabold text-base">{{ $count }}</span>
+                        <span class="font-mono font-extrabold text-base">{{ number_format($count) }}</span>
                     </div>
                 @endforeach
             </div>
@@ -100,10 +101,12 @@
         <div class="bg-white border border-ink/5 rounded-2xl p-6 shadow-sm">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
                 <h3 class="font-bold text-sm text-ink text-left">Akumulasi per Kategori Sampah</h3>
-                <a href="{{ route('admin.statistics.export') }}" class="btn btn-sm bg-forest border-none text-white hover:bg-forest-dark rounded-xl normal-case font-bold text-xs px-4 shadow-sm flex items-center gap-1.5">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Download Excel
-                </a>
+                @if(Route::has('admin.statistics.export'))
+                    <a href="{{ route('admin.statistics.export') }}" class="btn btn-sm bg-forest border-none text-white hover:bg-forest-dark rounded-xl normal-case font-bold text-xs px-4 shadow-sm flex items-center gap-1.5">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Download Excel
+                    </a>
+                @endif
             </div>
             <div class="overflow-x-auto">
                 <table class="table w-full text-sm">
@@ -118,7 +121,7 @@
                         </tr>
                     </thead>
                     <tbody class="font-medium">
-                        @forelse($depositsByCategory as $cat)
+                        @forelse($depositsByCategory ?? [] as $cat)
                             <tr class="border-b border-ink/5 hover:bg-cream/20 transition-colors">
                                 <td class="py-3.5 pl-4">
                                     <span class="font-bold text-ink text-xs">{{ $cat->kecamatan ?? '-' }}</span>
@@ -130,10 +133,10 @@
                                     <span class="font-bold text-ink">{{ $cat->sub_category ?? '-' }}</span>
                                 </td>
                                 <td class="py-3.5">
-                                    <span class="badge bg-cream border border-ink/10 text-ink-soft font-bold text-[10px] px-2 py-1 rounded-md capitalize">{{ $cat->category }}</span>
+                                    <span class="badge bg-cream border border-ink/10 text-ink-soft font-bold text-[10px] px-2 py-1 rounded-md capitalize">{{ $cat->category ?? '-' }}</span>
                                 </td>
-                                <td class="py-3.5 text-center font-mono font-bold text-ink">{{ number_format($cat->total) }}</td>
-                                <td class="py-3.5 pr-4 text-right font-mono font-bold text-forest">{{ number_format($cat->total_weight, 1, ',', '.') }} kg</td>
+                                <td class="py-3.5 text-center font-mono font-bold text-ink">{{ number_format($cat->total ?? 0) }}</td>
+                                <td class="py-3.5 pr-4 text-right font-mono font-bold text-forest">{{ number_format($cat->total_weight ?? 0, 1, ',', '.') }} kg</td>
                             </tr>
                         @empty
                             <tr><td colspan="6" class="py-6 text-center text-ink-soft/50 text-xs">Belum ada data setoran.</td></tr>
@@ -153,22 +156,22 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-white border border-ink/5 rounded-2xl p-5 shadow-sm text-left">
                 <span class="text-[11px] text-ink-soft font-bold uppercase tracking-wider block">Total Poin Didistribusi</span>
-                <span class="text-2xl font-extrabold text-forest font-mono mt-1 block">{{ number_format($totalPointsDistributed, 0, ',', '.') }}</span>
-                <span class="text-[10px] text-ink-soft font-medium">dari {{ number_format($totalPointTransfers) }} transfer</span>
+                <span class="text-2xl font-extrabold text-forest font-mono mt-1 block">{{ number_format($totalPointsDistributed ?? 0, 0, ',', '.') }}</span>
+                <span class="text-[10px] text-ink-soft font-medium">dari {{ number_format($totalPointTransfers ?? 0) }} transfer</span>
             </div>
             <div class="bg-white border border-ink/5 rounded-2xl p-5 shadow-sm text-left">
                 <span class="text-[11px] text-ink-soft font-bold uppercase tracking-wider block">Poin Beredar</span>
-                <span class="text-2xl font-extrabold text-maritime font-mono mt-1 block">{{ number_format($totalPointsCirculating, 0, ',', '.') }}</span>
+                <span class="text-2xl font-extrabold text-maritime font-mono mt-1 block">{{ number_format($totalPointsCirculating ?? 0, 0, ',', '.') }}</span>
                 <span class="text-[10px] text-ink-soft font-medium">saldo gabungan semua warga</span>
             </div>
             <div class="bg-white border border-ink/5 rounded-2xl p-5 shadow-sm text-left">
                 <span class="text-[11px] text-ink-soft font-bold uppercase tracking-wider block">Poin Ditukar Belanja</span>
-                <span class="text-2xl font-extrabold text-terracotta font-mono mt-1 block">{{ number_format($totalPointsRedeemed, 0, ',', '.') }}</span>
+                <span class="text-2xl font-extrabold text-terracotta font-mono mt-1 block">{{ number_format($totalPointsRedeemed ?? 0, 0, ',', '.') }}</span>
                 <span class="text-[10px] text-ink-soft font-medium">via pembelian produk kriya</span>
             </div>
             <div class="bg-white border border-ink/5 rounded-2xl p-5 shadow-sm text-left">
                 <span class="text-[11px] text-ink-soft font-bold uppercase tracking-wider block">Produk di Katalog</span>
-                <span class="text-2xl font-extrabold text-purple-600 font-mono mt-1 block">{{ number_format($totalProducts) }}</span>
+                <span class="text-2xl font-extrabold text-purple-600 font-mono mt-1 block">{{ number_format($totalProducts ?? 0) }}</span>
                 <span class="text-[10px] text-ink-soft font-medium">kerajinan UMKM terdaftar</span>
             </div>
         </div>
@@ -183,24 +186,26 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="bg-white border border-ink/5 rounded-2xl p-5 shadow-sm text-left">
                 <span class="text-[11px] text-ink-soft font-bold uppercase tracking-wider block">Total Transaksi</span>
-                <span class="text-3xl font-extrabold text-ink font-mono mt-1 block">{{ number_format($totalTransactions) }}</span>
-                <span class="text-[10px] text-ink-soft font-medium">{{ number_format($successTransactions) }} berhasil</span>
+                <span class="text-3xl font-extrabold text-ink font-mono mt-1 block">{{ number_format($totalTransactions ?? 0) }}</span>
+                <span class="text-[10px] text-ink-soft font-medium">{{ number_format($successTransactions ?? 0) }} berhasil</span>
             </div>
             <div class="bg-white border border-ink/5 rounded-2xl p-5 shadow-sm text-left">
                 <span class="text-[11px] text-ink-soft font-bold uppercase tracking-wider block">Omzet Kotor</span>
-                <span class="text-3xl font-extrabold text-forest font-mono mt-1 block">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</span>
+                <span class="text-3xl font-extrabold text-forest font-mono mt-1 block">Rp {{ number_format($totalRevenue ?? 0, 0, ',', '.') }}</span>
                 <span class="text-[10px] text-ink-soft font-medium">dari transaksi sukses</span>
             </div>
             <div class="bg-white border border-ink/5 rounded-2xl p-5 shadow-sm text-left">
                 <span class="text-[11px] text-ink-soft font-bold uppercase tracking-wider block">Rata-rata per Transaksi</span>
-                <span class="text-3xl font-extrabold text-maritime font-mono mt-1 block">Rp {{ $successTransactions > 0 ? number_format($totalRevenue / $successTransactions, 0, ',', '.') : '0' }}</span>
+                <span class="text-3xl font-extrabold text-maritime font-mono mt-1 block">
+                    Rp {{ (!empty($successTransactions) && $successTransactions > 0) ? number_format(($totalRevenue ?? 0) / $successTransactions, 0, ',', '.') : '0' }}
+                </span>
                 <span class="text-[10px] text-ink-soft font-medium">nilai pesanan rata-rata</span>
             </div>
         </div>
     </div>
 
     {{-- ========== SECTION 5: TREN BULANAN ========== --}}
-    @if($monthlyDeposits->count() > 0)
+    @if(isset($monthlyDeposits) && $monthlyDeposits->count() > 0)
     <div>
         <h2 class="font-display font-extrabold text-lg text-ink mb-4 flex items-center gap-2 text-left">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="text-forest"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -219,9 +224,11 @@
                     <tbody class="font-medium">
                         @foreach($monthlyDeposits as $m)
                             <tr class="border-b border-ink/5 hover:bg-cream/20 transition-colors">
-                                <td class="py-3.5 pl-4 font-bold text-ink">{{ \Carbon\Carbon::parse($m->bulan . '-01')->translatedFormat('F Y') }}</td>
-                                <td class="py-3.5 text-center font-mono font-bold text-ink">{{ number_format($m->total) }}</td>
-                                <td class="py-3.5 pr-4 text-right font-mono font-bold text-forest">{{ number_format($m->berat, 1, ',', '.') }} kg</td>
+                                <td class="py-3.5 pl-4 font-bold text-ink">
+                                    {{ !empty($m->bulan) ? \Carbon\Carbon::parse($m->bulan . '-01')->translatedFormat('F Y') : '-' }}
+                                </td>
+                                <td class="py-3.5 text-center font-mono font-bold text-ink">{{ number_format($m->total ?? 0) }}</td>
+                                <td class="py-3.5 pr-4 text-right font-mono font-bold text-forest">{{ number_format($m->berat ?? 0, 1, ',', '.') }} kg</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -232,7 +239,7 @@
     @endif
 
     {{-- ========== SECTION 6: TOP 5 WARGA ========== --}}
-    @if($topWarga->count() > 0)
+    @if(isset($topWarga) && $topWarga->count() > 0)
     <div>
         <h2 class="font-display font-extrabold text-lg text-ink mb-4 flex items-center gap-2 text-left">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="text-amber-500"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -264,10 +271,10 @@
                                         <span class="w-7 h-7 rounded-full bg-ink/5 text-ink-soft inline-flex items-center justify-center font-bold text-xs">{{ $i + 1 }}</span>
                                     @endif
                                 </td>
-                                <td class="py-3.5 font-bold text-ink">{{ $w->name }}</td>
-                                <td class="py-3.5 text-center font-mono font-bold text-ink">{{ number_format($w->selesai_count) }}x</td>
+                                <td class="py-3.5 font-bold text-ink">{{ $w->name ?? '-' }}</td>
+                                <td class="py-3.5 text-center font-mono font-bold text-ink">{{ number_format($w->selesai_count ?? 0) }}x</td>
                                 <td class="py-3.5 text-right font-mono font-bold text-forest">{{ number_format($w->total_berat ?? 0, 1, ',', '.') }} kg</td>
-                                <td class="py-3.5 pr-4 text-right font-mono font-bold text-maritime">{{ number_format($w->points_balance, 0, ',', '.') }}</td>
+                                <td class="py-3.5 pr-4 text-right font-mono font-bold text-maritime">{{ number_format($w->points_balance ?? 0, 0, ',', '.') }}</td>
                             </tr>
                         @endforeach
                     </tbody>

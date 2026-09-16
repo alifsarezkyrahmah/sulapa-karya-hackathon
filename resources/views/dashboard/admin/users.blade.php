@@ -56,98 +56,182 @@
     <!-- ========================================================================= -->
     <!-- TAB 1: SEMUA PENGGUNA (TABEL USER REGULER)                                -->
     <!-- ========================================================================= -->
-    <div id="tab_content_users" class="space-y-4">
-        <div class="hidden md:block bg-white border border-ink/5 rounded-2xl p-6 shadow-none">
-            <div class="overflow-x-auto">
-                <table class="table w-full text-xs">
-                    <thead>
-                        <tr class="bg-cream/40 text-ink-soft border-b border-ink/5 font-semibold text-[10px] uppercase">
-                            <th class="py-3 pl-3">Pengguna & Kontak</th>
-                            <th class="py-3">Status Kemitraan</th>
-                            <th class="py-3">Identitas Sistem</th>
-                            <th class="py-3">Saldo Poin</th>
-                            <th class="py-3 text-center min-w-[110px]">Hak Akses</th>
-                            <th class="py-3 pr-3 text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-ink/5 font-medium">
-                        @forelse($users as $u)
-                            <tr class="hover:bg-cream/20 transition-colors">
-                                <td class="py-3.5 pl-3">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-xl bg-forest/10 text-forest font-bold text-xs flex items-center justify-center shrink-0">
-                                            {{ strtoupper(substr($u->name, 0, 1)) }}
-                                        </div>
-                                        <div class="min-w-0 max-w-[220px]">
-                                            <span class="font-bold text-ink block text-xs truncate">{{ $u->name }}</span>
-                                            <span class="text-[10px] text-ink-soft font-mono block truncate">{{ $u->email }}</span>
-                                            <span class="text-[10px] text-ink-soft/70 block font-mono">{{ $u->phone ?? '-' }}</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="py-3.5">
-                                    @if($u->business_status === 'approved')
-                                        <span class="inline-flex items-center gap-1 bg-forest/15 text-forest border border-forest/20 text-[10px] font-bold px-2 py-0.5 rounded-md font-mono">
-                                            PRO &bull; {{ $u->business_name }}
-                                        </span>
-                                    @elseif($u->business_status === 'verified_unpaid')
-                                        <span class="inline-flex items-center bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-md font-mono">
-                                            Menunggu Bayar
-                                        </span>
-                                    @elseif($u->business_status === 'pending')
-                                        <span class="inline-flex items-center bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-md font-mono">
-                                            Pending
-                                        </span>
-                                    @else
-                                        <span class="text-[11px] text-ink-soft/60">Reguler</span>
-                                    @endif
-                                </td>
-                                <td class="py-3.5 font-mono text-[11px] text-ink-soft">
-                                    <span class="badge bg-cream border border-ink/10 text-ink text-[10px] font-mono px-2 py-0.5 rounded">
-                                        {{ substr($u->supabase_id ?? (string)$u->id, 0, 8) }}...
-                                    </span>
-                                </td>
-                                <td class="py-3.5 font-mono">
-                                    <span class="font-bold text-forest text-xs">{{ number_format($u->points_balance ?? 0) }}</span>
-                                    <span class="text-[10px] text-ink-soft font-sans">Poin</span>
-                                </td>
-                                <td class="py-3.5 text-center min-w-[110px]">
-                                    @if($u->role === 'admin')
-                                        <span class="inline-flex items-center justify-center whitespace-nowrap bg-terracotta/10 text-terracotta border border-terracotta/20 text-[10px] font-bold px-2.5 py-1 rounded-md">ADMIN</span>
-                                    @elseif($u->role === 'penjemput')
-                                        <span class="inline-flex items-center justify-center whitespace-nowrap bg-maritime/10 text-maritime border border-maritime/20 text-[10px] font-bold px-2.5 py-1 rounded-md">PENJEMPUT</span>
-                                    @elseif($u->role === 'pengrajin' || $u->role === 'artisan')
-                                        <span class="inline-flex items-center justify-center whitespace-nowrap bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-bold px-2.5 py-1 rounded-md">PENGRAJIN</span>
-                                    @else
-                                        <span class="inline-flex items-center justify-center whitespace-nowrap bg-forest/10 text-forest border border-forest/20 text-[10px] font-bold px-2.5 py-1 rounded-md">WARGA</span>
-                                    @endif
-                                </td>
-                                <td class="py-3.5 pr-3 text-right">
-                                    <div class="flex items-center justify-end gap-1.5">
-                                        <button type="button" onclick="document.getElementById('edit_modal_{{ $u->id }}').showModal()"
-                                            class="btn btn-xs bg-forest hover:bg-forest-dark text-white border-none rounded-lg text-[10px] font-semibold px-2.5 shadow-none whitespace-nowrap">
-                                            Edit
-                                        </button>
-                                        <form action="{{ route('admin.users.destroy', $u->id) }}" method="POST" onsubmit="return confirm('Hapus akun {{ $u->name }}?')" class="inline m-0 p-0">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-xs bg-white hover:bg-terracotta/10 text-terracotta border border-terracotta/30 rounded-lg text-[10px] font-semibold px-2 shadow-none">
-                                                Hapus
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="py-12 text-center text-ink-soft/60 text-xs font-medium">Belum ada pengguna lainnya.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+<!-- ========================================================================= -->
+<!-- TAB 1: SEMUA PENGGUNA (RESPONSIF MOBILE & DESKTOP)                         -->
+<!-- ========================================================================= -->
+<div id="tab_content_users" class="space-y-4">
+
+    <!-- 1. TAMPILAN KHUSUS MOBILE (HP) - Bentuk Card -->
+    <div class="block md:hidden space-y-3">
+        @forelse($users as $u)
+            <div class="bg-white border border-ink/10 rounded-2xl p-4 shadow-none space-y-3">
+                <!-- Header Card: Foto Avatar, Nama, Email, & Role -->
+                <div class="flex items-start justify-between gap-2 border-b border-ink/5 pb-2.5">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-9 h-9 rounded-xl bg-forest/10 text-forest font-bold text-xs flex items-center justify-center shrink-0">
+                            {{ strtoupper(substr($u->name, 0, 1)) }}
+                        </div>
+                        <div class="min-w-0">
+                            <span class="font-bold text-ink block text-xs truncate">{{ $u->name }}</span>
+                            <span class="text-[10px] text-ink-soft font-mono block truncate">{{ $u->email }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        @if($u->role === 'admin')
+                            <span class="inline-flex items-center bg-terracotta/10 text-terracotta border border-terracotta/20 text-[9px] font-bold px-2 py-0.5 rounded-md">ADMIN</span>
+                        @elseif($u->role === 'penjemput')
+                            <span class="inline-flex items-center bg-maritime/10 text-maritime border border-maritime/20 text-[9px] font-bold px-2 py-0.5 rounded-md">PENJEMPUT</span>
+                        @elseif($u->role === 'pengrajin' || $u->role === 'artisan')
+                            <span class="inline-flex items-center bg-purple-50 text-purple-700 border border-purple-200 text-[9px] font-bold px-2 py-0.5 rounded-md">PENGRAJIN</span>
+                        @else
+                            <span class="inline-flex items-center bg-forest/10 text-forest border border-forest/20 text-[9px] font-bold px-2 py-0.5 rounded-md">WARGA</span>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Info Detail: No HP, Status Kemitraan & Poin -->
+                <div class="grid grid-cols-2 gap-2 text-[11px]">
+                    <div>
+                        <span class="text-[10px] text-ink-soft block">Status Kemitraan</span>
+                        @if($u->business_status === 'approved')
+                            <span class="inline-flex items-center gap-1 bg-forest/15 text-forest border border-forest/20 text-[9px] font-bold px-1.5 py-0.5 rounded font-mono mt-0.5">
+                                PRO &bull; {{ Str::limit($u->business_name, 12) }}
+                            </span>
+                        @elseif($u->business_status === 'verified_unpaid')
+                            <span class="inline-flex items-center bg-amber-50 text-amber-700 border border-amber-200 text-[9px] font-bold px-1.5 py-0.5 rounded font-mono mt-0.5">
+                                Menunggu Bayar
+                            </span>
+                        @elseif($u->business_status === 'pending')
+                            <span class="inline-flex items-center bg-amber-100 text-amber-800 border border-amber-300 text-[9px] font-bold px-1.5 py-0.5 rounded font-mono mt-0.5">
+                                Pending
+                            </span>
+                        @else
+                            <span class="text-ink-soft/70 font-medium">Reguler</span>
+                        @endif
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] text-ink-soft block">Saldo Poin</span>
+                        <span class="font-bold text-forest text-xs font-mono">{{ number_format($u->points_balance ?? 0) }} Poin</span>
+                    </div>
+                </div>
+
+                <!-- Footer Card: No HP & Tombol Aksi -->
+                <div class="flex items-center justify-between pt-2 border-t border-ink/5 text-[10px]">
+                    <span class="text-ink-soft font-mono">No. HP: {{ $u->phone ?? '-' }}</span>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="document.getElementById('edit_modal_{{ $u->id }}').showModal()"
+                            class="btn btn-xs bg-forest hover:bg-forest-dark text-white border-none rounded-lg text-[10px] font-semibold px-2.5 shadow-none">
+                            Edit
+                        </button>
+                        <form action="{{ route('admin.users.destroy', $u->id) }}" method="POST" onsubmit="return confirm('Hapus akun {{ $u->name }}?')" class="inline m-0 p-0">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-xs bg-white hover:bg-terracotta/10 text-terracotta border border-terracotta/30 rounded-lg text-[10px] font-semibold px-2 shadow-none">
+                                Hapus
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
+        @empty
+            <div class="py-8 text-center text-ink-soft/60 text-xs font-medium bg-white border border-ink/5 rounded-2xl">
+                Belum ada pengguna lainnya.
+            </div>
+        @endforelse
+    </div>
+
+    <!-- 2. TAMPILAN KHUSUS DESKTOP / LAPTOP - Tabel -->
+    <div class="hidden md:block bg-white border border-ink/5 rounded-2xl p-6 shadow-none">
+        <div class="overflow-x-auto">
+            <table class="table w-full text-xs">
+                <thead>
+                    <tr class="bg-cream/40 text-ink-soft border-b border-ink/5 font-semibold text-[10px] uppercase">
+                        <th class="py-3 pl-3">Pengguna & Kontak</th>
+                        <th class="py-3">Status Kemitraan</th>
+                        <th class="py-3">Saldo Poin</th>
+                        <th class="py-3 text-center min-w-[110px]">Hak Akses</th>
+                        <th class="py-3 pr-3 text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-ink/5 font-medium">
+                    @forelse($users as $u)
+                        <tr class="hover:bg-cream/20 transition-colors">
+                            <td class="py-3.5 pl-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-xl bg-forest/10 text-forest font-bold text-xs flex items-center justify-center shrink-0">
+                                        {{ strtoupper(substr($u->name, 0, 1)) }}
+                                    </div>
+                                    <div class="min-w-0 max-w-[220px]">
+                                        <span class="font-bold text-ink block text-xs truncate">{{ $u->name }}</span>
+                                        <span class="text-[10px] text-ink-soft font-mono block truncate">{{ $u->email }}</span>
+                                        <span class="text-[10px] text-ink-soft/70 block font-mono">{{ $u->phone ?? '-' }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-3.5">
+                                @if($u->business_status === 'approved')
+                                    <span class="inline-flex items-center gap-1 bg-forest/15 text-forest border border-forest/20 text-[10px] font-bold px-2 py-0.5 rounded-md font-mono">
+                                        PRO &bull; {{ $u->business_name }}
+                                    </span>
+                                @elseif($u->business_status === 'verified_unpaid')
+                                    <span class="inline-flex items-center bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-md font-mono">
+                                        Menunggu Bayar
+                                    </span>
+                                @elseif($u->business_status === 'pending')
+                                    <span class="inline-flex items-center bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-md font-mono">
+                                        Pending
+                                    </span>
+                                @else
+                                    <span class="text-[11px] text-ink-soft/60">Reguler</span>
+                                @endif
+                            </td>
+                            {{-- <td class="py-3.5 font-mono text-[11px] text-ink-soft">
+                                <span class="badge bg-cream border border-ink/10 text-ink text-[10px] font-mono px-2 py-0.5 rounded">
+                                    {{ substr($u->supabase_id ?? (string)$u->id, 0, 8) }}...
+                                </span>
+                            </td> --}}
+                            <td class="py-3.5 font-mono">
+                                <span class="font-bold text-forest text-xs">{{ number_format($u->points_balance ?? 0) }}</span>
+                                <span class="text-[10px] text-ink-soft font-sans">Poin</span>
+                            </td>
+                            <td class="py-3.5 text-center min-w-[110px]">
+                                @if($u->role === 'admin')
+                                    <span class="inline-flex items-center justify-center whitespace-nowrap bg-terracotta/10 text-terracotta border border-terracotta/20 text-[10px] font-bold px-2.5 py-1 rounded-md">ADMIN</span>
+                                @elseif($u->role === 'penjemput')
+                                    <span class="inline-flex items-center justify-center whitespace-nowrap bg-maritime/10 text-maritime border border-maritime/20 text-[10px] font-bold px-2.5 py-1 rounded-md">PENJEMPUT</span>
+                                @elseif($u->role === 'pengrajin' || $u->role === 'artisan')
+                                    <span class="inline-flex items-center justify-center whitespace-nowrap bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-bold px-2.5 py-1 rounded-md">PENGRAJIN</span>
+                                @else
+                                    <span class="inline-flex items-center justify-center whitespace-nowrap bg-forest/10 text-forest border border-forest/20 text-[10px] font-bold px-2.5 py-1 rounded-md">WARGA</span>
+                                @endif
+                            </td>
+                            <td class="py-3.5 pr-3 text-right">
+                                <div class="flex items-center justify-end gap-1.5">
+                                    <button type="button" onclick="document.getElementById('edit_modal_{{ $u->id }}').showModal()"
+                                        class="btn btn-xs bg-forest hover:bg-forest-dark text-white border-none rounded-lg text-[10px] font-semibold px-2.5 shadow-none whitespace-nowrap">
+                                        Edit
+                                    </button>
+                                    <form action="{{ route('admin.users.destroy', $u->id) }}" method="POST" onsubmit="return confirm('Hapus akun {{ $u->name }}?')" class="inline m-0 p-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-xs bg-white hover:bg-terracotta/10 text-terracotta border border-terracotta/30 rounded-lg text-[10px] font-semibold px-2 shadow-none">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="py-12 text-center text-ink-soft/60 text-xs font-medium">Belum ada pengguna lainnya.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
+
+</div>
 
     <!-- ========================================================================= -->
     <!-- TAB 2: DIREKTORI MITRA BISNIS PRO                                         -->

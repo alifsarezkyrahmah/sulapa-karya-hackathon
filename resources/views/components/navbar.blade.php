@@ -52,7 +52,7 @@
             <li><a href="/#tentang-kami" data-nav="tentang-kami" class="nav-link rounded-full px-3 py-1.5 hover:bg-forest/10 hover:text-forest transition-colors">Tentang Kami</a></li>
             <li><a href="/#kalkulator" data-nav="kalkulator" class="nav-link rounded-full px-3 py-1.5 hover:bg-forest/10 hover:text-forest transition-colors">Kalkulator Poin</a></li>
             <li><a href="/katalog" data-nav="katalog" class="nav-link rounded-full px-3 py-1.5 hover:bg-forest/10 hover:text-forest transition-all {{ request()->is('katalog*') ? 'active-nav' : '' }}">Katalog Kriya</a></li>
-            <li><a href="/#mitra-bisnis" data-nav="mitra-bisnis" class="nav-link rounded-full px-3 py-1.5 hover:bg-forest/10 hover:text-forest transition-colors">SulapaKarya PRO</a></li>
+            <li><a href="/#mitra-bisnis" data-nav="mitra-bisnis" class="nav-link rounded-full px-3 py-1.5 hover:bg-forest/10 hover:text-forest transition-all {{ request()->is('mitra-bisnis*') ? 'active-nav' : '' }}">SulapaKarya PRO</a></li>
           </ul>
         </div>
       </div>
@@ -60,8 +60,22 @@
       <!-- Action Group Kanan (Desktop Only) -->
       <div class="navbar-end w-auto hidden lg:flex items-center gap-2 shrink-0">
         @if($currentUserId)
-          <!-- Notifikasi Dropdown Desktop -->
-          <div class="dropdown dropdown-end dropdown-hover relative">
+          <!-- 1. Keranjang Desktop -->
+          @if($currentRole == 'user')
+            <a href="/keranjang" id="cart-btn" aria-label="Keranjang" class="btn btn-ghost btn-circle relative text-ink hover:bg-white/40 focus:outline-none">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 0 1-8 0"/>
+              </svg>
+              @if($cartCount > 0)
+                <span class="badge badge-sm bg-forest border-none text-white font-extrabold absolute -top-1 -right-1 font-mono">{{ $cartCount }}</span>
+              @endif
+            </a>
+          @endif
+
+          <!-- 2. Notifikasi Dropdown Desktop -->
+          <div class="dropdown dropdown-end relative">
             <button id="notif-btn" aria-label="Notifikasi" tabindex="0" class="btn btn-ghost btn-circle relative text-ink hover:bg-white/40 focus:outline-none">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0">
                 <path d="M18 8a6 6 0 10-12 0v5l-2 2h16l-2-2z"/>
@@ -72,7 +86,7 @@
               @endif
             </button>
             
-            <div tabindex="0" class="dropdown-content z-[70] mt-3 p-4 shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl w-80 sm:w-88 border border-white/60 text-left overflow-hidden right-0">
+            <div tabindex="0" class="dropdown-content z-[70] mt-3 p-4 shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl w-80 sm:w-88 border border-white/60 text-left overflow-hidden right-0 flex flex-col">
               <div class="flex items-center justify-between pb-2 border-b border-ink/5 mb-2">
                 <div class="flex items-center gap-2">
                   <span class="text-ink font-bold text-sm">Notifikasi</span>
@@ -123,62 +137,6 @@
             </div>
           </div>
 
-          <!-- Keranjang Dropdown Desktop -->
-          @if($currentRole == 'user')
-            <div class="dropdown dropdown-end dropdown-hover relative">
-              <a href="/keranjang" id="cart-btn" aria-label="Keranjang" tabindex="0" class="btn btn-ghost btn-circle relative text-ink hover:bg-white/40 focus:outline-none">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0">
-                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                  <line x1="3" y1="6" x2="21" y2="6"/>
-                  <path d="M16 10a4 4 0 0 1-8 0"/>
-                </svg>
-                @if($cartCount > 0)
-                  <span class="badge badge-sm bg-forest border-none text-white font-extrabold absolute -top-1 -right-1 font-mono">{{ $cartCount }}</span>
-                @endif
-              </a>
-
-              <div tabindex="0" class="dropdown-content z-[70] mt-3 p-4 shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl w-80 border border-white/60 text-left overflow-hidden right-0">
-                <div class="flex items-center justify-between pb-2 border-b border-ink/5 mb-2">
-                  <span class="text-ink font-bold text-sm">Keranjang Kriya</span>
-                  <span class="text-xs text-ink-soft font-medium">{{ $cartCount }} Item</span>
-                </div>
-
-                @if($cartCount > 0)
-                  <div class="max-h-60 overflow-y-auto flex flex-col gap-2 pr-1 custom-scrollbar">
-                    @foreach(array_slice($cartItems, 0, 5, true) as $id => $item)
-                      <div class="flex items-center justify-between p-2 hover:bg-ink/[0.04] rounded-xl transition-colors">
-                        <div class="flex items-center gap-3 truncate">
-                          <img src="{{ isset($item['foto']) ? asset('storage/'.$item['foto']) : 'https://placehold.co/100' }}" 
-                              alt="{{ $item['name'] ?? 'Produk' }}" 
-                              class="w-10 h-10 object-cover rounded-lg border border-ink/5 shrink-0">
-                          <div class="truncate text-left">
-                            <p class="text-xs font-semibold text-ink truncate">{{ $item['name'] ?? 'Produk Kriya' }}</p>
-                            <p class="text-[10px] text-ink-soft font-mono">{{ $item['quantity'] ?? 1 }}x</p>
-                          </div>
-                        </div>
-                        <span class="text-xs font-bold text-forest shrink-0 font-mono">
-                          Rp {{ number_format($item['price'] ?? 0, 0, ',', '.') }}
-                        </span>
-                      </div>
-                    @endforeach
-                  </div>
-
-                  <div class="mt-3 pt-2 border-t border-ink/5">
-                    <a href="/keranjang" class="btn btn-sm w-full bg-forest hover:bg-forest/90 text-white normal-case font-bold border-none rounded-xl shadow-md">Lihat Keranjang</a>
-                  </div>
-                @else
-                  <div class="py-6 text-center">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto text-ink-soft/40 mb-2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                    <p class="text-xs text-ink-soft font-medium">Keranjang belanjamu masih kosong!</p>
-                  </div>
-                  <div class="mt-2">
-                    <a href="/katalog" class="btn btn-sm w-full border border-forest/20 text-forest hover:bg-forest/10 normal-case font-bold rounded-xl">Mulai Belanja</a>
-                  </div>
-                @endif
-              </div>
-            </div>
-          @endif
-
           <div class="h-4 w-[1px] bg-ink/10 mx-1"></div>
         @endif
 
@@ -189,7 +147,7 @@
             <div class="flex items-center"><a href="/register" class="rounded-full px-4 py-2 bg-forest text-white justify-between hover:bg-forest/90 border-none rounded-full px-2 font-bold shadow-sm shadow-forest/20">Daftar</a></div>
           </div>
         @else
-          <div class="dropdown dropdown-end dropdown-hover relative">
+          <div class="dropdown dropdown-end relative">
             <a href="/dashboard" tabindex="0" class="btn btn-ghost btn-circle avatar placeholder focus:outline-none hover:bg-white/40">
               <div class="bg-forest text-white rounded-full w-9 h-9 overflow-hidden flex items-center justify-center ring-2 ring-forest/20 {{ request()->is('dashboard*') || request()->is('profile*') ? 'ring-forest' : '' }}">
                 @if($navUser && $navUser->foto_profil)
@@ -200,7 +158,7 @@
               </div>
             </a>
             
-            <ul tabindex="0" class="dropdown-content menu menu-sm mt-3 z-[70] p-2.5 shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl w-64 border border-white/60 gap-1 normal-case text-left right-0">
+            <div tabindex="0" class="dropdown-content mt-3 z-[70] p-3 shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl w-64 border border-white/60 flex flex-col gap-1 text-left right-0">
               <div class="px-3 py-2 border-b border-ink/5 mb-1 text-left">
                 <p class="text-sm font-extrabold text-ink truncate max-w-[210px]" title="{{ $navUser->name ?? session('name') }}">
                   {{ $navUser->name ?? session('name') }}
@@ -222,30 +180,38 @@
                 @endif
               </div>
               
-              <li><a href="/dashboard" class="rounded-xl py-2 font-medium {{ request()->is('dashboard*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Dashboard</a></li>
-              <li><a href="/profile" class="rounded-xl py-2 font-medium {{ request()->is('profile*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Profil Saya</a></li>
+              <a href="/dashboard" class="rounded-xl py-2 px-3 text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors {{ request()->is('dashboard*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Dashboard</a>
+              <a href="/profile" class="rounded-xl py-2 px-3 text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors {{ request()->is('profile*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Profil Saya</a>
               
               <div class="my-1 border-t border-ink/5"></div>
               
-              <li>
-                <form action="/logout" method="POST" class="p-0 m-0">
-                  @csrf
-                  <button type="submit" class="w-full text-left rounded-xl py-2 px-3 font-bold text-terracotta hover:bg-terracotta/10">
-                    Keluar Akun
-                  </button>
-                </form>
-              </li>
-            </ul>
+              <form action="/logout" method="POST" class="p-0 m-0">
+                @csrf
+                <button type="submit" class="w-full text-left rounded-xl py-2 px-3 text-xs font-bold text-terracotta hover:bg-terracotta/10 transition-colors">
+                  Keluar Akun
+                </button>
+              </form>
+            </div>
           </div>
         @endif
       </div>
 
       <!-- ================================================================= -->
-      <!-- MOBILE ACTION BAR (LAYAR HP / SCREEN < 1024PX)                    -->
+      <!-- MOBILE ACTION BAR (LAYAR HP / SCREEN < 1024PX)                   -->
       <!-- ================================================================= -->
       <div class="navbar-end w-auto lg:hidden flex items-center gap-1 shrink-0">
         
-        <!-- Notifikasi Mobile -->
+        <!-- 1. Keranjang Mobile -->
+        @if($currentUserId && $currentRole === 'user')
+          <a href="/keranjang" class="btn btn-ghost btn-sm btn-circle relative text-ink hover:bg-white/40">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            @if($cartCount > 0)
+              <span class="badge badge-xs bg-terracotta text-white font-bold absolute -top-1 -right-1 font-mono">{{ $cartCount }}</span>
+            @endif
+          </a>
+        @endif
+
+        <!-- 2. Notifikasi Mobile -->
         <div class="dropdown dropdown-end relative">
           <button tabindex="0" aria-label="Notifikasi" class="btn btn-ghost btn-sm btn-circle relative text-ink hover:bg-white/40 focus:outline-none">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -257,7 +223,7 @@
             @endif
           </button>
           
-          <div tabindex="0" class="dropdown-content z-[70] p-0 shadow-2xl bg-white rounded-2xl w-72 sm:w-80 border border-ink/10 right-0 mt-2 text-left overflow-hidden">
+          <div tabindex="0" class="dropdown-content z-[70] p-0 shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl w-72 sm:w-80 border border-ink/10 right-0 mt-2 text-left overflow-hidden">
             <div class="px-3.5 py-2.5 bg-cream/40 border-b border-ink/5 flex items-center justify-between">
               <span class="font-bold text-xs text-ink">Notifikasi ({{ $unreadCount }})</span>
               @if($unreadCount > 0)
@@ -282,16 +248,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Keranjang Mobile -->
-        @if($currentUserId && $currentRole === 'user')
-          <a href="/keranjang" class="btn btn-ghost btn-sm btn-circle relative text-ink hover:bg-white/40">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-            @if($cartCount > 0)
-              <span class="badge badge-xs bg-terracotta text-white font-bold absolute -top-1 -right-1 font-mono">{{ $cartCount }}</span>
-            @endif
-          </a>
-        @endif
 
         <!-- Menu Burger Mobile -->
         <div class="dropdown dropdown-end relative">
@@ -335,7 +291,7 @@
                 <a href="/#tentang-kami" data-nav="tentang-kami" class="nav-link block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors">Tentang Kami</a>
                 <a href="/#kalkulator" data-nav="kalkulator" class="nav-link block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors">Kalkulator Poin</a>
                 <a href="/katalog" data-nav="katalog" class="nav-link block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors {{ request()->is('katalog*') ? 'bg-forest/10 text-forest font-bold' : '' }}">Katalog Kriya</a>
-                <a href="/#mitra-bisnis" data-nav="mitra-bisnis" class="nav-link block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors">SulapaKarya PRO</a>
+                <a href="/#mitra-bisnis" data-nav="mitra-bisnis" class="nav-link block px-3.5 py-2 rounded-xl text-xs font-semibold text-ink hover:bg-forest/10 hover:text-forest transition-colors {{ request()->is('mitra-bisnis*') ? 'bg-forest/10 text-forest font-bold' : '' }}">SulapaKarya PRO</a>
 
                 <div class="my-2 border-t border-ink/5"></div>
 

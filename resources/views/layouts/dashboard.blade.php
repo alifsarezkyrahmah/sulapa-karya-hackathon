@@ -84,10 +84,22 @@
                 </div>
             </div>
 
-            <!-- KANAN TOPBAR: POIN GAME COUNTER, NOTIFIKASI LONCENG, & BADGE ROLE -->
+            <!-- KANAN TOPBAR: URUTAN KIRI KE KANAN -> (1. BADGE ROLE, 2. KOIN POIN, 3. NOTIFIKASI) -->
             <div class="flex items-center gap-2.5 sm:gap-3">
                 
-                <!-- TAMPILAN POIN ALA GAME COUNTER KHUSUS ROLE USER / WARGA -->
+                <!-- 1. BADGE ROLE SAJA (TANPA NAMA USER) -->
+                <span class="badge border-none text-[10px] font-bold tracking-wider uppercase px-2.5 py-2 rounded-lg 
+                    {{ $currentRole === 'admin' ? 'bg-forest/10 text-forest' : ($currentRole === 'penjemput' ? 'bg-maritime/10 text-maritime' : ($businessStatus === 'approved' ? 'bg-amber-400/20 text-amber-900 border border-amber-400/30' : 'bg-sand/60 text-ink-soft')) }}">
+                    @if($currentRole === 'penjemput')
+                        Kurir Lapangan
+                    @elseif($businessStatus === 'approved' && $currentRole === 'user')
+                        Mitra PRO
+                    @else
+                        {{ $currentRole }}
+                    @endif
+                </span>
+
+                <!-- 2. TAMPILAN POIN / KOIN SULAPA KHUSUS ROLE USER / WARGA -->
                 @if($currentRole === 'user' || $currentRole === 'warga')
                     <a href="/pencairan-poin" class="group relative flex items-center bg-gradient-to-r from-amber-500/15 via-amber-400/20 to-amber-500/10 border-2 border-amber-400/50 hover:border-amber-400 pl-1.5 pr-4 py-1 rounded-full shadow-[0_4px_16px_rgba(245,158,11,0.22)] hover:shadow-[0_6px_22px_rgba(245,158,11,0.35)] transition-all duration-300 cursor-pointer select-none my-auto" title="Klik untuk mencairkan saldo poin">
                         <div class="relative w-9 h-9 sm:w-11 sm:h-11 -ml-2.5 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-yellow-100 p-0.5 shadow-md shadow-amber-600/30 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
@@ -116,7 +128,7 @@
                     </a>
                 @endif
 
-                <!-- DROPDOWN NOTIFIKASI LONCENG -->
+                <!-- 3. DROPDOWN NOTIFIKASI LONCENG -->
                 <div class="dropdown dropdown-end">
                     <label tabindex="0" class="btn btn-ghost btn-circle btn-sm text-ink-soft hover:text-ink hover:bg-cream/80 relative transition-all">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -131,7 +143,7 @@
                         @endif
                     </label>
 
-                    <div tabindex="0" class="dropdown-content z-[100] menu p-0 shadow-2xl bg-white border border-ink/10 rounded-2xl w-80 sm:w-96 mt-2 text-left overflow-hidden">
+                    <div tabindex="0" class="dropdown-content z-[100] menu p-0 shadow-2xl bg-white border border-ink/10 rounded-2xl w-80 sm:w-96 max-w-[calc(100vw-2rem)] mt-2 text-left overflow-hidden">
                         <div class="px-4 py-3 bg-cream/40 border-b border-ink/5 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <span class="font-bold text-xs text-ink">Aktivitas & Notifikasi</span>
@@ -202,17 +214,6 @@
                         </div>
                     </div>
                 </div>
-
-                <span class="badge border-none text-[10px] font-bold tracking-wider uppercase px-2.5 py-2 rounded-lg 
-                    {{ $currentRole === 'admin' ? 'bg-forest/10 text-forest' : ($currentRole === 'penjemput' ? 'bg-maritime/10 text-maritime' : ($businessStatus === 'approved' ? 'bg-amber-400/20 text-amber-900 border border-amber-400/30' : 'bg-sand/60 text-ink-soft')) }}">
-                    @if($currentRole === 'penjemput')
-                        Kurir Lapangan
-                    @elseif($businessStatus === 'approved' && $currentRole === 'user')
-                        Mitra PRO
-                    @else
-                        {{ $currentRole }}
-                    @endif
-                </span>
 
                 <div class="h-4 w-[1px] bg-ink/10 hidden sm:block"></div>
 
@@ -419,7 +420,7 @@
                                 <path d="M9 11l3 3L22 4"/>
                                 <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
                             </svg>
-                            <span>Panduan QC Sampah</span>
+                            <span>Panduan Aplikasi</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <span class="badge badge-xs bg-forest/20 text-forest-light border-none font-bold text-[9px] px-1.5 py-0.5 font-mono">SOP</span>

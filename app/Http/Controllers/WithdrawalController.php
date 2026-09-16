@@ -53,7 +53,7 @@ class WithdrawalController extends Controller
         $user = User::findOrFail($userId);
 
         $request->validate([
-            'points'              => 'required|integer|min:1000',
+            'points'              => 'required|integer|min:50000',
             'bank_name'           => 'required|string',
             'account_number'      => 'required|numeric',
             'account_holder_name' => 'required|string',

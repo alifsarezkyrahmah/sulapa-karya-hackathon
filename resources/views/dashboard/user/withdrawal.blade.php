@@ -97,7 +97,7 @@
 
                 <div class="flex items-start gap-2.5">
                     <span class="w-5 h-5 rounded-md bg-forest/10 text-forest flex items-center justify-center shrink-0 font-bold font-mono text-[10px]">2</span>
-                    <p><strong>Batas Minimum:</strong> Penarikan saldo dapat diproses mulai dari akumulasi <strong>1.000 Poin</strong>.</p>
+                    <p><strong>Batas Minimum:</strong> Penarikan saldo dapat diproses mulai dari akumulasi <strong>50.000 Poin</strong>.</p>
                 </div>
 
                 <div class="flex items-start gap-2.5">
