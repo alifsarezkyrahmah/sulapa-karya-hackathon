@@ -68,9 +68,7 @@
         </div>
     @endif
 
-    <!-- ========================================================================= -->
-    <!-- 1. KARTU MISI UTAMA (ACTIVE MISSION HERO) -->
-    <!-- ========================================================================= -->
+    <!-- 1. KARTU MISI UTAMA -->
     @if($currentMission)
         @php 
             $wargaCurrent = \App\Models\User::find($currentMission->user_id); 
@@ -78,7 +76,6 @@
         @endphp
         <div class="bg-white rounded-3xl border-2 {{ $isBusiness ? 'border-amber-400 bg-amber-50/[0.12] shadow-sm' : 'border-forest/20 shadow-xs' }} p-5 sm:p-7 relative overflow-hidden">
             
-            <!-- Header Misi Aktif & Lencana Prioritas -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-ink/5">
                 <div class="flex items-center gap-2 flex-wrap">
                     @if($isBusiness)
@@ -115,8 +112,6 @@
 
             <!-- Detail Pemohon & Lokasi Titik Jemput -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 py-5 border-b border-ink/5 items-start">
-                
-                <!-- Info Pemohon / Toko -->
                 <div class="space-y-2.5">
                     <div>
                         <span class="text-[10px] uppercase font-bold text-ink-soft block tracking-wider">
@@ -146,7 +141,6 @@
                     </div>
                 </div>
 
-                <!-- Alamat & Navigasi Cepat -->
                 <div class="lg:col-span-2 space-y-2.5">
                     <div>
                         <div class="flex items-center justify-between">
@@ -163,23 +157,8 @@
                         <span class="text-[11px] text-ink-soft font-mono block mt-1">
                             Kec. {{ $currentMission->kecamatan ?? '-' }}, Kel. {{ $currentMission->kelurahan ?? '-' }}
                         </span>
-                        @if($currentMission->qc_notes)
-                            <div class="p-2.5 bg-amber-500/10 border border-amber-300/60 rounded-xl text-[11px] text-amber-950 mt-2">
-                                <strong>Catatan Akses Armada:</strong> {{ $currentMission->qc_notes }}
-                            </div>
-                        @endif
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-3 text-xs text-ink-soft pt-1">
-                        @if($currentMission->pickup_date)
-                            <span>Jadwal: <strong class="text-ink font-semibold">{{ \Carbon\Carbon::parse($currentMission->pickup_date)->translatedFormat('d M Y') }}</strong></span>
-                        @endif
-                        @if($currentMission->pickup_time)
-                            <span class="font-mono">Slot Jam: <strong class="text-ink">{{ \Carbon\Carbon::parse($currentMission->pickup_time)->format('H:i') }} WITA</strong></span>
-                        @endif
                     </div>
                 </div>
-
             </div>
 
             <!-- Tombol Aksi Lapangan -->
@@ -220,9 +199,7 @@
             </div>
         </div>
 
-        <!-- ========================================================================= -->
         <!-- MODAL EVALUASI QC & VALIDASI SCAN QR -->
-        <!-- ========================================================================= -->
         <dialog id="timbang_modal_{{ $currentMission->id }}" class="modal modal-middle">
             <div class="modal-box w-11/12 max-w-lg bg-white rounded-3xl border border-ink/10 p-5 sm:p-7 text-left shadow-2xl overflow-y-auto max-h-[88vh] my-auto">
                 <button type="button" onclick="closeWeightModal('{{ $currentMission->id }}')" class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-ink-soft hover:bg-cream">✕</button>
@@ -232,10 +209,9 @@
                         Verifikasi Lapangan
                     </span>
                     <h3 class="font-bold text-base sm:text-lg text-ink mt-1">Evaluasi Mutu & Scan QR</h3>
-                    <p class="text-xs text-ink-soft mt-0.5">{{ $isBusiness ? 'Mitra PRO: ' . ($wargaCurrent->business_name ?? $wargaCurrent->name) : 'Warga: ' . ($wargaCurrent->name ?? 'Warga') }} &bull; Komoditas: <span class="font-semibold capitalize">{{ $currentMission->category }}</span></p>
+                    <p class="text-xs text-ink-soft mt-0.5">{{ $isBusiness ? 'Mitra PRO: ' . ($wargaCurrent->business_name ?? $wargaCurrent->name) : 'Warga: ' . ($wargaCurrent->name ?? 'Warga') }}</p>
                 </div>
 
-                <!-- Tab Pilihan: Lolos QC vs Tolak -->
                 <div class="space-y-2 mb-4">
                     <label class="text-xs font-semibold text-ink block">Kondisi Fisik Sampah: <span class="text-terracotta">*</span></label>
                     <div class="grid grid-cols-2 gap-2">
@@ -257,9 +233,7 @@
                     
                     <div>
                         <div class="flex items-center justify-between mb-1">
-                            <label class="text-xs font-semibold text-ink">
-                                Berat Timbangan Aktual (kg) <span class="text-terracotta">*</span>
-                            </label>
+                            <label class="text-xs font-semibold text-ink">Berat Timbangan Aktual (kg) <span class="text-terracotta">*</span></label>
                             <span class="text-[11px] text-ink-soft font-mono">Estimasi: {{ number_format($currentMission->estimated_weight, 2) }} kg</span>
                         </div>
                         <div class="relative">
@@ -300,9 +274,7 @@
 
                     <div class="space-y-2 pt-1">
                         <div class="flex items-center justify-between">
-                            <label class="text-xs font-semibold text-ink">
-                                Pindai QR Code di HP Pengguna: <span class="text-terracotta">*</span>
-                            </label>
+                            <label class="text-xs font-semibold text-ink">Pindai QR Code di HP Pengguna: <span class="text-terracotta">*</span></label>
                             <span class="text-[10px] font-mono text-forest font-bold">Wajib di Lokasi</span>
                         </div>
                         
@@ -317,11 +289,19 @@
                             </button>
                         </div>
 
+                        <!-- KONTEN SCANNER KANVAS PERBAIKAN -->
                         <div id="container_scan_{{ $currentMission->id }}" class="space-y-2 pt-1">
-                            <div class="w-full max-w-[240px] aspect-square mx-auto bg-black rounded-2xl overflow-hidden border border-ink/10 relative shadow-inner flex items-center justify-center">
+                            <div class="w-full max-w-[260px] aspect-square mx-auto bg-black rounded-2xl overflow-hidden border border-ink/10 relative shadow-inner flex flex-col items-center justify-center p-2">
                                 <div id="reader_{{ $currentMission->id }}" class="w-full h-full"></div>
                             </div>
-                            <p class="text-[10px] text-ink-soft text-center font-medium">Arahkan kamera ke layar ponsel yang membuka QR setoran.</p>
+
+                            <div id="camera_error_msg_{{ $currentMission->id }}" class="hidden p-2.5 bg-amber-500/10 border border-amber-300 rounded-xl text-[11px] text-amber-900 text-center font-medium">
+                                Kamera tidak terdeteksi atau diblokir browser. <br>
+                                <button type="button" onclick="startScanner('{{ $currentMission->id }}')" class="underline font-bold text-forest mt-1 inline-block">Coba Buka Ulang Kamera</button> 
+                                atau gunakan <strong class="underline cursor-pointer" onclick="toggleVerificationMode('{{ $currentMission->id }}', 'paste')">Input Kode Manual</strong>.
+                            </div>
+
+                            <p class="text-[10px] text-ink-soft text-center font-medium">Arahkan kamera belakang ke layar ponsel setoran pengguna.</p>
                         </div>
 
                         <div id="container_paste_{{ $currentMission->id }}" class="hidden space-y-1">
@@ -337,7 +317,7 @@
                     </button>
                 </form>
 
-                <!-- FORM SKENARIO 2: TOLAK SETORAN (TIDAK LAYAK QC) -->
+                <!-- FORM SKENARIO 2: TOLAK SETORAN -->
                 <form id="form_qc_reject_{{ $currentMission->id }}" action="{{ route('penjemput.completeTransaction', $currentMission->id) }}" method="POST" class="hidden space-y-4">
                     @csrf
                     <input type="hidden" name="qc_action" value="reject">
@@ -372,19 +352,14 @@
             </div>
         </dialog>
     @else
-        <!-- Keadaan jika semua tugas hari ini selesai -->
         <div class="bg-white rounded-3xl border border-ink/5 p-8 text-center space-y-3">
             <div class="w-12 h-12 rounded-2xl bg-forest/10 text-forest flex items-center justify-center mx-auto text-xl font-bold">✓</div>
             <h3 class="text-lg font-bold text-ink">Semua Penjemputan Selesai</h3>
-            <p class="text-xs text-ink-soft max-w-md mx-auto">
-                Tidak ada antrean penjemputan sampah aktif untuk Anda saat ini. Istirahat sejenak atau tunggu delegasi tugas baru dari Admin.
-            </p>
+            <p class="text-xs text-ink-soft max-w-md mx-auto">Tidak ada antrean penjemputan sampah aktif untuk Anda saat ini.</p>
         </div>
     @endif
 
-    <!-- ========================================================================= -->
-    <!-- 2. ANTREAN PENJEMPUTAN BERIKUTNYA (UPCOMING QUEUE) -->
-    <!-- ========================================================================= -->
+    <!-- ANTREAN PENJEMPUTAN BERIKUTNYA -->
     <div class="bg-white border border-ink/10 rounded-2xl p-5 sm:p-6 shadow-none space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-ink/5">
             <div>
@@ -396,7 +371,6 @@
             </span>
         </div>
 
-        <!-- Desktop Table (>= md) -->
         <div class="overflow-x-auto">
             <table class="table w-full text-xs">
                 <thead>
@@ -422,57 +396,35 @@
                             </td>
                             <td class="py-3">
                                 @if($isTaskBusiness)
-                                    <span class="inline-flex items-center bg-amber-400 text-amber-950 font-black text-[9px] font-mono px-2 py-0.5 rounded shadow-2xs">
-                                        ★ PRO B2B
-                                    </span>
+                                    <span class="inline-flex items-center bg-amber-400 text-amber-950 font-black text-[9px] font-mono px-2 py-0.5 rounded shadow-2xs">★ PRO B2B</span>
                                 @else
-                                    <span class="inline-flex items-center bg-cream text-ink border border-ink/10 font-bold text-[9px] font-mono px-2 py-0.5 rounded">
-                                        WARGA
-                                    </span>
+                                    <span class="inline-flex items-center bg-cream text-ink border border-ink/10 font-bold text-[9px] font-mono px-2 py-0.5 rounded">WARGA</span>
                                 @endif
                             </td>
                             <td class="py-3 font-bold text-ink text-xs">
                                 {{ $isTaskBusiness && $wargaNext->business_name ? $wargaNext->business_name : ($wargaNext->name ?? 'Pengguna') }}
                             </td>
-                            <td class="py-3">
-                                <span class="badge bg-cream border border-ink/10 text-ink text-[10px] px-2 py-0.5 rounded capitalize">
-                                    {{ $task->category }}
-                                </span>
-                            </td>
+                            <td class="py-3"><span class="badge bg-cream border border-ink/10 text-ink text-[10px] px-2 py-0.5 rounded capitalize">{{ $task->category }}</span></td>
                             <td class="py-3 font-mono text-ink font-bold">{{ number_format($task->estimated_weight, 1) }} kg</td>
-                            <td class="py-3 text-ink-soft max-w-[200px] truncate" title="{{ $task->pickup_address }}">
-                                {{ $task->pickup_address }}
-                            </td>
-                            <td class="py-3 pr-3 text-right">
-                                <span class="inline-flex items-center text-[10px] font-semibold text-ink-soft bg-cream/60 px-2 py-1 rounded border border-ink/5">
-                                    Antrean Berikutnya
-                                </span>
-                            </td>
+                            <td class="py-3 text-ink-soft max-w-[200px] truncate" title="{{ $task->pickup_address }}">{{ $task->pickup_address }}</td>
+                            <td class="py-3 pr-3 text-right"><span class="inline-flex items-center text-[10px] font-semibold text-ink-soft bg-cream/60 px-2 py-1 rounded border border-ink/5">Antrean Berikutnya</span></td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="7" class="py-6 text-center text-ink-soft/60 text-xs font-medium">
-                                Tidak ada antrean rute penjemputan tambahan.
-                            </td>
-                        </tr>
+                        <tr><td colspan="7" class="py-6 text-center text-ink-soft/60 text-xs font-medium">Tidak ada antrean rute penjemputan tambahan.</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- ========================================================================= -->
-    <!-- 3. RIWAYAT PENJEMPUTAN SELESAI HARI INI -->
-    <!-- ========================================================================= -->
+    <!-- RIWAYAT PENJEMPUTAN SELESAI HARI INI -->
     <div class="bg-white border border-ink/10 rounded-2xl p-5 sm:p-6 shadow-none space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-ink/5">
             <div>
                 <h2 class="text-sm font-bold text-ink">Riwayat Tugas Tuntas Hari Ini</h2>
                 <p class="text-[11px] text-ink-soft">Daftar transaksi yang sudah Anda evaluasi QC & timbang hari ini.</p>
             </div>
-            <span class="inline-flex items-center whitespace-nowrap text-[11px] font-mono font-bold text-forest bg-forest/10 px-2.5 py-1 rounded-lg">
-                {{ $totalCompleted }} Selesai
-            </span>
+            <span class="inline-flex items-center whitespace-nowrap text-[11px] font-mono font-bold text-forest bg-forest/10 px-2.5 py-1 rounded-lg">{{ $totalCompleted }} Selesai</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -494,9 +446,7 @@
                             $isLogBusiness = ($log->deposit_type === 'business') || (($pemohon->business_status ?? '') === 'approved');
                         @endphp
                         <tr class="hover:bg-cream/20 transition-colors">
-                            <td class="py-3 pl-3 font-semibold text-ink">
-                                {{ $isLogBusiness && $pemohon->business_name ? $pemohon->business_name : ($pemohon->name ?? 'Pengguna') }}
-                            </td>
+                            <td class="py-3 pl-3 font-semibold text-ink">{{ $isLogBusiness && $pemohon->business_name ? $pemohon->business_name : ($pemohon->name ?? 'Pengguna') }}</td>
                             <td class="py-3">
                                 @if($isLogBusiness)
                                     <span class="badge badge-xs bg-amber-400 text-amber-950 font-bold border-none text-[8px] font-mono">PRO</span>
@@ -515,22 +465,14 @@
                             </td>
                             <td class="py-3 pr-3 text-right">
                                 @if($log->status === 'ditolak' || $log->status === 'ditolak_qc' || $log->status === 'rejected')
-                                    <span class="inline-flex items-center whitespace-nowrap bg-terracotta/10 text-terracotta border border-terracotta/20 text-[10px] font-bold px-2 py-0.5 rounded">
-                                        Ditolak QC &bull; {{ $log->updated_at ? $log->updated_at->format('H:i') : '' }} WITA
-                                    </span>
+                                    <span class="inline-flex items-center whitespace-nowrap bg-terracotta/10 text-terracotta border border-terracotta/20 text-[10px] font-bold px-2 py-0.5 rounded">Ditolak QC &bull; {{ $log->updated_at ? $log->updated_at->format('H:i') : '' }} WITA</span>
                                 @else
-                                    <span class="inline-flex items-center whitespace-nowrap bg-forest/10 text-forest border border-forest/20 text-[10px] font-bold px-2 py-0.5 rounded">
-                                        Lolos QC &bull; {{ $log->updated_at ? $log->updated_at->format('H:i') : '' }} WITA
-                                    </span>
+                                    <span class="inline-flex items-center whitespace-nowrap bg-forest/10 text-forest border border-forest/20 text-[10px] font-bold px-2 py-0.5 rounded">Lolos QC &bull; {{ $log->updated_at ? $log->updated_at->format('H:i') : '' }} WITA</span>
                                 @endif
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="6" class="py-6 text-center text-ink-soft/60 text-xs font-medium">
-                                Belum ada penjemputan yang diselesaikan hari ini.
-                            </td>
-                        </tr>
+                        <tr><td colspan="6" class="py-6 text-center text-ink-soft/60 text-xs font-medium">Belum ada penjemputan yang diselesaikan hari ini.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -549,7 +491,9 @@
             modal.showModal();
             updateLivePoints(taskId);
             setQcDecision(taskId, 'pass');
-            startScanner(taskId);
+            setTimeout(() => {
+                startScanner(taskId);
+            }, 300);
         }
     }
 
@@ -618,28 +562,71 @@
         }
     }
 
+    // FUNGSI UTAMA SCANNER DENGAN DETEKSI FISIK KAMERA HP
     function startScanner(taskId) {
-        if (html5QrScannerMap[taskId]) return;
+        const errorMsg = document.getElementById('camera_error_msg_' + taskId);
+        if (errorMsg) errorMsg.classList.add('hidden');
+
+        if (html5QrScannerMap[taskId]) {
+            return;
+        }
 
         const html5QrCode = new Html5Qrcode("reader_" + taskId);
         html5QrScannerMap[taskId] = html5QrCode;
-
         const config = { fps: 10, qrbox: { width: 180, height: 180 } };
 
+        const onScanSuccess = (decodedText) => {
+            const qrInput = document.getElementById('qr_input_' + taskId);
+            if (qrInput) qrInput.value = decodedText;
+            if (navigator.vibrate) navigator.vibrate(100);
+            alert("Kode Terverifikasi: " + decodedText);
+            toggleVerificationMode(taskId, 'paste');
+        };
+
+        // Deteksi semua perangkat kamera di HP
+        Html5Qrcode.getCameras().then(devices => {
+            if (devices && devices.length) {
+                // Cari kamera yang berlabel back, rear, atau environment (kamera belakang)
+                let backCamera = devices.find(device => 
+                    device.label.toLowerCase().includes('back') || 
+                    device.label.toLowerCase().includes('rear') || 
+                    device.label.toLowerCase().includes('environment')
+                );
+
+                // Jika ketemu kamera belakang spesifik, pakai deviceId-nya
+                let cameraId = backCamera ? backCamera.id : devices[devices.length - 1].id;
+
+                html5QrCode.start(
+                    cameraId,
+                    config,
+                    onScanSuccess,
+                    () => {}
+                ).catch(err => {
+                    console.warn("Gagal memulai kamera via deviceId:", err);
+                    fallbackFacingMode(html5QrCode, config, onScanSuccess, taskId);
+                });
+            } else {
+                fallbackFacingMode(html5QrCode, config, onScanSuccess, taskId);
+            }
+        }).catch(err => {
+            console.warn("Gagal mendapatkan daftar kamera:", err);
+            fallbackFacingMode(html5QrCode, config, onScanSuccess, taskId);
+        });
+    }
+
+    function fallbackFacingMode(html5QrCode, config, onScanSuccess, taskId) {
+        const errorMsg = document.getElementById('camera_error_msg_' + taskId);
         html5QrCode.start(
             { facingMode: "environment" },
             config,
-            (decodedText) => {
-                const qrInput = document.getElementById('qr_input_' + taskId);
-                if (qrInput) qrInput.value = decodedText;
-                if (navigator.vibrate) navigator.vibrate(100);
-                
-                alert("Kode Terverifikasi: " + decodedText);
-                toggleVerificationMode(taskId, 'paste');
-            },
-            (errorMessage) => {}
-        ).catch(err => {
-            console.error("Izin kamera tidak diberikan: ", err);
+            onScanSuccess,
+            () => {}
+        ).catch(() => {
+            return html5QrCode.start({ facingMode: "user" }, config, onScanSuccess, () => {});
+        }).catch(err => {
+            console.error("Semua metode kamera gagal:", err);
+            if (errorMsg) errorMsg.classList.remove('hidden');
+            toggleVerificationMode(taskId, 'paste');
         });
     }
 
@@ -649,6 +636,7 @@
                 delete html5QrScannerMap[taskId];
             }).catch(err => {
                 console.error("Gagal menghentikan kamera: ", err);
+                delete html5QrScannerMap[taskId];
             });
         }
     }
