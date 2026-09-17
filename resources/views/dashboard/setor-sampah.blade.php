@@ -151,12 +151,13 @@
                         </div>
                     </div>
 
-                    <!-- Upload Foto Fisik Sampah -->
+                    <!-- Upload Foto Fisik Sampah (Sudah Tanpa Capture) -->
                     <div class="form-control">
                         <label class="label py-1"><span class="label-text font-semibold text-xs text-ink">Foto Bukti Fisik Sampah <span class="text-terracotta">*</span></span></label>
-                        <input type="file" name="photo" accept="image/*" capture="environment" required 
+                        <!-- Atribut capture="environment" DIHAPUS agar HP bisa membuka Galeri & Kamera -->
+                        <input type="file" name="photo" id="photo_input" accept="image/png, image/jpeg, image/jpg, image/webp" required 
                             class="file-input file-input-bordered file-input-sm w-full rounded-xl text-xs focus:outline-none focus:border-forest bg-cream/20 @error('photo') border-terracotta @enderror" />
-                        <span class="text-[10px] text-ink-soft mt-1">Maksimal ukuran 3MB (format JPG, PNG, atau WebP).</span>
+                        <span class="text-[10px] text-ink-soft mt-1" id="photo_status">Sistem otomatis mengompresi gambar dari kamera HP.</span>
                     </div>
                 </div>
 
@@ -344,7 +345,64 @@
         }
     }
 
-    // 3. Kontrol Kalender & Jam Penjemputan
+    // 3. Script Kompresi Gambar Otomatis
+    document.addEventListener('DOMContentLoaded', function() {
+        const photoInput = document.getElementById('photo_input');
+        const photoStatus = document.getElementById('photo_status');
+
+        if (photoInput) {
+            photoInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // Batas ukuran kompresi: Kompres jika foto > 2MB
+                if (file.size > 2 * 1024 * 1024) {
+                    photoStatus.innerHTML = '<span class="text-amber-600">Mengompresi gambar dari kamera, mohon tunggu...</span>';
+                    
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    
+                    reader.onload = function(event) {
+                        const img = new Image();
+                        img.src = event.target.result;
+                        
+                        img.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            const MAX_WIDTH = 1200; // Resolusi maksimal
+                            const scaleSize = MAX_WIDTH / img.width;
+                            canvas.width = MAX_WIDTH;
+                            canvas.height = img.height * scaleSize;
+
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                            // Proses Kompresi menjadi format JPEG dengan kualitas 75%
+                            canvas.toBlob(function(blob) {
+                                // Ganti nama file untuk memastikan formatnya sesuai hasil kompresi
+                                const newFileName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
+                                const compressedFile = new File([blob], newFileName, {
+                                    type: 'image/jpeg',
+                                    lastModified: Date.now()
+                                });
+                                
+                                const dataTransfer = new DataTransfer();
+                                dataTransfer.items.add(compressedFile);
+                                e.target.files = dataTransfer.files; // Ganti File Input asli
+                                
+                                // Kalkulasi ukuran baru untuk notifikasi
+                                const newSizeMb = (compressedFile.size / (1024 * 1024)).toFixed(2);
+                                photoStatus.innerHTML = `<span class="text-forest">Gambar berhasil dikompres ke ${newSizeMb} MB.</span>`;
+                            }, 'image/jpeg', 0.75);
+                        }
+                    }
+                } else {
+                    photoStatus.innerHTML = '<span class="text-forest">Ukuran foto optimal.</span>';
+                }
+            });
+        }
+    });
+
+    // 4. Kontrol Kalender & Jam Penjemputan
     document.addEventListener('DOMContentLoaded', function () {
         var pickupDateInput = document.querySelector('input[name="pickup_date"]');
         if (pickupDateInput && window.flatpickr) {
