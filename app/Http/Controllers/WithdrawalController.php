@@ -50,16 +50,25 @@ class WithdrawalController extends Controller
             return redirect('/login')->withErrors(['error' => 'Sesi login telah berakhir.']);
         }
 
+        /** @var \App\Models\User $user */
         $user = User::findOrFail($userId);
 
+        // Cek apakah user sudah punya data bank di profil
+        $hasBankDetails = !empty($user->bank_name) && !empty($user->account_number);
+
+        // Ambil nilai bank & account_number (Gunakan data lama jika sudah ada di DB)
+        $bankName = $hasBankDetails ? $user->bank_name : strtoupper($request->bank_name);
+        $accountNumber = $hasBankDetails ? $user->account_number : $request->account_number;
+
+        // Validasi Kondisional
         $request->validate([
             'points'              => 'required|integer|min:50000',
-            'bank_name'           => 'required|string',
-            'account_number'      => 'required|numeric',
+            'bank_name'           => $hasBankDetails ? 'nullable' : 'required|string',
+            'account_number'      => $hasBankDetails ? 'nullable' : 'required|numeric',
             'account_holder_name' => 'required|string',
         ], [
             'points.required'        => 'Jumlah poin yang ingin dicairkan wajib diisi.',
-            'points.min'             => 'Batas minimal pencairan adalah 1.000 poin.',
+            'points.min'             => 'Batas minimal pencairan adalah 50.000 poin.',
             'account_number.numeric' => 'Nomor rekening wajib berupa angka.',
             'bank_name.required'     => 'Silakan pilih bank tujuan penarikan.',
         ]);
@@ -79,10 +88,18 @@ class WithdrawalController extends Controller
         }
 
         try {
-            $withdrawalData = DB::transaction(function () use ($user, $request) {
+            $withdrawalData = DB::transaction(function () use ($user, $request, $bankName, $accountNumber, $hasBankDetails) {
                 $cashAmount = (int) $request->points;
                 $withdrawalCode = 'WDR-' . date('Ymd') . '-' . strtoupper(Str::random(5));
                 $refId = 'TRX-SIM-' . rand(100000, 999999);
+
+                // Kunci rekening secara permanen di profil user jika baru pertama kali diisi
+                if (!$hasBankDetails) {
+                    $user->update([
+                        'bank_name' => $bankName,
+                        'account_number' => $accountNumber,
+                    ]);
+                }
 
                 // Potong saldo di database
                 $user->decrement('points_balance', $request->points);
@@ -94,9 +111,9 @@ class WithdrawalController extends Controller
                     'withdrawal_code'     => $withdrawalCode,
                     'points_redeemed'     => $request->points,
                     'cash_amount'         => $cashAmount,
-                    'bank_name'           => strtoupper($request->bank_name),
-                    'account_number'      => $request->account_number,
-                    'account_holder_name' => $request->account_holder_name,
+                    'bank_name'           => $bankName,
+                    'account_number'      => $accountNumber,
+                    'account_holder_name' => $user->name,
                     'status'              => 'success',
                     'reference_id'        => $refId,
                 ]);

@@ -25,6 +25,8 @@ class User extends Authenticatable
         'foto_profil',
         'role',
         'points_balance',
+        'bank_name',
+        'account_number',
         'cash_received_total',
         'qr_code',
         'transaction_pin',
